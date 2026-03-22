@@ -79,9 +79,9 @@ This is where "I type prompts and hope" becomes "I've built an environment where
 | `./CLAUDE.md` or `./.claude/CLAUDE.md` | Project-level | Committed to git |
 | `CLAUDE.local.md` | Project-level personal | Gitignored |
 
-**Priority order:** `.claude/settings.local.json` > project `CLAUDE.md` > global `~/.claude/CLAUDE.md`
+All levels combine — they don't replace each other. When there's a conflict, the more specific file wins. Anthropic's official guidance: **target under 200 lines per CLAUDE.md file.**
 
-**Key insight:** Good CLAUDE.md files are boring on purpose. Short, specific, positive instructions. "Use named exports exclusively" beats "Do NOT use default exports" — positive instructions cut violations roughly in half.
+**Key insight:** Good CLAUDE.md files are boring on purpose. Short, specific, positive instructions. "Use named exports exclusively" beats "Do NOT use default exports" — LLMs are measurably worse at following negated instructions (KAIST, NeurIPS 2022 Workshop; Zhang et al., ACL 2023). Anthropic's own docs say: "Tell Claude what to do instead of what not to do."
 
 **Common mistakes:**
 - Over-specifying: 200+ lines where half get ignored because important rules get lost in the noise

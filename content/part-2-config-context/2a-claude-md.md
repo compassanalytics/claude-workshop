@@ -6,15 +6,11 @@
 
 ### The hook
 
-Start with this question to the room:
+So we just saw how fast this has moved — autocomplete to full agent orchestration in under five years. What we want to do now is give everyone a level playing field. The goal for the rest of this session is to lay the foundations that take you from "I type prompts and hope for the best" to "I've built an environment where the agent consistently does good work."
 
-> "How many of you have started a Claude Code session and spent the first 5 minutes re-explaining your project? What framework you use, how to run tests, what naming conventions to follow?"
+And that starts with the simplest thing: Claude starts every session completely blank. No memory of yesterday. Doesn't know your test runner needs a special flag, doesn't know there's a legacy module nobody should touch.
 
-That's the problem. Every session starts from zero. Claude doesn't remember your last conversation. It doesn't know your team's conventions. It doesn't know that your test runner needs a special flag, or that you use barrel exports, or that there's a legacy module nobody should touch.
-
-**CLAUDE.md fixes this.** It's a markdown file that Claude reads at the start of every single session — before you type anything. It's persistent context. Think of it as writing an onboarding doc, except the new hire is an AI agent that joins your team fresh every morning.
-
-Without one, you're managing an amnesiac. With a good one, Claude shows up already knowing how your project works.
+**CLAUDE.md fixes that.** Markdown file Claude reads at the start of every session. Your conventions, your commands, your gotchas — all loaded before you type anything.
 
 ---
 
@@ -28,34 +24,33 @@ There isn't just one CLAUDE.md — there's a hierarchy. Each level serves a diff
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  MOST SPECIFIC (wins on conflict)                       │
-│                                                         │
-│  📁 ./CLAUDE.local.md                                   │
-│     Personal, project-level. Gitignored.                │
-│     "I like verbose test output"                        │
-│                                                         │
-├─────────────────────────────────────────────────────────┤
-│  📁 ./CLAUDE.md  or  ./.claude/CLAUDE.md                │
-│     Project-level. Committed to git. Shared with team.  │
-│     "We use ESM, run tests with vitest, deploy to AWS"  │
-│                                                         │
-├─────────────────────────────────────────────────────────┤
-│  📁 ./subdir/CLAUDE.md                                  │
-│     Directory-specific. Loaded on demand.               │
-│     "This module uses a different ORM"                  │
-│                                                         │
-├─────────────────────────────────────────────────────────┤
 │  📁 ~/.claude/CLAUDE.md                                 │
 │     Global. Applies to every project on your machine.   │
 │     "I prefer TypeScript, use pnpm, never amend commits"│
 │                                                         │
-│  MOST GENERAL                                           │
+│  + ─────────────────────────────────────────────────────┤
+│  📁 ./CLAUDE.md  or  ./.claude/CLAUDE.md                │
+│     Project-level. Committed to git. Shared with team.  │
+│     "We use ESM, run tests with vitest, deploy to AWS"  │
+│                                                         │
+│  + ─────────────────────────────────────────────────────┤
+│  📁 ./subdir/CLAUDE.md                                  │
+│     Directory-specific. Loaded when working in subdir.  │
+│     "This module uses a different ORM"                  │
+│                                                         │
+│  + ─────────────────────────────────────────────────────┤
+│  📁 ./CLAUDE.local.md                                   │
+│     Personal, project-level. Gitignored.                │
+│     "I like verbose test output"                        │
+│                                                         │
 └─────────────────────────────────────────────────────────┘
 ```
 
 ### How they combine
 
-All levels **combine** — they don't replace each other. Claude sees all of them. When there's a conflict, the more specific file wins.
+These **stack** — they don't replace each other. Claude sees all of them at once. Global sets your baseline, project adds team context on top, subdirectory layers on more when you're working in that folder, and local adds your personal preferences.
+
+So what happens when two files contradict each other? Say your global CLAUDE.md says "use npm" but your project CLAUDE.md says "use pnpm." Claude sees both, and the **more specific scope wins**. Project beats global. Subdirectory beats project. Local beats everything — it's your personal override for this project, so it gets the final word.
 
 ### Talk through each level:
 
@@ -89,11 +84,13 @@ This is the file nobody talks about, but it's genuinely useful. It lets you cust
 
 > For each line, ask: **"Would removing this cause Claude to make mistakes?"** If the answer is no, delete it.
 
-CLAUDE.md is loaded into Claude's context every session. Every line you add competes for attention with every other line. Research shows frontier LLMs can follow roughly **150–200 instructions** with reasonable consistency — and Claude Code's own system prompt already uses about 50 of those. Your CLAUDE.md is drawing from what's left.
+CLAUDE.md is loaded into Claude's context every session. Every line you add competes for attention with every other line. Anthropic's official guidance is to **target under 200 lines per CLAUDE.md file** — longer files consume more context and reduce adherence.
+
+The IFScale benchmark (Jaroslawicz et al., July 2025 — [arXiv:2507.11538](https://arxiv.org/abs/2507.11538)) tested 20 frontier models and found that even the best ones start falling off hard after about 150 instructions. Claude Code's own system prompt already eats a big chunk of that budget — your CLAUDE.md is drawing from what's left.
 
 ### What to include
 
-**Show this table — it's the fastest way to communicate the boundaries:**
+**This table is adapted from Anthropic's [Claude Code Best Practices](https://code.claude.com/docs/en/best-practices) page:**
 
 | ✅ Include | ❌ Exclude |
 |-----------|-----------|
@@ -107,27 +104,19 @@ CLAUDE.md is loaded into Claude's context every session. Every line you add comp
 
 ### The positive instruction principle
 
-This is a practical insight worth landing clearly.
+LLMs are measurably worse at following negated instructions. Research out of KAIST (Jang et al., NeurIPS 2022 — [arXiv:2209.12711](https://arxiv.org/abs/2209.12711)) found an inverse scaling law: larger models actually performed *worse* on negated prompts. Anthropic's own docs say it plainly: **"Tell Claude what to do instead of what not to do."** ([Claude Best Practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices))
 
-**The problem:** When you write "Do NOT use default exports," Claude has to process the negation and infer what you *do* want. This is how LLMs work — negations require an extra reasoning step that sometimes fails.
+Frame instructions as what you want, not what you don't:
 
-**The fix:** Frame instructions as what you want, not what you don't.
+| ❌ Negative | ✅ Positive |
+|------------|------------|
+| Don't create new files if one exists | Make all changes in existing files |
+| Don't push directly to main | Create a feature branch for all changes |
+| Never hardcode secrets | Load secrets from environment variables |
+| Avoid long functions | Keep functions under 40 lines, extract helpers |
+| Don't leave TODO comments | Resolve TODOs before committing or file an issue |
 
-**Before and After examples:**
-
-| ❌ Negative (weaker) | ✅ Positive (stronger) |
-|---------------------|----------------------|
-| Do NOT use default exports | Use named exports exclusively |
-| Don't use `var` | Use `const` by default, `let` when reassignment is needed |
-| Never create duplicate files | Make all updates in existing files |
-| Don't use mocks in integration tests | Integration tests must hit the real database |
-| Avoid inline styles | Use CSS modules for all component styling |
-
-**The data behind this:** Practitioners who flipped 10 negative rules to positive equivalents measured roughly **half the violation rate**. Anthropic's own documentation says: "Tell Claude what to do instead of what not to do."
-
-There's a psychological parallel here — **Ironic Process Theory** (the "don't think of a pink elephant" effect). Telling someone *not* to do something makes the unwanted behavior more salient, not less. LLMs, trained on human language patterns, exhibit the same tendency.
-
-**When negative instructions still make sense:** Hard safety boundaries. "NEVER commit .env files" or "NEVER expose API keys in client code." These are guardrails, not style preferences — and even then, a hook is more reliable than a CLAUDE.md instruction.
+**When negative instructions still make sense:** Hard safety boundaries. "NEVER commit .env files" or "NEVER expose API keys in client code." These are guardrails, not style preferences — and even then, a hook is more reliable than a CLAUDE.md instruction. We'll get to hooks later.
 
 ### Emphasis when it matters
 
@@ -151,7 +140,7 @@ See @docs/api-conventions.md for API design rules.
 
 This keeps your CLAUDE.md lean while still giving Claude access to detailed reference material. Claude reads the referenced file when it needs the content — it's not loaded upfront.
 
-**Pro tip from HumanLayer:** Prefer pointers over copies. Don't paste code snippets into CLAUDE.md — they go stale fast. Instead, point to the file: `"See @src/lib/api/client.ts for the canonical API client pattern."` Claude reads the current version.
+**Pro tip (from the [HumanLayer blog, Nov 2025](https://www.humanlayer.dev/blog/writing-a-good-claude-md)):** Prefer pointers over copies. Don't paste code snippets into CLAUDE.md — they go stale fast. Instead, point to the file: `"See @src/lib/api/client.ts for the canonical API client pattern."` Claude reads the current version.
 
 ---
 
@@ -248,29 +237,14 @@ Next.js 14 e-commerce app with Prisma + PostgreSQL.
 
 ---
 
-## Getting Started & Maintenance (~2 min)
+## Getting Started (~2 min)
 
-### The `/init` command
+### `/init`
 
-For anyone starting from scratch:
+Run `/init` in Claude Code. It scans your project and generates a starter CLAUDE.md. Treat it as a first draft — it'll include stuff Claude can already figure out from your code (file structure descriptions, obvious conventions). Cut those.
 
-> Run `/init` in Claude Code. It scans your project — reads package files, configs, code structure — and generates a starter CLAUDE.md.
+### How it should evolve
 
-It's a solid starting point. But treat it as a draft, not a finished product. `/init` will include things Claude can already infer (file structure descriptions, obvious conventions). **Ruthlessly prune** what it generates.
+A good CLAUDE.md grows from real friction, not upfront planning. Every time Claude makes a mistake, ask: "Would a one-line instruction have prevented this?" If yes, add it. Every time Claude keeps asking you something, that's a missing instruction. Commit it to git so the whole team benefits and iterates on it together.
 
-### The feedback loop
-
-The best CLAUDE.md files aren't written in one sitting. They evolve:
-
-1. **Start with `/init`**, prune aggressively
-2. **When Claude makes a mistake** — ask yourself: "Would a one-line instruction in CLAUDE.md have prevented this?" If yes, add it.
-3. **When Claude asks a question** that CLAUDE.md already answers — the phrasing might be ambiguous. Rewrite the instruction.
-4. **When Claude correctly does something** without a corresponding instruction — delete the instruction if there is one. It's unnecessary weight.
-
-> **Treat CLAUDE.md like code.** Review it when things go wrong. Prune it regularly. Commit it to git so your team iterates on it together. It compounds in value over time.
-
-### Bridge to 2b
-
-That covers what goes into a single CLAUDE.md file. But as your project grows, stuffing everything into one file becomes the same problem as having no file at all — important rules get lost in the noise.
-
-That's where **Rules** come in — splitting your instructions into focused, scoped files that load only when relevant. Let's look at that next.
+The [HumanLayer blog (Nov 2025)](https://www.humanlayer.dev/blog/writing-a-good-claude-md) makes a good point here — their root CLAUDE.md is under sixty lines. You're not writing documentation. You're writing the minimum set of things Claude can't figure out on its own.
