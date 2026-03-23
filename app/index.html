@@ -585,7 +585,7 @@ const sections = [
     id: "part-1",
     number: "1",
     title: "The Evolution",
-    duration: "~20 min",
+    duration: "",
     author: "julien",
     content: null
   },
@@ -593,7 +593,7 @@ const sections = [
     id: "part-2a",
     number: "2a",
     title: "CLAUDE.md",
-    duration: "~17 min",
+    duration: "",
     author: "colleague",
     content: null
   },
@@ -601,7 +601,7 @@ const sections = [
     id: "part-2b",
     number: "2b",
     title: "Rules",
-    duration: "~6 min",
+    duration: "",
     author: "colleague",
     content: null
   },
@@ -609,7 +609,7 @@ const sections = [
     id: "part-3",
     number: "3",
     title: "Skills & Commands",
-    duration: "~12 min",
+    duration: "",
     author: "colleague",
     content: null
   },
@@ -617,7 +617,7 @@ const sections = [
     id: "part-4",
     number: "4",
     title: "MCP",
-    duration: "~10 min",
+    duration: "",
     author: "julien",
     content: null
   },
@@ -625,7 +625,7 @@ const sections = [
     id: "part-5",
     number: "5",
     title: "Hooks",
-    duration: "~10 min",
+    duration: "",
     author: "colleague",
     content: null
   },
@@ -633,7 +633,7 @@ const sections = [
     id: "part-6",
     number: "6",
     title: "Subagents & Teams",
-    duration: "~12 min",
+    duration: "",
     author: "colleague",
     content: null
   },
@@ -641,7 +641,7 @@ const sections = [
     id: "part-7",
     number: "7",
     title: "Plugins",
-    duration: "~9 min",
+    duration: "",
     author: "julien",
     content: null
   },
@@ -649,7 +649,7 @@ const sections = [
     id: "part-8",
     number: "8",
     title: "Permissions",
-    duration: "~10 min",
+    duration: "",
     author: "julien",
     content: null
   },
@@ -657,7 +657,7 @@ const sections = [
     id: "closing",
     number: "C",
     title: "Closing",
-    duration: "~5 min",
+    duration: "",
     author: "julien",
     content: null
   }
@@ -665,75 +665,75 @@ const sections = [
 
 // --- MARKDOWN CONTENT ---
 
-sections[0].content = `# Part 1: The Evolution \u2014 From Autocomplete to Agent Orchestration
+sections[0].content = `# Part 1: The Evolution  -  From Autocomplete to Agent Orchestration
 
 ---
 
-## Opening (~1 min)
+## Opening
 
 ### Setting the stage
 
-Alright, let\u2019s start with where we\u2019ve been and where we are \u2014 because the speed of this shift is genuinely remarkable. We\u2019re going to walk through the last five years of AI-assisted coding, and I want to ground it in what actually happened, with dates, products, and real numbers. Not vibes.
+Alright, let\u2019s start with where we\u2019ve been and where we are  -  because the speed of this shift is genuinely remarkable. We\u2019re going to walk through the last five years of AI-assisted coding, and I want to ground it in what actually happened, with dates, products, and real numbers. Not vibes.
 
-The reason this matters: if you understand *how* we got here, the rest of the workshop \u2014 the config, the tools, the agent orchestration \u2014 stops feeling like a bag of tricks and starts feeling like the logical next step.
+The reason this matters: if you understand *how* we got here, the rest of the workshop  -  the config, the tools, the agent orchestration  -  stops feeling like a bag of tricks and starts feeling like the logical next step.
 
 **[Image placeholder: timeline of AI coding evolution, four phases from 2021 to 2026]**
 
 ---
 
-## The Journey \u2014 Four Phases (~10 min)
+## The Journey  -  Four Phases
 
-### Phase 1: Autocomplete (2021-2022) \u2014 \u201CIntelliSense on steroids\u201D
+### Phase 1: Autocomplete (2021-2022)  -  \u201CIntelliSense on steroids\u201D
 
 GitHub Copilot launches mid-2021, built on OpenAI\u2019s Codex. For the first time, AI is predicting entire lines and blocks of code from context. You\u2019re writing a function signature, and it fills in the body. You\u2019re writing a comment, and it writes the code underneath.
 
-Impressive \u2014 but fundamentally passive. You type, it suggests, you accept or reject. Every decision is still yours. The developer drives every keystroke. Think of it like a really good autocomplete that occasionally reads your mind. The ceiling is \u201CI type less.\u201D The floor is \u201CI hit Escape a lot.\u201D
+Impressive  -  but fundamentally passive. You type, it suggests, you accept or reject. Every decision is still yours. The developer drives every keystroke. Think of it like a really good autocomplete that occasionally reads your mind. The ceiling is \u201CI type less.\u201D The floor is \u201CI hit Escape a lot.\u201D
 
-### Phase 2: Conversational coding (2023-early 2024) \u2014 \u201CAsk it, don\u2019t just type\u201D
+### Phase 2: Conversational coding (2023-early 2024)  -  \u201CAsk it, don\u2019t just type\u201D
 
-ChatGPT drops in late 2022, GPT-4 follows in March 2023, and the interface changes completely. Copilot Chat arrives. AI stops being just inline suggestions and becomes a second interface for coding \u2014 you can ask for patterns, debug explanations, scaffolding, alternative implementations. Cursor launches in March 2023 as a VS Code fork with AI baked in.
+ChatGPT drops in late 2022, GPT-4 follows in March 2023, and the interface changes completely. Copilot Chat arrives. AI stops being just inline suggestions and becomes a second interface for coding  -  you can ask for patterns, debug explanations, scaffolding, alternative implementations. Cursor launches in March 2023 as a VS Code fork with AI baked in.
 
-At this stage it\u2019s still chat plus autocomplete. Powerful, yes \u2014 but the developer drives everything. You ask a question, you get an answer, you copy-paste it in, you verify it works. Quality control is entirely human. The AI is a knowledgeable colleague sitting next to you, but you\u2019re still the one with your hands on the keyboard.
+At this stage it\u2019s still chat plus autocomplete. Powerful, yes  -  but the developer drives everything. You ask a question, you get an answer, you copy-paste it in, you verify it works. Quality control is entirely human. The AI is a knowledgeable colleague sitting next to you, but you\u2019re still the one with your hands on the keyboard.
 
-### Phase 3: Agentic coding emerges (late 2024-2025) \u2014 \u201CDelegate, don\u2019t dictate\u201D
+### Phase 3: Agentic coding emerges (late 2024-2025)  -  \u201CDelegate, don\u2019t dictate\u201D
 
 This is where the paradigm actually shifts.
 
-Cursor ships Agent Mode in November 2024 \u2014 the AI can now read terminal output, run commands, make multi-file changes, and iterate on errors inside the IDE. Claude Code launches in February 2025 as terminal-native: no IDE at all, just an agent that reads your codebase, plans, executes, and loops. Copilot adds agent mode in May 2025. Codex, Windsurf, and others follow.
+Cursor ships Agent Mode in November 2024  -  the AI can now read terminal output, run commands, make multi-file changes, and iterate on errors inside the IDE. Claude Code launches in February 2025 as terminal-native: no IDE at all, just an agent that reads your codebase, plans, executes, and loops. Copilot adds agent mode in May 2025. Codex, Windsurf, and others follow.
 
-The AI isn\u2019t suggesting code anymore \u2014 it\u2019s *executing tasks*. You describe intent; the agent handles execution. \u201CAdd pagination to the users endpoint\u201D stops being a prompt you paste into a chat window, and becomes a task the agent plans, implements across multiple files, runs the tests, and fixes its own errors.
+The AI isn\u2019t suggesting code anymore  -  it\u2019s *executing tasks*. You describe intent; the agent handles execution. \u201CAdd pagination to the users endpoint\u201D stops being a prompt you paste into a chat window, and becomes a task the agent plans, implements across multiple files, runs the tests, and fixes its own errors.
 
 Here\u2019s a number that tells the story: by late 2025, Cursor reports a dramatic flip. Where they once had 2.5x more tab-completion users than agent users, they now have 2x more agent users than tab users. The majority of their user base shifted from \u201Csuggest code for me\u201D to \u201Cdo the task for me\u201D in under a year.
 
-**The key distinction here:** agentic isn\u2019t one tool \u2014 it\u2019s a mode of working that all the major players converged on roughly simultaneously. Cursor does it inside the IDE. Claude Code does it in the terminal. Copilot does it across GitHub. Different interfaces, same fundamental shift from \u201Cyou type, AI suggests\u201D to \u201Cyou describe, AI executes.\u201D
+**The key distinction here:** agentic isn\u2019t one tool  -  it\u2019s a mode of working that all the major players converged on roughly simultaneously. Cursor does it inside the IDE. Claude Code does it in the terminal. Copilot does it across GitHub. Different interfaces, same fundamental shift from \u201Cyou type, AI suggests\u201D to \u201Cyou describe, AI executes.\u201D
 
-### Phase 4: Multi-agent orchestration (early 2026 \u2014 where we are now)
+### Phase 4: Multi-agent orchestration (early 2026  -  where we are now)
 
-And now we\u2019re here. Agent teams. Parallel execution. Peer-to-peer communication between agents. One lead coordinates, teammates work independently with their own context windows. You\u2019re not just delegating a single task anymore \u2014 you\u2019re managing a team of AI engineers working in parallel.
+And now we\u2019re here. Agent teams. Parallel execution. Peer-to-peer communication between agents. One lead coordinates, teammates work independently with their own context windows. You\u2019re not just delegating a single task anymore  -  you\u2019re managing a team of AI engineers working in parallel.
 
 We\u2019ve gone from \u201CAI autocomplete\u201D to \u201Cmanaging a team of AI engineers\u201D in under five years. That\u2019s the trajectory. And it\u2019s why \u201CI use Copilot for suggestions sometimes\u201D and \u201CI orchestrate multiple agents working on my codebase\u201D are now fundamentally different skill sets.
 
-**[Image placeholder: four-phase diagram showing the shift from passive to autonomous \u2014 autocomplete, chat, single agent, multi-agent]**
+**[Image placeholder: four-phase diagram showing the shift from passive to autonomous  -  autocomplete, chat, single agent, multi-agent]**
 
 ---
 
-## Where We Actually Are Right Now \u2014 The Numbers (~5 min)
+## Where We Actually Are Right Now  -  The Numbers
 
 ### Adoption
 
 Let\u2019s ground this in real data. These come from Anthropic\u2019s 2026 Agentic Coding Trends Report, the Sonar State of Code survey, Stack Overflow, and independent studies.
 
 - **84%+ of developers** are now using or planning to use AI coding tools (Stack Overflow 2025). 51% of professional developers use AI daily.
-- **64% of developers** have started using agentic AI tools specifically \u2014 25% regularly, another 39% experimenting (Sonar State of Code 2026).
+- **64% of developers** have started using agentic AI tools specifically  -  25% regularly, another 39% experimenting (Sonar State of Code 2026).
 - **41% of all code** is now estimated to be AI-generated (global estimates, early 2026).
 
 So the question is no longer \u201Care people using this.\u201D The question is \u201Chow well are people using this.\u201D
 
 ### Productivity
 
-- **Developers save ~3.6 hours per week** on average; daily users save more. 75% say AI reduces \u201Ctoil work\u201D \u2014 the repetitive, low-creativity stuff nobody enjoys. That\u2019s from the DX Q4 2025 report, surveying 135,000+ developers.
-- **22% of merged code** is AI-authored based on actual repo telemetry (DX analysis). Not survey responses \u2014 actual commit data.
-- GitHub studied 129K+ projects and found **15-22% agent adoption** \u2014 remarkable for technology that\u2019s only been available for months.
+- **Developers save ~3.6 hours per week** on average; daily users save more. 75% say AI reduces \u201Ctoil work\u201D  -  the repetitive, low-creativity stuff nobody enjoys. That\u2019s from the DX Q4 2025 report, surveying 135,000+ developers.
+- **22% of merged code** is AI-authored based on actual repo telemetry (DX analysis). Not survey responses  -  actual commit data.
+- GitHub studied 129K+ projects and found **15-22% agent adoption**  -  remarkable for technology that\u2019s only been available for months.
 
 ### Enterprise case studies
 
@@ -741,7 +741,7 @@ These are the ones that tend to land with people who are still on the fence:
 
 - **Rakuten:** Claude Code completed activation vector extraction across a 12.5 million-line codebase in 7 autonomous hours, achieving 99.9% numerical accuracy.
 - **TELUS:** 13,000+ custom AI solutions, engineering code shipped 30% faster, 500,000 total hours saved.
-- **Zapier:** 89-97% AI adoption across their *entire* organization \u2014 not just engineering.
+- **Zapier:** 89-97% AI adoption across their *entire* organization  -  not just engineering.
 - **Stripe:** Cursor adoption went from single digits to over 80% of developers.
 - **Salesforce:** 90% of 20,000 developers using AI coding tools.
 
@@ -749,17 +749,17 @@ These aren\u2019t startups experimenting. These are large organizations seeing m
 
 ---
 
-## Where It\u2019s All Headed (~2 min)
+## Where It\u2019s All Headed
 
 ### The near-term
 
-This section is about giving everyone a reason to invest in learning the tooling properly \u2014 because it\u2019s not slowing down.
+This section is about giving everyone a reason to invest in learning the tooling properly  -  because it\u2019s not slowing down.
 
-**In 2026,** agents are progressing from short tasks to work that continues for hours or days. Multi-agent coordination is becoming standard \u2014 not just parallelism, but agents that share findings, challenge each other, and coordinate independently. And non-engineers \u2014 security, ops, design, data, legal, marketing \u2014 are starting to build their own tools using agents.
+**In 2026,** agents are progressing from short tasks to work that continues for hours or days. Multi-agent coordination is becoming standard  -  not just parallelism, but agents that share findings, challenge each other, and coordinate independently. And non-engineers  -  security, ops, design, data, legal, marketing  -  are starting to build their own tools using agents.
 
 ### The convergence
 
-Compare Claude Code, Codex, Copilot CLI, Gemini CLI, Cursor, Windsurf \u2014 they\u2019re all converging on the same architecture under the hood. Config files (CLAUDE.md, AGENTS.md). Tool use. Multi-step planning. Agent delegation. The open standards \u2014 MCP for tools, Agent Skills spec for skills \u2014 mean skills work across Claude Code, Codex CLI, Gemini CLI, and Cursor without modification. This isn\u2019t a walled garden; the ecosystem is standardizing.
+Compare Claude Code, Codex, Copilot CLI, Gemini CLI, Cursor, Windsurf  -  they\u2019re all converging on the same architecture under the hood. Config files (CLAUDE.md, AGENTS.md). Tool use. Multi-step planning. Agent delegation. The open standards  -  MCP for tools, Agent Skills spec for skills  -  mean skills work across Claude Code, Codex CLI, Gemini CLI, and Cursor without modification. This isn\u2019t a walled garden; the ecosystem is standardizing.
 
 That\u2019s actually good news for you. The patterns you learn today aren\u2019t locked to one vendor.
 
@@ -767,46 +767,36 @@ That\u2019s actually good news for you. The patterns you learn today aren\u2019t
 
 Anthropic\u2019s report frames it bluntly: engineering is shifting from writing code to *orchestrating agents that write code*. The developer becomes a conductor, not a composer. The gap between \u201Cperson who prompts a chatbot\u201D and \u201Cperson who orchestrates an AI workforce\u201D is widening fast.
 
-That\u2019s what this workshop is about \u2014 making sure everyone in the room is on the right side of that gap.
+That\u2019s what this workshop is about  -  making sure everyone in the room is on the right side of that gap.
 
 ---
 
-## The Honest Caveats (~2 min)
+## The Honest Caveats
 
 ### What\u2019s still hard
 
 I want to be upfront about the limitations too, because overselling this helps nobody.
 
-- **Developers still fully delegate only 0-20% of tasks.** This isn\u2019t \u201CAI replaces you\u201D \u2014 it\u2019s \u201CAI amplifies you.\u201D The vast majority of work is still collaborative, not autonomous. That\u2019s from Anthropic\u2019s own report.
+- **Developers still fully delegate only 0-20% of tasks.** This isn\u2019t \u201CAI replaces you\u201D  -  it\u2019s \u201CAI amplifies you.\u201D The vast majority of work is still collaborative, not autonomous. That\u2019s from Anthropic\u2019s own report.
 - **CodeRabbit\u2019s analysis found roughly 1.7x more issues in AI-coauthored PRs.** Verification matters. The code gets written faster, but that doesn\u2019t mean it\u2019s correct by default.
 - **Long sessions suffer from context rot.** Assumptions compound. The agent starts confidently building on mistakes it made 200 messages ago.
-- **75% of devs still manually review every AI snippet before merging.** That\u2019s healthy \u2014 and it\u2019s going to stay that way for a while.
+- **75% of devs still manually review every AI snippet before merging.** That\u2019s healthy  -  and it\u2019s going to stay that way for a while.
 - **The tools are powerful but need proper setup to be reliable.** Which is exactly what the rest of this session covers.
 
 So the framing for everything that follows: these tools are genuinely transformative when configured well, and genuinely frustrating when they\u2019re not. Let\u2019s make sure yours are configured well.`;
 
 
-sections[1].content = `# Part 2a: CLAUDE.md \u2014 Your Onboarding Doc for the Agent
+sections[1].content = `# Part 2a: CLAUDE.md  -  Your Onboarding Doc for the Agent
 
 ---
 
-## Opening (~2 min)
-
-### The hook
-
-So we just saw how fast this has moved. The goal for the rest of this session is to lay the foundations and go over some of the basics that take you from just prompting, to creating an environment where your agent consistently does good work. The end goal is for you to spend less time prompting, and your agent less tokens correcting its own mistakes.
-
-And so we\u2019re going to start with the simplest thing: Claude.md. Claude starts every session completely blank. No memory of yesterday. And you might want to persist some basic guidance and instructions that are relevant to your own and/or your project conventions, and that would apply to each and every session.
-
-**CLAUDE.md fixes that.** Markdown file Claude reads at the start of every session all loaded before you type anything.
+Claude starts every session with no memory of previous conversations. **CLAUDE.md** is a markdown file Claude reads at the start of every session, before you type anything. It\u2019s where you persist guidance and instructions relevant to your project conventions.
 
 ---
 
-## The Hierarchy (~5 min)
+## The Hierarchy
 
-### Where CLAUDE.md files live and how they combine
-
-Now as you may know, CLAUDE.md is not a single file that lives on your computer. It can be defined at multiple levels. So how are they combined?
+CLAUDE.md can be defined at multiple levels. Each layer stacks on top of the previous one:
 
 <div class="svg-diagram">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
@@ -844,7 +834,7 @@ Now as you may know, CLAUDE.md is not a single file that lives on your computer.
   <text x="705" y="225" font-size="14" fill="#334155" text-anchor="middle">A .local.md file can exist at</text>
   <text x="705" y="245" font-size="14" fill="#334155" text-anchor="middle">any directory level. It overrides</text>
   <text x="705" y="265" font-size="14" fill="#334155" text-anchor="middle">the shared CLAUDE.md at that</text>
-  <text x="705" y="285" font-size="14" fill="#334155" text-anchor="middle">same level \u2014 not deeper ones.</text>
+  <text x="705" y="285" font-size="14" fill="#334155" text-anchor="middle">same level  -  not deeper ones.</text>
   <rect x="600" y="305" width="210" height="1" fill="#cbd5e1"/>
   <text x="705" y="335" font-size="14" fill="#334155" text-anchor="middle">Automatically gitignored.</text>
   <text x="705" y="355" font-size="14" fill="#334155" text-anchor="middle">Your team never sees it.</text>
@@ -856,37 +846,29 @@ Now as you may know, CLAUDE.md is not a single file that lives on your computer.
 </svg>
 </div>
 
-First of all, these are all layers that stack on top of one another. Anytime you start a new session, the global CLAUDE.md (\`~/.claude/CLAUDE.md\`) always loads no matter what project you\u2019re working on, and where you are on your computer.
+- **Global** (\`~/.claude/CLAUDE.md\`)  -  loads for every project on your machine.
+- **Project root** (\`./CLAUDE.md\`)  -  stacks on top of global. Typically committed to git and shared with your team.
+- **Subdirectory** (\`./subdir/CLAUDE.md\`)  -  stacks on top of the project root. Loads when Claude works in that directory.
 
-Now if you\u2019re working on a project with a CLAUDE.md defined in the project root (\`./CLAUDE.md\`), then a new session loads both global and project CLAUDE.md.
+When instructions conflict, the more specific (deeper) directory wins.
 
-And say you\u2019re also working on the backend of your application \u2014 a new session is going to stack that subdirectory CLAUDE.md (\`./subdir/CLAUDE.md\`) on top of the one in the project root, and on top of global.
-
-If you have conflicting instructions at different levels, the more specific directory takes priority.
-
-Now these files \u2014 anything at project level and below \u2014 are typically committed to git so they can be shared with your team. But say you\u2019d like to add your personal touch and you don\u2019t want to share some instructions with the team. Then you would define a \`CLAUDE.local.md\` file, which is automatically gitignored. This is seen as a personal override, and these instructions will take priority over the shared ones at the same directory level.
+**Personal overrides:** \`CLAUDE.local.md\` can exist at any directory level. It\u2019s automatically gitignored and takes priority over the shared CLAUDE.md at the same level  -  useful for personal preferences you don\u2019t want to push to the team.
 
 ---
 
-## Writing a Good CLAUDE.md (~8 min)
+## Writing Effective Instructions
 
 ### The golden rule
 
 > For each line, ask: **\u201CWould removing this cause Claude to make mistakes?\u201D** If the answer is no, delete it.
 
-CLAUDE.md is loaded into Claude\u2019s context every session. Every line you add competes for attention with every other line. Anthropic\u2019s official guidance is to **target under 200 lines per CLAUDE.md file** \u2014 longer files consume more context and reduce adherence.
+CLAUDE.md is loaded into context every session. Every line competes for attention. Anthropic\u2019s guidance is to **target under 200 lines per file**  -  longer files consume more context and reduce adherence.
 
-The IFScale benchmark (Jaroslawicz et al., July 2025 \u2014 [arXiv:2507.11538](https://arxiv.org/abs/2507.11538)) tested 20 frontier models and found that even the best ones start falling off hard after about 150 instructions. Claude Code\u2019s own system prompt already eats a big chunk of that budget \u2014 your CLAUDE.md is drawing from what\u2019s left.
+The IFScale benchmark (Jaroslawicz et al., July 2025  -  [arXiv:2507.11538](https://arxiv.org/abs/2507.11538)) tested 20 frontier models and found adherence drops significantly after ~150 instructions. Claude Code\u2019s system prompt already consumes a large portion of that budget.
 
 ### What to include
 
-So what actually goes into a good CLAUDE.md? Anthropic has a table on their [best practices page](https://code.claude.com/docs/en/best-practices) that lays this out, and the underlying logic is simple.
-
-On the include side, it all comes down to one question: **can Claude figure this out on its own?** If the answer is no, it belongs in CLAUDE.md. Your build commands, your test runner flags, architectural decisions that aren\u2019t obvious from the code, environment quirks \u2014 Claude has no way to know these unless you tell it.
-
-On the exclude side, it\u2019s the inverse. If Claude can read your code and figure it out \u2014 your file structure, standard language conventions, things like \u201Cwrite clean code\u201D \u2014 don\u2019t waste context on it. And don\u2019t paste in long docs or tutorials. Link to them instead.
-
-The golden rule: for each line in your CLAUDE.md, ask yourself \u2014 **would removing this cause Claude to make mistakes?** If the answer is no, delete it.
+The core question: **can Claude figure this out on its own?** If no, it belongs in CLAUDE.md. If Claude can infer it from reading your code, leave it out.
 
 **Table from Anthropic\u2019s [Claude Code Best Practices](https://code.claude.com/docs/en/best-practices) page:**
 
@@ -902,9 +884,9 @@ The golden rule: for each line in your CLAUDE.md, ask yourself \u2014 **would re
 
 ### The positive instruction principle
 
-LLMs are measurably worse at following negated instructions. Research out of KAIST (Jang et al., NeurIPS 2022 \u2014 [arXiv:2209.12711](https://arxiv.org/abs/2209.12711)) found an inverse scaling law: larger models actually performed *worse* on negated prompts. Anthropic\u2019s own docs say it plainly: **\u201CTell Claude what to do instead of what not to do.\u201D** ([Claude Best Practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices))
+LLMs are measurably worse at following negated instructions. Research from KAIST (Jang et al., NeurIPS 2022  -  [arXiv:2209.12711](https://arxiv.org/abs/2209.12711)) found an inverse scaling law: larger models performed *worse* on negated prompts. Anthropic\u2019s own guidance: **\u201CTell Claude what to do instead of what not to do.\u201D** ([Claude Best Practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices))
 
-Frame instructions as what you want, not what you don\u2019t:
+Frame instructions positively:
 
 | Negative | Positive |
 |------------|------------|
@@ -914,20 +896,20 @@ Frame instructions as what you want, not what you don\u2019t:
 | Avoid long functions | Keep functions under 40 lines, extract helpers |
 | Don\u2019t leave TODO comments | Resolve TODOs before committing or file an issue |
 
-**When negative instructions still make sense:** Hard safety boundaries. \u201CNEVER commit .env files\u201D or \u201CNEVER expose API keys in client code.\u201D These are guardrails, not style preferences \u2014 and even then, a hook is more reliable than a CLAUDE.md instruction. We\u2019ll get to hooks later.
+**Exception:** Hard safety boundaries (\u201CNEVER commit .env files,\u201D \u201CNEVER expose API keys in client code\u201D) are guardrails, not style preferences. Even then, a hook is more reliable than a CLAUDE.md instruction.
 
-### Emphasis when it matters
+### Emphasis
 
-If a rule is critical, you can add emphasis. Claude responds to signal words:
+Claude responds to signal words for critical rules:
 
 \`\`\`markdown
 IMPORTANT: Always run the type checker before committing.
-YOU MUST use the shared API client from src/lib/api \u2014 do not create new HTTP clients.
+YOU MUST use the shared API client from src/lib/api  -  do not create new HTTP clients.
 \`\`\`
 
 Use this sparingly. If everything is \u201CIMPORTANT,\u201D nothing is. Save emphasis for the 2-3 rules that really matter.
 
-### The import syntax
+### Import syntax
 
 CLAUDE.md files can reference other files using \`@\` syntax:
 
@@ -936,43 +918,43 @@ See @README.md for project overview.
 See @docs/api-conventions.md for API design rules.
 \`\`\`
 
-This keeps your CLAUDE.md lean while still giving Claude access to detailed reference material. Claude reads the referenced file when it needs the content \u2014 it\u2019s not loaded upfront.
+Claude reads the referenced file on demand  -  it\u2019s not loaded upfront. This keeps your CLAUDE.md lean while still giving access to detailed reference material.
 
-**Pro tip (from the [HumanLayer blog, Nov 2025](https://www.humanlayer.dev/blog/writing-a-good-claude-md)):** Prefer pointers over copies. Don\u2019t paste code snippets into CLAUDE.md \u2014 they go stale fast. Instead, point to the file: \`\u201CSee @src/lib/api/client.ts for the canonical API client pattern.\u201D\` Claude reads the current version.
+**Best practice ([HumanLayer blog, Nov 2025](https://www.humanlayer.dev/blog/writing-a-good-claude-md)):** Prefer pointers over copies. Don\u2019t paste code snippets into CLAUDE.md  -  they go stale. Point to the file instead: \`\u201CSee @src/lib/api/client.ts for the canonical API client pattern.\u201D\`
 
 ---
 
-## Getting Started (~2 min)
+## Getting Started
 
-### \`/init\`
-
-Run \`/init\` in Claude Code. It scans your project and generates a starter CLAUDE.md. Treat it as a first draft \u2014 it\u2019ll include stuff Claude can already figure out from your code (file structure descriptions, obvious conventions). Cut those.
+Run \`/init\` in Claude Code to generate a starter CLAUDE.md. It scans your project and produces a first draft  -  review it and cut anything Claude can already infer from your code.
 
 ### How it should evolve
 
-A good CLAUDE.md grows from real friction, not upfront planning. Every time Claude makes a mistake, ask: \u201CWould a one-line instruction have prevented this?\u201D If yes, add it. Every time Claude keeps asking you something, that\u2019s a missing instruction. Commit it to git so the whole team benefits and iterates on it together.
+A good CLAUDE.md grows from real friction, not upfront planning:
 
-The [HumanLayer blog (Nov 2025)](https://www.humanlayer.dev/blog/writing-a-good-claude-md) makes a good point here \u2014 their root CLAUDE.md is under sixty lines. You\u2019re not writing documentation. You\u2019re writing the minimum set of things Claude can\u2019t figure out on its own.`;
+- Every time Claude makes a mistake, ask: \u201CWould a one-line instruction have prevented this?\u201D If yes, add it.
+- Every time Claude keeps asking the same question, that\u2019s a missing instruction.
+- Commit to git so the whole team benefits and iterates together.
+
+For reference, the [HumanLayer blog (Nov 2025)](https://www.humanlayer.dev/blog/writing-a-good-claude-md) keeps their root CLAUDE.md under sixty lines. The goal is the minimum set of things Claude can\u2019t figure out on its own.`;
 
 
-sections[2].content = `# Part 2b: Rules \u2014 Scoped Instructions for Specific Contexts
-
----
-
-## The Problem Rules Solve (~1 min)
-
-Alright so next we have rules. In certain cases, you might find yourself adding way too many instructions in your CLAUDE.md files, even while following the best practices of what not to include. And so you might need a more efficient and robust way to manage how and when these instructions should be added to your context.
-
-This is where rules come in. They allow you to split these instructions into their own focused files, each covering a topic, so you get better organization. Path-scoped rules take it a step further \u2014 they only load into context when needed, if Claude is reading a specific type of file whose path matches a specific pattern. And that\u2019s what adds a lot of efficiency by keeping things clean.
+sections[2].content = `# Part 2b: Rules  -  Scoped Instructions for Specific Contexts
 
 ---
 
-## How Rules Work (~4 min)
+## Why Rules
+
+As projects grow, CLAUDE.md files can become overloaded even when following best practices. Rules let you split instructions into focused files under \`.claude/rules/\`, each covering a single topic. Path-scoped rules go further  -  they only load into context when Claude reads files matching a specific glob pattern, keeping context clean and efficient.
+
+---
+
+## How Rules Work
 
 Every \`.md\` file in \`.claude/rules/\` (including subdirectories) automatically becomes part of your project context. There are two types:
 
-1. **Unscoped** \u2014 no frontmatter. Loads every session, behaves like extra CLAUDE.md content.
-2. **Path-scoped** \u2014 has a \`paths\` field in YAML frontmatter. Loads only when Claude reads files matching the pattern.
+1. **Unscoped**  -  no frontmatter. Loads every session, behaves like extra CLAUDE.md content.
+2. **Path-scoped**  -  has a \`paths\` field in YAML frontmatter. Loads only when Claude reads files matching the pattern.
 
 <div class="svg-diagram">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 720" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
@@ -994,7 +976,7 @@ Every \`.md\` file in \`.claude/rules/\` (including subdirectories) automaticall
   <g transform="translate(30, 20)">
     <rect width="820" height="310" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
     <path d="M0,10 a10,10 0 0,1 10,-10 h800 a10,10 0 0,1 10,10 v30 h-820 v-30" fill="#0f172a" />
-    <text x="410" y="26" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">SESSION START \u2014 Claude scans .claude/rules/</text>
+    <text x="410" y="26" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">SESSION START  -  Claude scans .claude/rules/</text>
     <g transform="translate(20, 60)">
       <rect width="370" height="230" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
       <text x="185" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#15803d">Unscoped (no frontmatter)</text>
@@ -1011,7 +993,7 @@ Every \`.md\` file in \`.claude/rules/\` (including subdirectories) automaticall
     <g transform="translate(430, 60)">
       <rect width="370" height="230" rx="8" fill="#fefce8" stroke="#ca8a04" stroke-width="2"/>
       <text x="185" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#a16207">Path-scoped (has frontmatter)</text>
-      <text x="185" y="48" text-anchor="middle" font-size="13" font-weight="bold" fill="#ca8a04">INDEX ONLY \u2014 not loaded yet</text>
+      <text x="185" y="48" text-anchor="middle" font-size="13" font-weight="bold" fill="#ca8a04">INDEX ONLY  -  not loaded yet</text>
       <rect x="25" y="65" width="320" height="32" rx="5" fill="#fefce8" stroke="#fde68a" stroke-width="1"/>
       <text x="35" y="86" font-size="12" font-family="monospace" fill="#713f12">.claude/rules/frontend/react.md</text>
       <text x="335" y="86" font-size="12" fill="#a16207" text-anchor="end">src/**/*.tsx</text>
@@ -1033,7 +1015,7 @@ Every \`.md\` file in \`.claude/rules/\` (including subdirectories) automaticall
   <g transform="translate(30, 350)">
     <rect width="820" height="330" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
     <path d="M0,10 a10,10 0 0,1 10,-10 h800 a10,10 0 0,1 10,10 v30 h-820 v-30" fill="#334155" />
-    <text x="410" y="26" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">DURING SESSION \u2014 File reads trigger path-scoped rules</text>
+    <text x="410" y="26" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">DURING SESSION  -  File reads trigger path-scoped rules</text>
     <g transform="translate(20, 60)">
       <rect width="250" height="50" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
       <text x="125" y="21" text-anchor="middle" font-size="13" fill="#0369a1">Claude reads file</text>
@@ -1078,7 +1060,7 @@ Every \`.md\` file in \`.claude/rules/\` (including subdirectories) automaticall
 </svg>
 </div>
 
-**The frontmatter is minimal** \u2014 \`paths\` is the only supported field:
+**The frontmatter is minimal**  -  \`paths\` is the only supported field:
 
 \`\`\`markdown
 # .claude/rules/backend/api.md
@@ -1092,29 +1074,54 @@ paths:
 # API Rules
 - Validate all inputs with Zod schemas from src/lib/schemas/
 - Return consistent error shapes: { error: string, code: number, details?: object }
-- Use parameterized queries \u2014 never interpolate user input into SQL
+- Use parameterized queries  -  never interpolate user input into SQL
 \`\`\`
 
-Standard glob syntax: \`**\` for recursive, \`*\` for wildcard, \`{ts,tsx}\` for brace expansion. Always quote patterns \u2014 unquoted \`*\` and \`{\` are reserved in YAML and will cause parse errors. This was a real bug in the official docs, fixed January 2026 ([GitHub #13905](https://github.com/anthropics/claude-code/issues/13905)).
+Standard glob syntax: \`**\` for recursive, \`*\` for wildcard, \`{ts,tsx}\` for brace expansion. Always quote patterns  -  unquoted \`*\` and \`{\` are reserved in YAML and will cause parse errors. This was a real bug in the official docs, fixed January 2026 ([GitHub #13905](https://github.com/anthropics/claude-code/issues/13905)).
+
+An **unscoped rule** is even simpler  -  no frontmatter, always loaded:
+
+\`\`\`markdown
+# .claude/rules/testing.md
+
+- Use vitest for all tests
+- Co-locate test files next to source: foo.ts \u2192 foo.test.ts
+- Prefer integration tests over unit tests for API routes
+- Always include at least one failure case per test
+\`\`\`
 
 ---
 
-## Caveat (~1 min)
+## Rules vs CLAUDE.md
 
-**Path-scoped rules only trigger on file reads** \u2014 not writes or creates. So if Claude is creating a brand new API file from scratch, your API rules won\u2019t load. If a rule is critical enough that it needs to apply even during file creation, make it unscoped.`;
+Both are project-level instructions, so when should you use which?
+
+| If the instruction... | Put it in... |
+|---|---|
+| Is a short, high-priority default (build commands, key conventions) | **CLAUDE.md** |
+| Covers a distinct topic that deserves its own file (testing, API style, code review) | **Unscoped rule** |
+| Only matters when working in specific files or directories | **Path-scoped rule** |
+
+**Think of it this way:** CLAUDE.md is your elevator pitch  -  the 10-20 most important things. Rules are the detailed handbooks organized by topic. As your CLAUDE.md grows past ~50 lines, start extracting topics into rules.
+
+**Organizing rules:** Structure the directory by domain as it grows  -  \`.claude/rules/backend/\`, \`.claude/rules/frontend/\`, \`.claude/rules/testing.md\`. Claude doesn\u2019t care about the directory structure, but your team will.
+
+---
+
+## Caveat
+
+**Path-scoped rules only trigger on file reads**  -  not writes or creates. If Claude is creating a brand new API file from scratch, your API rules won\u2019t load. If a rule is critical enough that it needs to apply even during file creation, make it unscoped.`;
 
 
 sections[3].content = `# Part 3: Skills & Commands
 
 ---
 
-## What Skills Are (~1 min)
+## What Skills Are
 
-CLAUDE.md and rules give Claude knowledge \u2014 what your project is, how it works, and what conventions to follow. Skills on the other hand give Claude capabilities to execute certain workflows.
+CLAUDE.md and rules give Claude **knowledge**  -  what your project is and what conventions to follow. Skills give Claude **capabilities**  -  reusable workflows it can execute on demand.
 
-For example: You could have a skill that explores your codebase in a specific way and generates documentation that should follow a specific format, and include key points you want it to look for. A skill here would prevent you from having to rewrite the prompt each time, and it also helps ensure your agent is consistent with the way it approaches this task.
-
-Now concretely, a skill is a directory with a \`SKILL.md\` file inside it. That\u2019s the only required file. The directory can also contain supporting files \u2014 templates, scripts, reference docs \u2014 anything Claude might need when executing the skill.
+A skill is a directory with a \`SKILL.md\` file inside it. The directory can also contain supporting files (templates, scripts, reference docs). Skills eliminate the need to rewrite complex prompts and ensure consistent execution across sessions.
 
 Skills live in \`.claude/skills/<name>/SKILL.md\`.
 
@@ -1158,9 +1165,7 @@ Skills live in \`.claude/skills/<name>/SKILL.md\`.
 
 ---
 
-## A Complete Example (~2 min)
-
-Before we get into the details, here\u2019s what a skill actually looks like:
+## Example
 
 \`\`\`yaml
 # .claude/skills/fix-issue/SKILL.md
@@ -1183,45 +1188,38 @@ Fix GitHub issue $ARGUMENTS following our coding standards.
 7. Push and create a PR with \\\`gh pr create\\\`
 \`\`\`
 
-The top part between the \`---\` is frontmatter \u2014 metadata that controls how the skill behaves. The bottom part is the instructions Claude follows when the skill runs. You invoke it by typing \`/fix-issue 1234\`. We\u2019ll break down every piece in a moment.
+The frontmatter (between \`---\`) is metadata controlling the skill\u2019s behavior. The body is the instructions Claude follows. Invoke with \`/fix-issue 1234\`.
 
 ---
 
-## Invocation (~3 min)
+## Invocation
 
-Typically, when you start a new session, Claude reads only the \`name\` and \`description\` from each skill (~100 tokens each). The full body loads only when invoked. You can have dozens of skills installed without paying a context cost on unrelated tasks.
+At session start, Claude reads only the \`name\` and \`description\` from each skill (~100 tokens each). The full body loads only when invoked, so dozens of skills have minimal context cost.
 
-Two ways skills get triggered:
+Two invocation methods:
 
-**Manual** \u2014 you type \`/skill-name\` as a slash command. Reliable, predictable.
+**Manual**  -  you type \`/skill-name\` as a slash command. Reliable, predictable.
 
 \`\`\`
 /fix-issue 1234
 /deploy staging
 \`\`\`
 
-**Auto-invocation** \u2014 Claude decides on its own whether now is a good time to invoke a skill based on the current context and the skills description.
-
-Reliability depends on description quality. Practitioner reports range from 20-50% with basic descriptions to 90%+ with well-tuned ones ([source](https://medium.com/@reliabledataengineering/claude-skills-2-0-the-self-improving-ai-capabilities-that-actually-work-dc3525eb391b)). The description is the single biggest factor.
-
-The way you should see it is auto-invocation is an added bonus. If you want your skill to run, then you may as well specify it manually.
-
+**Auto-invocation**  -  Claude decides whether to invoke a skill based on context and the skill\u2019s description. Reliability ranges from 20-50% with basic descriptions to 90%+ with well-tuned ones ([source](https://medium.com/@reliabledataengineering/claude-skills-2-0-the-self-improving-ai-capabilities-that-actually-work-dc3525eb391b)). Treat auto-invocation as a bonus  -  for critical workflows, invoke manually.
 
 **Controlling invocation:**
 
 | Frontmatter | You can invoke | Claude can invoke | Use for |
 |---|---|---|---|
 | (default) | Yes | Yes | Reference knowledge, conventions |
-| \`disable-model-invocation: true\` | Yes | No | Side effects \u2014 deploy, commit, send |
+| \`disable-model-invocation: true\` | Yes | No | Side effects  -  deploy, commit, send |
 | \`user-invocable: false\` | No | Yes | Background knowledge Claude should auto-apply |
 
-Skills with \`disable-model-invocation: true\` don\u2019t even have their description loaded into context \u2014 Claude can\u2019t see them at all.
+Skills with \`disable-model-invocation: true\` are completely invisible to Claude  -  their description isn\u2019t loaded into context.
 
 ---
 
-## Anatomy \u2014 Frontmatter Fields (~3 min)
-
-Now that you know how skills are invoked, here\u2019s what each frontmatter field does:
+## Frontmatter Fields
 
 | Field | What it does |
 |---|---|
@@ -1233,7 +1231,7 @@ Now that you know how skills are invoked, here\u2019s what each frontmatter fiel
 | \`context\` | \`fork\` = run in a subagent. Keeps main conversation clean. |
 | \`model\` | Route to a specific model. \`sonnet\` for fast/cheap, \`opus\` for complex. |
 
-**Dynamic context** \u2014 skills can run shell commands at invocation time with \`\` !\\\`command\\\` \`\` syntax:
+**Dynamic context**  -  skills can run shell commands at invocation time with \`\` !\\\`command\\\` \`\` syntax:
 
 \`\`\`markdown
 ## PR Context
@@ -1245,7 +1243,7 @@ These execute before Claude sees the skill content. Claude receives the rendered
 
 ---
 
-## Built-in Skills (~2 min)
+## Built-in Skills
 
 Five ship with Claude Code ([skills docs](https://code.claude.com/docs/en/skills)):
 
@@ -1261,39 +1259,39 @@ Note: \`/review\` is deprecated. Install the \`code-review\` plugin instead: \`c
 
 ---
 
-## Commands vs Skills (~30 sec)
+## Commands vs Skills
 
-Older tutorials mention \`.claude/commands/\` as a separate system. They\u2019ve been merged \u2014 a file at \`.claude/commands/deploy.md\` and a skill at \`.claude/skills/deploy/SKILL.md\` both create \`/deploy\`. Existing command files keep working. Use skills going forward: they support directories for supporting files, frontmatter control, and auto-invocation.
-
----
-
-## Open Standard (~30 sec)
-
-Skills follow the [Agent Skills specification](https://agentskills.io) \u2014 an open standard with 32+ adopters including Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI, and JetBrains Junie. A skill you write for Claude Code works in Cursor without modification.`;
-
-
-sections[4].content = `# Part 4: MCP \u2014 Connecting Claude to Everything
+Older tutorials reference \`.claude/commands/\` as a separate system. Commands and skills have been merged  -  both \`.claude/commands/deploy.md\` and \`.claude/skills/deploy/SKILL.md\` create \`/deploy\`. Existing command files still work, but skills are the recommended format going forward (directory support, frontmatter control, auto-invocation).
 
 ---
 
-## What MCP Actually Is (~2 min)
+## Open Standard
 
-So far, everything we\u2019ve covered \u2014 CLAUDE.md, rules, skills, hooks \u2014 operates within Claude Code\u2019s built-in capabilities. Claude can read files, run shell commands, and call the Anthropic API. That\u2019s it. If you need Claude to interact with your issue tracker, your database, your design tool, or your monitoring stack, it has no way to do that natively.
+Skills follow the [Agent Skills specification](https://agentskills.io)  -  an open standard with 32+ adopters including Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI, and JetBrains Junie. A skill you write for Claude Code works in Cursor without modification.`;
 
-**Model Context Protocol** fixes that. MCP is an open standard \u2014 developed by Anthropic, now adopted widely \u2014 that defines how AI assistants connect to external tools. It uses a JSON-RPC-style protocol over stdio or HTTP. The important thing is you don\u2019t need to understand the protocol details. What matters is the mental model.
+
+sections[4].content = `# Part 4: MCP  -  Connecting Claude to Everything
+
+---
+
+## What MCP Actually Is
+
+So far, everything we\u2019ve covered  -  CLAUDE.md, rules, skills, hooks  -  operates within Claude Code\u2019s built-in capabilities. Claude can read files, run shell commands, and call the Anthropic API. That\u2019s it. If you need Claude to interact with your issue tracker, your database, your design tool, or your monitoring stack, it has no way to do that natively.
+
+**Model Context Protocol** fixes that. MCP is an open standard  -  developed by Anthropic, now adopted widely  -  that defines how AI assistants connect to external tools. It uses a JSON-RPC-style protocol over stdio or HTTP. The important thing is you don\u2019t need to understand the protocol details. What matters is the mental model.
 
 **[Image placeholder: MCP architecture diagram showing Claude Code in the center, with arrows pointing to MCP servers for GitHub, Jira, PostgreSQL, Figma, Slack]**
 
 MCP servers are bridges. Each server exposes two things:
 
-- **Tools** \u2014 callable functions. \u201CCreate a GitHub PR,\u201D \u201Cquery this PostgreSQL table,\u201D \u201Cpost a Slack message.\u201D
-- **Resources** \u2014 readable data. Database records, API responses, document contents.
+- **Tools**  -  callable functions. \u201CCreate a GitHub PR,\u201D \u201Cquery this PostgreSQL table,\u201D \u201Cpost a Slack message.\u201D
+- **Resources**  -  readable data. Database records, API responses, document contents.
 
-There\u2019s also a third primitive \u2014 **Prompts** \u2014 reusable templates for workflows, though you\u2019ll encounter tools and resources far more often in practice.
+There\u2019s also a third primitive  -  **Prompts**  -  reusable templates for workflows, though you\u2019ll encounter tools and resources far more often in practice.
 
 ---
 
-## What Becomes Possible (~2 min)
+## What Becomes Possible
 
 Without MCP, you\u2019d have to copy-paste between Claude and your tools, or write custom shell scripts to bridge the gap. With MCP servers connected, Claude can work across your entire toolchain in a single conversation. Here are real examples of what that looks like:
 
@@ -1302,11 +1300,11 @@ Without MCP, you\u2019d have to copy-paste between Claude and your tools, or wri
 - \u201CFind emails of 10 users who used feature X, based on our PostgreSQL database\u201D
 - \u201CUpdate our email template based on the new Figma designs posted in Slack\u201D
 
-Each of these would be painful without MCP \u2014 you\u2019d be alt-tabbing, copying issue descriptions, pasting query results. With the right servers connected, Claude handles the entire workflow.
+Each of these would be painful without MCP  -  you\u2019d be alt-tabbing, copying issue descriptions, pasting query results. With the right servers connected, Claude handles the entire workflow.
 
 ---
 
-## Adding and Configuring Servers (~3 min)
+## Adding and Configuring Servers
 
 ### Adding a server
 
@@ -1336,7 +1334,7 @@ If your whole team needs the GitHub and Jira servers, put them in \`.claude/.mcp
 
 ---
 
-## The Ecosystem (~2 min)
+## The Ecosystem
 
 The MCP ecosystem has grown quickly. Here are the servers you\u2019re most likely to reach for:
 
@@ -1360,7 +1358,7 @@ You don\u2019t need all of these. Connect the ones that match your actual workfl
 
 ---
 
-## When Not to Overdo It (~1 min)
+## When Not to Overdo It
 
 Every MCP server you connect adds to Claude\u2019s context. Each server\u2019s tools need to be described so Claude knows what\u2019s available, and that eats tokens.
 
@@ -1373,24 +1371,24 @@ The rule of thumb: if you wouldn\u2019t keep the app open on your desktop all da
 ---`;
 
 
-sections[5].content = `# Part 4: Hooks \u2014 Deterministic Control
+sections[5].content = `# Part 4: Hooks  -  Deterministic Control
 
 ---
 
-## The Distinction (~1 min)
+## Probabilistic vs Deterministic
 
-Everything so far \u2014 CLAUDE.md, rules, skills \u2014 is guidance. Claude sees it, usually follows it. But \u201Cusually\u201D isn\u2019t always good enough.
+Everything covered so far  -  CLAUDE.md, rules, skills  -  is guidance. Claude sees it and usually follows it, but \u201Cusually\u201D isn\u2019t always sufficient.
 
-Hooks are shell commands that execute at specific points in Claude Code\u2019s lifecycle. They don\u2019t ask Claude to do something \u2014 they do it. Claude doesn\u2019t decide whether a hook runs. The system runs it unconditionally.
+Hooks are shell commands that execute at specific points in Claude Code\u2019s lifecycle. They run unconditionally  -  Claude has no say in whether a hook fires.
 
-> **Skills are probabilistic** \u2014 Claude uses judgment about whether to invoke them.
-> **Hooks are deterministic** \u2014 they run every single time, zero exceptions.
+> **Skills are probabilistic**  -  Claude uses judgment about whether to invoke them.
+> **Hooks are deterministic**  -  they run every single time, zero exceptions.
 
 ---
 
-## What a Hook Looks Like (~2 min)
+## Basic Example
 
-Before we break down the pieces, here\u2019s the simplest useful hook \u2014 a desktop notification for when Claude needs your attention:
+A desktop notification hook for when Claude needs your attention:
 
 \`\`\`json
 {
@@ -1406,17 +1404,13 @@ Before we break down the pieces, here\u2019s the simplest useful hook \u2014 a d
 }
 \`\`\`
 
-This lives in your \`settings.json\`. Three parts: an **event** (\`Notification\` \u2014 when does it fire?), a **matcher** (\`""\` \u2014 which tools trigger it? empty means all), and a **command** (the shell script that runs).
-
-You kick off a task, switch to Slack, and get a notification when Claude needs you. That\u2019s the \u201Cgo get coffee\u201D hook.
+Configured in \`settings.json\`. Three parts: an **event** (\`Notification\`), a **matcher** (\`""\` = all tools), and a **command** (the shell script that runs).
 
 ---
 
-## How Hooks Work (~3 min)
+## How Hooks Work
 
-Now let\u2019s break down each piece.
-
-**Events** \u2014 specific points in Claude\u2019s lifecycle where a hook can fire. The ones you\u2019ll use most:
+**Events**  -  points in Claude\u2019s lifecycle where a hook can fire:
 
 | Event | When it fires | Can block? |
 |---|---|---|
@@ -1427,7 +1421,7 @@ Now let\u2019s break down each piece.
 | \`SessionStart\` | Session begins or resumes | No |
 | \`UserPromptSubmit\` | User submits a prompt | Yes |
 
-**Matchers** \u2014 regex patterns that filter which tools trigger the hook:
+**Matchers**  -  regex patterns that filter which tools trigger the hook:
 
 \`\`\`
 "Bash"              \u2192 only Bash commands
@@ -1436,23 +1430,23 @@ Now let\u2019s break down each piece.
 ""                  \u2192 everything (or omit matcher entirely)
 \`\`\`
 
-Some events like \`Stop\` and \`UserPromptSubmit\` don\u2019t support matchers \u2014 they always fire.
+Some events (\`Stop\`, \`UserPromptSubmit\`) don\u2019t support matchers  -  they always fire.
 
-**Exit codes** \u2014 this is how hooks control behavior:
+**Exit codes**  -  how hooks control behavior:
 
 | Exit Code | Effect |
 |---|---|
-| 0 | Allow \u2014 tool proceeds normally |
-| **2** | **Block \u2014 tool call cancelled. Stderr shown to Claude as error.** |
+| 0 | Allow  -  tool proceeds normally |
+| **2** | **Block  -  tool call cancelled. Stderr shown to Claude as error.** |
 | Other | Non-blocking error. Stderr shown in verbose mode only. |
 
-Exit code 2 is the kill switch. A \`PreToolUse\` hook that exits 2 cancels the tool call \u2014 period. Claude sees the error and has to find another approach. This is fundamentally different from CLAUDE.md: you can write \u201CNEVER force push to main\u201D in CLAUDE.md, and Claude will follow it until a long session where it decides it needs to. A hook with exit 2 makes it impossible.
+Exit code 2 is the kill switch. A \`PreToolUse\` hook that exits 2 cancels the tool call unconditionally. Unlike a CLAUDE.md instruction (which Claude may eventually override in long sessions), a hook with exit 2 makes the action impossible.
 
 ---
 
-## More Examples (~3 min)
+## More Examples
 
-**Block commits with sensitive files** \u2014 a \`PreToolUse\` hook that prevents committing \`.env\`, \`.key\`, \`.pem\` files:
+**Block commits with sensitive files**  -  \`PreToolUse\` hook preventing \`.env\`, \`.key\`, \`.pem\` files from being committed:
 
 \`\`\`bash
 #!/bin/bash
@@ -1481,9 +1475,7 @@ exit 0
 }
 \`\`\`
 
-Exit 2 = commit cancelled. You can write \u201Cnever commit .env files\u201D in CLAUDE.md. This hook makes it impossible.
-
-**Auto-format after edits** \u2014 \`PostToolUse\` on \`Edit|Write\` that runs your formatter:
+**Auto-format after edits**  -  \`PostToolUse\` on \`Edit|Write\` runs your formatter:
 
 \`\`\`bash
 #!/bin/bash
@@ -1499,9 +1491,9 @@ esac
 exit 0
 \`\`\`
 
-Always exits 0 \u2014 formatting is best-effort, shouldn\u2019t block Claude.
+Always exits 0  -  formatting is best-effort and should not block Claude.
 
-Use \`/hooks\` to browse what\u2019s configured. You can also ask Claude to write hooks for you: \u201CWrite a hook that blocks writes to the migrations folder.\u201D
+Use \`/hooks\` to browse configured hooks. Claude can also write hooks for you: \u201CWrite a hook that blocks writes to the migrations folder.\u201D
 
 ---
 
@@ -1515,9 +1507,13 @@ Hooks are configured in \`settings.json\`, not markdown files:
 | \`.claude/settings.json\` | This project (committed) |
 | \`.claude/settings.local.json\` | This project (gitignored) |
 
-The hook command receives context as JSON via stdin \u2014 tool input, tool output, session info. This is how the block-secrets script knows what command Claude is running.
+Hook commands receive context as JSON via stdin (tool input, tool output, session info).
 
-Hooks aren\u2019t limited to shell scripts either. You can use \`prompt\` hooks that trigger LLM inference, or \`agent\` hooks that spawn a Claude subagent to review or evaluate something. For example, a \`PreToolUse\` agent hook could have Claude review every commit message before it\u2019s created, or evaluate whether a code change follows your architecture patterns \u2014 deterministically triggered, with AI-level judgment.`;
+Hooks also support two additional types beyond shell scripts:
+- **\`prompt\` hooks**  -  trigger LLM inference
+- **\`agent\` hooks**  -  spawn a Claude subagent to review or evaluate something
+
+For example, a \`PreToolUse\` agent hook could review every commit message or evaluate whether a code change follows architecture patterns  -  deterministically triggered, with AI-level judgment.`;
 
 
 sections[6].content = `# Part 5: Subagents & Agent Teams
@@ -1526,11 +1522,11 @@ sections[6].content = `# Part 5: Subagents & Agent Teams
 
 ## 5a: Subagents
 
-### The Problem They Solve (~1 min)
+### Context Isolation
 
-Two hours into a session, you need Claude to research how authentication works elsewhere in the codebase. If Claude does that in your main conversation, it reads 30 files, runs a bunch of greps, and all that output floods your context. Your earlier planning and implementation notes get diluted.
+When Claude researches something mid-session (reading dozens of files, running greps), that output floods your main context and dilutes earlier work.
 
-Subagents solve this. A subagent is a separate Claude instance with its own context window. It does a job \u2014 research, analysis, code review \u2014 and returns only the final summary. Everything intermediate stays inside the subagent.
+Subagents solve this. A subagent is a separate Claude instance with its own context window. It performs a task  -  research, analysis, code review  -  and returns only the final summary. All intermediate work stays contained.
 
 <div class="svg-diagram">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 540" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
@@ -1599,9 +1595,7 @@ Subagents solve this. A subagent is a separate Claude instance with its own cont
 
 ---
 
-### A Custom Subagent (~2 min)
-
-Here\u2019s what a subagent definition looks like:
+### Custom Subagent Example
 
 \`\`\`markdown
 # .claude/agents/security-scanner.md
@@ -1624,13 +1618,13 @@ Provide file paths, line numbers, and suggested fixes.
 Rate each finding: Critical, Warning, or Info.
 \`\`\`
 
-Same structure as a skill \u2014 frontmatter on top, instructions below. Lives in \`.claude/agents/\` (project) or \`~/.claude/agents/\` (personal).
+Same structure as a skill  -  frontmatter on top, instructions below. Lives in \`.claude/agents/\` (project) or \`~/.claude/agents/\` (personal).
 
-Invoke with natural language (\u201Cuse the security-scanner to review src/auth/\u201D) or \`@security-scanner\`. Claude also auto-delegates based on descriptions \u2014 same probabilistic matching as skills.
+Invoke with natural language (\u201Cuse the security-scanner to review src/auth/\u201D) or \`@security-scanner\`. Claude also auto-delegates based on descriptions, using the same probabilistic matching as skills.
 
 ---
 
-### How Context Flows (~2 min)
+### How Context Flows
 
 - **Parent \u2192 subagent:** Only the prompt string. The subagent does not inherit conversation history.
 - **Subagent \u2192 parent:** Only the final message. All intermediate work stays inside.
@@ -1640,7 +1634,7 @@ Invoke with natural language (\u201Cuse the security-scanner to review src/auth/
 
 ### Built-in Subagents
 
-Claude uses these automatically \u2014 you don\u2019t need to define them:
+Claude uses these automatically  -  you don\u2019t need to define them:
 
 | Agent | Model | Tools | Purpose |
 |---|---|---|---|
@@ -1648,19 +1642,19 @@ Claude uses these automatically \u2014 you don\u2019t need to define them:
 | **Plan** | Inherits | Read-only | Context gathering for plan mode |
 | **General-purpose** | Inherits | All | Complex multi-step tasks |
 
-When you ask \u201Chow does X work in our codebase?\u201D, Claude typically spawns an Explore subagent. The research happens in a separate context; you get a clean answer.
+When you ask \u201Chow does X work in our codebase?\u201D, Claude typically spawns an Explore subagent automatically.
 
 ---
 
-### Frontmatter Fields (~1 min)
+### Frontmatter Fields
 
 | Field | What it does |
 |---|---|
 | \`name\` | How you reference the subagent. |
-| \`description\` | Drives auto-delegation \u2014 same as skills. Write this well. |
+| \`description\` | Drives auto-delegation  -  same as skills. Write this well. |
 | \`tools\` | Restrict what the subagent can do. \`Read, Grep, Glob\` for read-only. |
 | \`model\` | Route to a specific model. \`sonnet\` for fast/cheap tasks. |
-| \`skills\` | List of skills to inject into the subagent\u2019s context. Full content is loaded at startup. Subagents don\u2019t inherit skills \u2014 you must list them explicitly. |
+| \`skills\` | List of skills to inject into the subagent\u2019s context. Full content is loaded at startup. Subagents don\u2019t inherit skills  -  you must list them explicitly. |
 | \`isolation\` | \`worktree\` = run in an isolated git worktree. |
 
 Run \`/agents\` to view, create, edit, and delete subagents.
@@ -1669,9 +1663,9 @@ Run \`/agents\` to view, create, edit, and delete subagents.
 
 ## 5b: Agent Teams
 
-### From Subagents to Teams (~1 min)
+### From Subagents to Teams
 
-Subagents are isolated workers within one session. They report back to you and can\u2019t talk to each other. Agent teams are different: multiple independent Claude Code sessions, each with their own context window, communicating directly with each other.
+Subagents are isolated workers within one session  -  they report back to the parent and can\u2019t communicate with each other. Agent teams are different: multiple independent Claude Code sessions, each with their own context window, communicating directly with each other.
 
 | | Subagents | Agent Teams |
 |---|---|---|
@@ -1683,17 +1677,19 @@ Subagents are isolated workers within one session. They report back to you and c
 
 ---
 
-### How They Work (~2 min)
+### How They Work
 
-One session is the team lead. It spawns teammates \u2014 separate Claude Code instances. Each teammate has its own context window. They load the same project context (CLAUDE.md, rules, MCP servers) but not the lead\u2019s conversation history.
+One session acts as team lead and spawns teammates  -  separate Claude Code instances. Each teammate has its own context window and loads the same project context (CLAUDE.md, rules, MCP servers) but not the lead\u2019s conversation history.
+
+<div class="svg-diagram"><img src="agent-teams-diagram.svg" alt="Agent Teams topology diagram showing lead session spawning teammates with peer-to-peer SendMessage communication and a shared task list" style="width:100%;max-width:700px;margin:0 auto;display:block;" /></div>
 
 **Key components:**
-- **Task list** \u2014 shared file on disk. Tasks have states (pending, in progress, completed) and can have dependencies.
-- **Mailbox** \u2014 \`SendMessage\` for direct peer-to-peer communication. Teammates coordinate without going through the lead. \u201CI changed the API response shape \u2014 here\u2019s the new type. Update your frontend components.\u201D
+- **Task list**  -  shared file on disk. Tasks have states (pending, in progress, completed) and can have dependencies.
+- **Mailbox**  -  \`SendMessage\` for direct peer-to-peer communication. Teammates coordinate without going through the lead. \u201CI changed the API response shape  -  here\u2019s the new type. Update your frontend components.\u201D
 
 ---
 
-### Launching a Team (~2 min)
+### Launching a Team
 
 Agent teams are experimental. Enable in settings:
 
@@ -1716,7 +1712,7 @@ Spawn three teammates:
 Require plan approval before they make changes.
 \`\`\`
 
-Claude spawns the teammates, creates a shared task list, and begins coordinating. Use **Shift+Down** to cycle through teammates.
+Claude spawns teammates, creates a shared task list, and coordinates. Use **Shift+Down** to cycle through teammates.
 
 ---
 
@@ -1732,7 +1728,7 @@ Claude spawns the teammates, creates a shared task list, and begins coordinating
 
 ### Practical Guidance
 
-- **Team size:** 3-5 teammates. More isn\u2019t better \u2014 coordination overhead grows.
+- **Team size:** 3-5 teammates. More isn\u2019t better  -  coordination overhead grows.
 - **Model choice:** Sonnet for teammates, Opus for the lead.
 - **Avoid file conflicts:** Break work so each teammate owns different files.
 - **Give rich context in spawn prompts:** Teammates don\u2019t inherit the lead\u2019s history. Include everything they need.
@@ -1741,11 +1737,11 @@ Claude spawns the teammates, creates a shared task list, and begins coordinating
 ---`;
 
 
-sections[7].content = `# Part 7: Plugins \u2014 Bundling It All Together
+sections[7].content = `# Part 7: Plugins  -  Bundling It All Together
 
 ---
 
-## What Plugins Solve (~2 min)
+## What Plugins Solve
 
 By this point, you\u2019ve seen skills, hooks, MCP servers, and subagents as individual concepts. Each one lives in its own file or config. That works fine when everything is scoped to a single repo. But what happens when you want the same workflow across multiple projects? Or when you want to share a setup with your team that includes a skill, a couple of hooks, and an MCP server that all work together?
 
@@ -1755,9 +1751,9 @@ You copy files around. You write setup instructions. Someone forgets a step. Thi
 
 ---
 
-## What a Plugin Contains (~2 min)
+## What a Plugin Contains
 
-A plugin is a directory with a \`.claude-plugin/plugin.json\` manifest. Everything else is optional \u2014 you include what you need:
+A plugin is a directory with a \`.claude-plugin/plugin.json\` manifest. Everything else is optional  -  you include what you need:
 
 \`\`\`
 my-team-plugin/
@@ -1770,20 +1766,20 @@ my-team-plugin/
 \u2514\u2500\u2500 README.md
 \`\`\`
 
-The \`plugin.json\` manifest is the only required piece \u2014 it declares the plugin\u2019s name, description, and version. The rest of the structure mirrors what you already know: skills go in \`skills/\`, subagents go in \`agents/\`, MCP config goes in \`.mcp.json\`, and hooks go in the settings.
+The \`plugin.json\` manifest is the only required piece  -  it declares the plugin\u2019s name, description, and version. The rest of the structure mirrors what you already know: skills go in \`skills/\`, subagents go in \`agents/\`, MCP config goes in \`.mcp.json\`, and hooks go in the settings.
 
 **The decision rule is simple:** if it\u2019s just for one repo, keep things in \`.claude/\`. If you need the same workflow across multiple projects or across your team, bundle it into a plugin.
 
 ---
 
-## Installing and Managing Plugins (~3 min)
+## Installing and Managing Plugins
 
 ### The plugin ecosystem (as of March 2026)
 
 Plugins are distributed through marketplaces:
 
-- **Official Anthropic marketplace** (\`claude-plugins-official\`) \u2014 these are automatically available, no extra setup needed.
-- **Community marketplaces** \u2014 43+ marketplaces with 834+ plugins catalogued. Install a marketplace first, then browse its plugins.
+- **Official Anthropic marketplace** (\`claude-plugins-official\`)  -  these are automatically available, no extra setup needed.
+- **Community marketplaces**  -  43+ marketplaces with 834+ plugins catalogued. Install a marketplace first, then browse its plugins.
 
 \`\`\`bash
 # Add a community marketplace
@@ -1806,26 +1802,26 @@ Just like everything else in Claude Code, plugins support scoping:
 
 ---
 
-## LSP Plugins (~1 min)
+## LSP Plugins
 
-Worth calling out specifically: the official marketplace includes **LSP plugins** \u2014 Language Server Protocol integrations that give Claude real code intelligence. Jump to definition, find references, see type errors immediately after edits.
+Worth calling out specifically: the official marketplace includes **LSP plugins**  -  Language Server Protocol integrations that give Claude real code intelligence. Jump to definition, find references, see type errors immediately after edits.
 
-These are configured per language and require the language server binary installed on your system. But when they\u2019re set up, Claude stops guessing about types and symbol locations \u2014 it uses the same language intelligence your editor does.
+These are configured per language and require the language server binary installed on your system. But when they\u2019re set up, Claude stops guessing about types and symbol locations  -  it uses the same language intelligence your editor does.
 
 ---
 
-## When to Reach for a Plugin (~1 min)
+## When to Reach for a Plugin
 
 Not everything needs to be a plugin. Here\u2019s the quick decision framework:
 
 | Situation | Approach |
 |---|---|
-| One-off workflow for a single repo | Keep it in \`.claude/\` \u2014 skills, hooks, agents directly |
+| One-off workflow for a single repo | Keep it in \`.claude/\`  -  skills, hooks, agents directly |
 | Same workflow needed across 2-3 of your repos | Consider a user-scoped plugin |
 | Team-wide standards and tooling | Project-scoped plugin, committed to each repo |
 | Organization-wide policies and guardrails | Managed plugin, admin-deployed |
 
-Plugins are the natural end state when a workflow matures. You start with a skill in one repo, realize you want it everywhere, and promote it to a plugin. The building blocks are the same \u2014 plugins just handle the distribution.
+Plugins are the natural end state when a workflow matures. You start with a skill in one repo, realize you want it everywhere, and promote it to a plugin. The building blocks are the same  -  plugins just handle the distribution.
 
 ---`;
 
@@ -1834,9 +1830,9 @@ sections[8].content = `# Part 8: Permissions & \`--dangerously-skip-permissions\
 
 ---
 
-## The Permission System (~2 min)
+## The Permission System
 
-Claude Code asks for permission before executing anything potentially dangerous \u2014 bash commands, file modifications, network operations, dependency installation. This is correct from a security standpoint. You don\u2019t want an agent silently running \`rm -rf\` or \`curl\`-ing your credentials to a remote server.
+Claude Code asks for permission before executing anything potentially dangerous  -  bash commands, file modifications, network operations, dependency installation. This is correct from a security standpoint. You don\u2019t want an agent silently running \`rm -rf\` or \`curl\`-ing your credentials to a remote server.
 
 But in practice, it creates real workflow friction. Claude asks roughly 100 permission prompts per hour during active sessions. That\u2019s a prompt every 36 seconds. And what happens is predictable: you stop reading them. You start rubber-stamping. Click accept, accept, accept without evaluating whether each operation is actually safe.
 
@@ -1846,7 +1842,7 @@ So the question becomes: how do you get the safety guarantees you need without t
 
 ---
 
-## The Five Permission Modes (~3 min)
+## The Five Permission Modes
 
 There are five ways to handle permissions, from most restrictive to least. Think of them as a spectrum.
 
@@ -1855,32 +1851,32 @@ There are five ways to handle permissions, from most restrictive to least. Think
 | Mode | How it works | When to use |
 |---|---|---|
 | **Default** | Prompts for everything potentially dangerous | First time using Claude Code, unfamiliar codebases |
-| **Auto-accept (Shift+Tab)** | Proceeds without pausing, but remains interactive \u2014 you can still watch and intervene | Active pairing sessions where you\u2019re watching the output |
-| **AllowedTools whitelist** | Configure specific tools/commands in \`settings.json\` that skip approval | Day-to-day development \u2014 allow your common commands |
+| **Auto-accept (Shift+Tab)** | Proceeds without pausing, but remains interactive  -  you can still watch and intervene | Active pairing sessions where you\u2019re watching the output |
+| **AllowedTools whitelist** | Configure specific tools/commands in \`settings.json\` that skip approval | Day-to-day development  -  allow your common commands |
 | **Deny rules** | Explicitly block specific tools/commands (takes precedence over allow) | Guardrails for dangerous operations you never want |
 | **\`--dangerously-skip-permissions\`** | Disables ALL permission checks | Containerized/sandboxed environments only |
 
-The sweet spot for most people is a combination of AllowedTools and deny rules. You whitelist the commands you run constantly \u2014 \`npm run\`, \`git commit\`, version checks \u2014 and you explicitly deny the ones that are genuinely dangerous. More on that in a moment.
+The sweet spot for most people is a combination of AllowedTools and deny rules. You whitelist the commands you run constantly  -  \`npm run\`, \`git commit\`, version checks  -  and you explicitly deny the ones that are genuinely dangerous. More on that in a moment.
 
 ---
 
-## The Flag Everyone\u2019s Curious About (~3 min)
+## The Flag Everyone\u2019s Curious About
 
 Let\u2019s talk about \`--dangerously-skip-permissions\`. It does exactly what it says. No confirmation dialogs, no pauses, no human-in-the-loop. Claude executes whatever it decides to execute. It\u2019s technically equivalent to \`--permission-mode bypassPermissions\`.
 
 Three critical details that most people miss:
 
-**First \u2014 subagent inheritance.** When you run in bypass mode, ALL subagents inherit full autonomous access. You can\u2019t override this. You can\u2019t say \u201Cskip permissions for the main session but ask for subagents.\u201D It\u2019s all or nothing, and subagents get the same unrestricted access.
+**First  -  subagent inheritance.** When you run in bypass mode, ALL subagents inherit full autonomous access. You can\u2019t override this. You can\u2019t say \u201Cskip permissions for the main session but ask for subagents.\u201D It\u2019s all or nothing, and subagents get the same unrestricted access.
 
-**Second \u2014 the name is deliberate.** There\u2019s no \`-y\` shortcut. No \`--yes\` alias. No abbreviated form. You type \`--dangerously-skip-permissions\` every single time. Anthropic made it inconvenient on purpose. The friction of typing that flag is the last line of defense.
+**Second  -  the name is deliberate.** There\u2019s no \`-y\` shortcut. No \`--yes\` alias. No abbreviated form. You type \`--dangerously-skip-permissions\` every single time. Anthropic made it inconvenient on purpose. The friction of typing that flag is the last line of defense.
 
-**Third \u2014 hooks still fire.** Even in bypass mode, a \`PreToolUse\` hook can block a tool call. So if you have a hook that exits 2 on \`rm -rf\`, that hook still runs and still cancels the command. Hooks are the one safety mechanism that survives bypass mode.
+**Third  -  hooks still fire.** Even in bypass mode, a \`PreToolUse\` hook can block a tool call. So if you have a hook that exits 2 on \`rm -rf\`, that hook still runs and still cancels the command. Hooks are the one safety mechanism that survives bypass mode.
 
 ### The real risks
 
 These aren\u2019t theoretical.
 
-In October 2025, a developer named Wolak reported that Claude Code executed \`rm -rf\` from root on a firmware project. The error logs showed thousands of \u201CPermission denied\u201D messages for system paths \u2014 the command tried to delete everything on the machine. The operating system\u2019s own file permissions were the only thing that limited the damage.
+In October 2025, a developer named Wolak reported that Claude Code executed \`rm -rf\` from root on a firmware project. The error logs showed thousands of \u201CPermission denied\u201D messages for system paths  -  the command tried to delete everything on the machine. The operating system\u2019s own file permissions were the only thing that limited the damage.
 
 A study found that 32% of developers using the flag encountered unintended file modifications. 9% reported actual data loss.
 
@@ -1899,7 +1895,7 @@ If you\u2019re not in a container, you probably shouldn\u2019t be using this fla
 
 ---
 
-## The Better Alternative (~2 min)
+## The Better Alternative
 
 For most people, the right answer is granular AllowedTools configuration in \`settings.json\`. You get 90% of the speed without the risk.
 
@@ -1921,13 +1917,13 @@ For most people, the right answer is granular AllowedTools configuration in \`se
 }
 \`\`\`
 
-Allow patterns let Claude run common dev commands without asking. Deny patterns block operations you never want \u2014 and deny always takes precedence over allow. So even if \`Bash(rm -rf *)\` somehow matched an allow pattern, the deny rule wins.
+Allow patterns let Claude run common dev commands without asking. Deny patterns block operations you never want  -  and deny always takes precedence over allow. So even if \`Bash(rm -rf *)\` somehow matched an allow pattern, the deny rule wins.
 
-**[Image placeholder: flowchart showing permission evaluation \u2014 deny checked first, then allow, then default prompt]**
+**[Image placeholder: flowchart showing permission evaluation  -  deny checked first, then allow, then default prompt]**
 
-Start by running Claude Code normally for a day. Pay attention to which permissions you\u2019re rubber-stamping \u2014 those are your allow list. Pay attention to which ones make you nervous \u2014 those are your deny list. Then configure accordingly.
+Start by running Claude Code normally for a day. Pay attention to which permissions you\u2019re rubber-stamping  -  those are your allow list. Pay attention to which ones make you nervous  -  those are your deny list. Then configure accordingly.
 
-Combine this with hooks for the operations that must be blocked deterministically. An AllowedTools deny rule prevents Claude from running a command. A \`PreToolUse\` hook with exit 2 does the same thing \u2014 but the hook can also inspect the arguments, check the environment, and make more nuanced decisions. Use both.
+Combine this with hooks for the operations that must be blocked deterministically. An AllowedTools deny rule prevents Claude from running a command. A \`PreToolUse\` hook with exit 2 does the same thing  -  but the hook can also inspect the arguments, check the environment, and make more nuanced decisions. Use both.
 
 ---`;
 
@@ -1936,9 +1932,9 @@ sections[9].content = `# Closing: Tying It All Together
 
 ---
 
-## The Layered Architecture (~2 min)
+## The Layered Architecture
 
-We\u2019ve covered a lot of ground. Let\u2019s zoom out and look at the whole picture \u2014 because all of these pieces fit together in a specific way.
+We\u2019ve covered a lot of ground. Let\u2019s zoom out and look at the whole picture  -  because all of these pieces fit together in a specific way.
 
 \`\`\`
 \u250C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510
@@ -1968,7 +1964,7 @@ Each layer builds on the one below. You don\u2019t need all of them on day one. 
 
 ---
 
-## The Mental Model That Matters (~2 min)
+## The Mental Model That Matters
 
 If there\u2019s one thing to take away from this session, it\u2019s the distinction between deterministic and probabilistic control. Everything we covered falls into one of those two categories.
 
@@ -1982,15 +1978,15 @@ If there\u2019s one thing to take away from this session, it\u2019s the distinct
 
 The rule of thumb is simple:
 
-If something **must** happen 100% of the time \u2014 use a hook or a permission rule. Block secrets from commits. Run formatters on every edit. Deny force pushes. These are deterministic. Claude doesn\u2019t get a vote.
+If something **must** happen 100% of the time  -  use a hook or a permission rule. Block secrets from commits. Run formatters on every edit. Deny force pushes. These are deterministic. Claude doesn\u2019t get a vote.
 
-If something **should** happen when relevant \u2014 use a skill, a subagent, or CLAUDE.md guidance. Code review patterns. Architecture conventions. Research delegation. These are probabilistic. Claude uses judgment, and judgment is usually right \u2014 but not always.
+If something **should** happen when relevant  -  use a skill, a subagent, or CLAUDE.md guidance. Code review patterns. Architecture conventions. Research delegation. These are probabilistic. Claude uses judgment, and judgment is usually right  -  but not always.
 
-When people get frustrated with Claude Code, it\u2019s almost always because they put something in the probabilistic category that belongs in the deterministic one. They write \u201Cnever commit .env files\u201D in CLAUDE.md and get burned when Claude does it anyway on a long session. The fix isn\u2019t a better prompt \u2014 it\u2019s a hook.
+When people get frustrated with Claude Code, it\u2019s almost always because they put something in the probabilistic category that belongs in the deterministic one. They write \u201Cnever commit .env files\u201D in CLAUDE.md and get burned when Claude does it anyway on a long session. The fix isn\u2019t a better prompt  -  it\u2019s a hook.
 
 ---
 
-## Bridge to Session 2 (~1 min)
+## Bridge to Session 2
 
 Session 2 is hands-on. We\u2019re going to take everything we just covered and actually build it.
 
@@ -2015,7 +2011,7 @@ function buildNav() {
         <span class="nav-info">
           <span class="nav-title">${s.title}</span>
           <span class="nav-meta">
-            <span class="nav-duration">${s.duration}</span>
+            ${s.duration ? `<span class="nav-duration">${s.duration}</span>` : ''}
             <span class="nav-author ${s.author}">${s.author === 'julien' ? 'Julien' : 'Richard'}</span>
           </span>
         </span>
