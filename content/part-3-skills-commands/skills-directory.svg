@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 480" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <!-- Directory Structure -->
+  <g transform="translate(140, 30)">
+    <rect width="600" height="420" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M0,10 a10,10 0 0,1 10,-10 h580 a10,10 0 0,1 10,10 v35 h-600 v-35" fill="#0f172a"/>
+    <text x="300" y="28" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">Skills Directory Structure</text>
+
+    <!-- Tree -->
+    <g transform="translate(45, 80)" font-size="15" font-family="monospace">
+      <text x="0" y="0" fill="#64748b">workspace/</text>
+      <text x="35" y="24" fill="#64748b">└── .claude/</text>
+      <text x="70" y="48" fill="#64748b">└── skills/</text>
+
+      <!-- fix-issue -->
+      <text x="105" y="72" fill="#334155" font-weight="bold">├── fix-issue/</text>
+      
+      <!-- Highlight rect for SKILL.md -->
+      <rect x="20" y="81" width="510" height="24" rx="4" fill="#dcfce7" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="140" y="96" fill="#15803d" font-weight="bold">├── SKILL.md</text>
+      <text x="520" y="95" text-anchor="end" fill="#64748b" font-size="11" font-family="sans-serif">required</text>
+      
+      <text x="140" y="120" fill="#64748b">└── templates/</text>
+      <text x="175" y="144" fill="#94a3b8">└── pr-template.md</text>
+
+      <!-- deploy -->
+      <text x="105" y="168" fill="#334155" font-weight="bold">├── deploy/</text>
+      
+      <!-- Highlight rect for SKILL.md -->
+      <rect x="20" y="177" width="510" height="24" rx="4" fill="#dcfce7" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="140" y="192" fill="#15803d" font-weight="bold">├── SKILL.md</text>
+      <text x="520" y="191" text-anchor="end" fill="#64748b" font-size="11" font-family="sans-serif">required</text>
+      
+      <text x="140" y="216" fill="#64748b">└── scripts/</text>
+      <text x="175" y="240" fill="#94a3b8">├── validate.sh</text>
+      <text x="175" y="264" fill="#94a3b8">└── rollback.sh</text>
+
+      <!-- api-conventions -->
+      <text x="105" y="288" fill="#334155" font-weight="bold">└── api-conventions/</text>
+      
+      <!-- Highlight rect for SKILL.md -->
+      <rect x="20" y="297" width="510" height="24" rx="4" fill="#dcfce7" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="140" y="312" fill="#15803d" font-weight="bold">└── SKILL.md</text>
+      <text x="520" y="311" text-anchor="end" fill="#64748b" font-size="11" font-family="sans-serif">required</text>
+      
+    </g>
+  </g>
+</svg>

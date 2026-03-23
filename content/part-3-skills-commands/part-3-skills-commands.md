@@ -2,91 +2,23 @@
 
 ---
 
-## What Skills Are (~2 min)
+## What Skills Are (~1 min)
 
-CLAUDE.md and rules give Claude knowledge — what your project is, how it works, what conventions to follow. Skills give Claude capabilities — workflows it can execute.
+CLAUDE.md and rules give Claude knowledge — what your project is, how it works, and what conventions to follow. Skills on the other hand give Claude capabilities to execute certain workflows. 
 
-A skill is a directory containing a `SKILL.md` file with YAML frontmatter and markdown instructions. When invoked, the instructions load into Claude's context and Claude executes them. A skill can be a set of conventions, a multi-step deployment pipeline, or anything in between.
+For example: You could have a skill that explores your codebase in a specific way and generates documentation that should follow a specific format, and include key points you want it to look for. A skill here would prevent you from having to rewrite the prompt each time, and it also helps ensure your agent is consistent with the way it approaches this task.
 
-**How loading works:** At startup, Claude reads only the `name` and `description` from each skill (~100 tokens each). The full body loads only when invoked. You can have dozens of skills installed without paying a context cost on unrelated tasks. There's a budget: skill descriptions can consume up to 2% of the context window. Run `/context` to check for warnings if you have many skills ([skills docs](https://code.claude.com/docs/en/skills)).
+Now concretely, a skill is a directory with a `SKILL.md` file inside it. That's the only required file. The directory can also contain supporting files — templates, scripts, reference docs — anything Claude might need when executing the skill.
 
----
+Skills live in `.claude/skills/<name>/SKILL.md`.
 
-## Invocation (~3 min)
-
-Two ways skills get triggered:
-
-**Manual** — you type `/skill-name` as a slash command. Reliable, predictable. Arguments after the name get passed through and are available as `$ARGUMENTS` (all) or `$0`, `$1` (positional).
-
-```
-/fix-issue 1234
-/deploy staging
-```
-
-**Auto-invocation** — Claude reads skill descriptions at startup and decides to invoke one when your request matches. Reliability depends on description quality. Practitioner reports range from 20-50% with basic descriptions to 90%+ with well-tuned ones ([source](https://medium.com/@reliabledataengineering/claude-skills-2-0-the-self-improving-ai-capabilities-that-actually-work-dc3525eb391b)). The description is the single biggest factor.
-
-Manual invocation always works. Auto-invocation is a bonus. If something must happen every time, that's a hook, not a skill.
-
-**Controlling invocation:**
-
-| Frontmatter | You can invoke | Claude can invoke | Use for |
-|---|---|---|---|
-| (default) | Yes | Yes | Reference knowledge, conventions |
-| `disable-model-invocation: true` | Yes | No | Side effects — deploy, commit, send |
-| `user-invocable: false` | No | Yes | Background knowledge Claude should auto-apply |
-
-Skills with `disable-model-invocation: true` don't even have their description loaded into context — Claude can't see them at all.
-
----
-
-## Anatomy of a Skill (~3 min)
-
-```
-my-skill/
-├── SKILL.md           # Required — instructions + frontmatter
-├── templates/         # Optional — templates, scripts, examples
-└── scripts/
-```
-
-The frontmatter fields that matter:
-
-```yaml
----
-name: fix-issue
-description: Fix a GitHub issue by implementing changes and creating a PR
-disable-model-invocation: true
-argument-hint: [issue-number]
-allowed-tools: Read, Grep, Glob, Bash, Edit, Write
-context: fork
-model: sonnet
----
-```
-
-| Field | What it does |
-|---|---|
-| `name` | Slash command name. Defaults to directory name. |
-| `description` | What the skill does. Claude uses this for auto-invocation. Write this well. |
-| `disable-model-invocation` | `true` = manual only. Use for anything with side effects. |
-| `allowed-tools` | Restrict tool access. `Read, Grep, Glob` for read-only skills. |
-| `context` | `fork` = run in a subagent. Keeps main conversation clean. |
-| `agent` | Which subagent type when forked (`Explore`, `Plan`, `general-purpose`, or custom). |
-| `model` | Route to a specific model. `sonnet` for fast/cheap, `opus` for complex. |
-
-Skills live in `.claude/skills/<name>/SKILL.md` (project, committed) or `~/.claude/skills/<name>/SKILL.md` (personal). In monorepos, Claude auto-discovers skills from nested `.claude/skills/` directories.
-
-**Dynamic context** — skills can run shell commands at invocation time with `` !`command` `` syntax:
-
-```markdown
-## PR Context
-- PR diff: !`gh pr diff`
-- Changed files: !`gh pr diff --name-only`
-```
-
-These execute before Claude sees the skill content. Claude receives the rendered output, not the commands. This is preprocessing, not something Claude runs.
+**Diagram:** See `skills-directory.svg` in this directory for the full layout.
 
 ---
 
 ## A Complete Example (~2 min)
+
+Before we get into the details, here's what a skill actually looks like:
 
 ```yaml
 # .claude/skills/fix-issue/SKILL.md
@@ -109,9 +41,65 @@ Fix GitHub issue $ARGUMENTS following our coding standards.
 7. Push and create a PR with `gh pr create`
 ```
 
-Usage: `/fix-issue 1234`. Manual-only because it creates commits and PRs.
+The top part between the `---` is frontmatter — metadata that controls how the skill behaves. The bottom part is the instructions Claude follows when the skill runs. You invoke it by typing `/fix-issue 1234`. We'll break down every piece in a moment.
 
-The pattern is the same for every skill: frontmatter declares metadata, body declares the workflow. A conventions skill looks identical except the body is a list of rules instead of steps, and you leave auto-invocation on so Claude loads it when relevant.
+---
+
+## Invocation (~3 min)
+
+Typically, when you start a new session, Claude reads only the `name` and `description` from each skill (~100 tokens each). The full body loads only when invoked. You can have dozens of skills installed without paying a context cost on unrelated tasks.
+
+Two ways skills get triggered:
+
+**Manual** — you type `/skill-name` as a slash command. Reliable, predictable.
+
+```
+/fix-issue 1234
+/deploy staging
+```
+
+**Auto-invocation** — Claude decides on its own whether now is a good time to invoke a skill based on the current context and the skills description.
+
+Reliability depends on description quality. Practitioner reports range from 20-50% with basic descriptions to 90%+ with well-tuned ones ([source](https://medium.com/@reliabledataengineering/claude-skills-2-0-the-self-improving-ai-capabilities-that-actually-work-dc3525eb391b)). The description is the single biggest factor.
+
+The way you should see it is auto-invocation is an added bonus. If you want your skill to run, then you may as well specify it manually.
+
+
+**Controlling invocation:**
+
+| Frontmatter | You can invoke | Claude can invoke | Use for |
+|---|---|---|---|
+| (default) | Yes | Yes | Reference knowledge, conventions |
+| `disable-model-invocation: true` | Yes | No | Side effects — deploy, commit, send |
+| `user-invocable: false` | No | Yes | Background knowledge Claude should auto-apply |
+
+Skills with `disable-model-invocation: true` don't even have their description loaded into context — Claude can't see them at all.
+
+---
+
+## Anatomy — Frontmatter Fields (~3 min)
+
+Now that you know how skills are invoked, here's what each frontmatter field does:
+
+| Field | What it does |
+|---|---|
+| `name` | Slash command name. Defaults to directory name. |
+| `description` | What the skill does. This is what Claude reads at startup to decide whether to auto-invoke. Write this well. |
+| `argument-hint` | Tells the user what arguments the skill expects (e.g. `[issue-number]`). In the body, `$ARGUMENTS` gives you everything after the slash command, `$0`, `$1` give positional args. |
+| `disable-model-invocation` | `true` = manual only. Use for anything with side effects (deploy, commit, send). |
+| `allowed-tools` | Restrict what the skill can do. `Read, Grep, Glob` for read-only skills. |
+| `context` | `fork` = run in a subagent. Keeps main conversation clean. |
+| `model` | Route to a specific model. `sonnet` for fast/cheap, `opus` for complex. |
+
+**Dynamic context** — skills can run shell commands at invocation time with `` !`command` `` syntax:
+
+```markdown
+## PR Context
+- PR diff: !`gh pr diff`
+- Changed files: !`gh pr diff --name-only`
+```
+
+These execute before Claude sees the skill content. Claude receives the rendered output, not the commands.
 
 ---
 

@@ -6,75 +6,31 @@
 
 ### The hook
 
-So we just saw how fast this has moved — autocomplete to full agent orchestration in under five years. What we want to do now is give everyone a level playing field. The goal for the rest of this session is to lay the foundations that take you from "I type prompts and hope for the best" to "I've built an environment where the agent consistently does good work."
+So we just saw how fast this has moved. The goal for the rest of this session is to lay the foundations and go over some of the basics that take you from just prompting, to creating an environment where your agent consistently does good work. The end goal is for you to spend less time prompting, and your agent less tokens correcting its own mistakes.
 
-And that starts with the simplest thing: Claude starts every session completely blank. No memory of yesterday. Doesn't know your test runner needs a special flag, doesn't know there's a legacy module nobody should touch.
+And so we're going to start with the simplest thing: Claude.md. Claude starts every session completely blank. No memory of yesterday. And you might want to persist some basic guidance and instructions that are relevant to your own and/or your project conventions, and that would apply to each and every session.
 
-**CLAUDE.md fixes that.** Markdown file Claude reads at the start of every session. Your conventions, your commands, your gotchas — all loaded before you type anything.
+**CLAUDE.md fixes that.** Markdown file Claude reads at the start of every session all loaded before you type anything.
 
 ---
 
 ## The Hierarchy (~5 min)
 
-### Where CLAUDE.md files live
+### Where CLAUDE.md files live and how they combine
 
-There isn't just one CLAUDE.md — there's a hierarchy. Each level serves a different purpose.
+Now as you may know, CLAUDE.md is not a single file that lives on your computer. It can be defined at multiple levels. So how are they combined?
 
-**Diagram: The CLAUDE.md Hierarchy**
+**Diagram:** See `gemini-svg.svg` in this directory for the visual version.
 
-```
-┌─────────────────────────────────────────────────────────┐
-│  📁 ~/.claude/CLAUDE.md                                 │
-│     Global. Applies to every project on your machine.   │
-│     "I prefer TypeScript, use pnpm, never amend commits"│
-│                                                         │
-│  + ─────────────────────────────────────────────────────┤
-│  📁 ./CLAUDE.md  or  ./.claude/CLAUDE.md                │
-│     Project-level. Committed to git. Shared with team.  │
-│     "We use ESM, run tests with vitest, deploy to AWS"  │
-│                                                         │
-│  + ─────────────────────────────────────────────────────┤
-│  📁 ./subdir/CLAUDE.md                                  │
-│     Directory-specific. Loaded when working in subdir.  │
-│     "This module uses a different ORM"                  │
-│                                                         │
-│  + ─────────────────────────────────────────────────────┤
-│  📁 ./CLAUDE.local.md                                   │
-│     Personal, project-level. Gitignored.                │
-│     "I like verbose test output"                        │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
+First of all, these are all layers that stack on top of one another. Anytime you start a new session, the global CLAUDE.md (`~/.claude/CLAUDE.md`) always loads no matter what project you're working on, and where you are on your computer.
 
-### How they combine
+Now if you're working on a project with a CLAUDE.md defined in the project root (`./CLAUDE.md`), then a new session loads both global and project CLAUDE.md.
 
-These **stack** — they don't replace each other. Claude sees all of them at once. Global sets your baseline, project adds team context on top, subdirectory layers on more when you're working in that folder, and local adds your personal preferences.
+And say you're also working on the backend of your application — a new session is going to stack that subdirectory CLAUDE.md (`./subdir/CLAUDE.md`) on top of the one in the project root, and on top of global.
 
-So what happens when two files contradict each other? Say your global CLAUDE.md says "use npm" but your project CLAUDE.md says "use pnpm." Claude sees both, and the **more specific scope wins**. Project beats global. Subdirectory beats project. Local beats everything — it's your personal override for this project, so it gets the final word.
+If you have conflicting instructions at different levels, the more specific directory takes priority.
 
-### Talk through each level:
-
-**Global (`~/.claude/CLAUDE.md`)** — Your personal defaults across every project. Things like:
-- Your preferred package manager
-- Your commit message style
-- Your editor/terminal preferences that affect how Claude should behave
-
-Keep this short. 10-20 lines max. If it's project-specific, it doesn't belong here.
-
-**Project (`./CLAUDE.md`)** — The team file. This is the one that matters most. It gets committed to git, so everyone on the team benefits. It should contain:
-- What the project is (one line)
-- How to build, test, lint, deploy
-- Coding conventions the team agreed on
-- Architectural decisions Claude can't infer from code alone
-
-**Directory-specific (`./subdir/CLAUDE.md`)** — For monorepos or projects with distinct modules. Claude loads these on demand when working in that directory. Example: your `frontend/CLAUDE.md` says "use React hooks, no class components" while your `api/CLAUDE.md` says "use Zod for validation, return consistent error shapes."
-
-**Local (`./CLAUDE.local.md`)** — Your personal overrides for *this* project. Automatically gitignored. This is where you put things that are yours alone:
-- "Run tests with `--verbose`"
-- "I'm working on the auth module this sprint, prioritize context around `src/auth/`"
-- "I prefer detailed explanations — don't be terse"
-
-This is the file nobody talks about, but it's genuinely useful. It lets you customize your Claude experience without polluting the team's shared CLAUDE.md.
+Now these files — anything at project level and below — are typically committed to git so they can be shared with your team. But say you'd like to add your personal touch and you don't want to share some instructions with the team. Then you would define a `CLAUDE.local.md` file, which is automatically gitignored. This is seen as a personal override, and these instructions will take priority over the shared ones at the same directory level.
 
 ---
 
@@ -90,17 +46,25 @@ The IFScale benchmark (Jaroslawicz et al., July 2025 — [arXiv:2507.11538](http
 
 ### What to include
 
-**This table is adapted from Anthropic's [Claude Code Best Practices](https://code.claude.com/docs/en/best-practices) page:**
+So what actually goes into a good CLAUDE.md? Anthropic has a table on their [best practices page](https://code.claude.com/docs/en/best-practices) that lays this out, and the underlying logic is simple.
+
+On the include side, it all comes down to one question: **can Claude figure this out on its own?** If the answer is no, it belongs in CLAUDE.md. Your build commands, your test runner flags, architectural decisions that aren't obvious from the code, environment quirks — Claude has no way to know these unless you tell it.
+
+On the exclude side, it's the inverse. If Claude can read your code and figure it out — your file structure, standard language conventions, things like "write clean code" — don't waste context on it. And don't paste in long docs or tutorials. Link to them instead.
+
+The golden rule: for each line in your CLAUDE.md, ask yourself — **would removing this cause Claude to make mistakes?** If the answer is no, delete it.
+
+**Table from Anthropic's [Claude Code Best Practices](https://code.claude.com/docs/en/best-practices) page:**
 
 | ✅ Include | ❌ Exclude |
 |-----------|-----------|
-| Commands Claude can't guess (`pnpm test:unit --run`) | Anything Claude can figure out by reading code |
-| Code style rules that differ from defaults | Standard conventions Claude already knows |
-| Test instructions and preferred runners | Detailed API docs (link instead) |
-| Branch naming, PR, commit conventions | Info that changes frequently |
+| Bash commands Claude can't guess | Anything Claude can figure out by reading code |
+| Code style rules that differ from defaults | Standard language conventions Claude already knows |
+| Testing instructions and preferred test runners | Detailed API documentation (link to docs instead) |
+| Repository etiquette (branch naming, PR conventions) | Information that changes frequently |
 | Architectural decisions specific to your project | Long explanations or tutorials |
-| Dev environment quirks (required env vars, ports) | File-by-file codebase descriptions |
-| Common gotchas and non-obvious behaviors | Self-evident things like "write clean code" |
+| Developer environment quirks (required env vars) | File-by-file descriptions of the codebase |
+| Common gotchas or non-obvious behaviors | Self-evident practices like "write clean code" |
 
 ### The positive instruction principle
 
@@ -141,99 +105,6 @@ See @docs/api-conventions.md for API design rules.
 This keeps your CLAUDE.md lean while still giving Claude access to detailed reference material. Claude reads the referenced file when it needs the content — it's not loaded upfront.
 
 **Pro tip (from the [HumanLayer blog, Nov 2025](https://www.humanlayer.dev/blog/writing-a-good-claude-md)):** Prefer pointers over copies. Don't paste code snippets into CLAUDE.md — they go stale fast. Instead, point to the file: `"See @src/lib/api/client.ts for the canonical API client pattern."` Claude reads the current version.
-
----
-
-## A Real Example (~3 min)
-
-### Bad CLAUDE.md (show and critique)
-
-```markdown
-# My Project
-
-This is a Next.js project with React and TypeScript. We use Tailwind for styling.
-The project has a frontend and a backend. The frontend is in src/app and the backend
-is in src/api. We use PostgreSQL for the database with Prisma as the ORM.
-
-## Code Style
-- Use TypeScript
-- Use functional components
-- Write clean, readable code
-- Use meaningful variable names
-- Add comments where necessary
-- Follow DRY principles
-- Use proper error handling
-- Write tests for your code
-
-## Don't Do This
-- Don't use var
-- Don't use class components
-- Don't write inline styles
-- Don't commit without tests
-- Don't use any type
-- Don't skip error handling
-- Don't use console.log in production code
-- Don't create duplicate files
-- Don't modify the database schema without a migration
-
-## Project Structure
-- src/app — frontend pages and components
-- src/api — backend API routes
-- src/lib — shared utilities
-- src/types — TypeScript type definitions
-- prisma/ — database schema and migrations
-- public/ — static assets
-- tests/ — test files
-```
-
-**What's wrong with this:**
-- **Claude already knows most of this.** "Use TypeScript," "meaningful variable names," "follow DRY" — Claude does these by default. Wasted context.
-- **Negative instructions everywhere.** "Don't use var," "don't use class components" — positive framing would be stronger.
-- **Describing the file structure.** Claude can read the directory. It doesn't need you to list what's in `src/`.
-- **No actionable commands.** How does Claude run tests? Build? Lint? Deploy? Those are the things it can't figure out on its own.
-- **Too vague to be useful.** "Write clean code" and "proper error handling" aren't instructions — they're platitudes.
-
-### Good CLAUDE.md (show the rewrite)
-
-```markdown
-# Project
-Next.js 14 e-commerce app with Prisma + PostgreSQL.
-
-# Commands
-- Build: `pnpm build`
-- Dev: `pnpm dev` (port 3000)
-- Test all: `pnpm test`
-- Test single: `pnpm test -- --run path/to/test`
-- Lint: `pnpm lint`
-- Type check: `pnpm typecheck`
-- DB migrate: `pnpm prisma migrate dev --name <name>`
-- DB generate: `pnpm prisma generate`
-
-# Code Style
-- Use named exports exclusively
-- Use `const` by default, `let` only when reassignment is needed
-- Use CSS modules for component styling (not Tailwind utilities inline)
-- Use the shared API client from `src/lib/api/client.ts` for all HTTP calls
-- Collocate tests next to source files: `Button.tsx` → `Button.test.tsx`
-
-# Architecture Decisions
-- All API routes validate input with Zod schemas from `src/lib/schemas/`
-- Auth uses next-auth with JWT strategy — session tokens in httpOnly cookies
-- Database migrations are reviewed by the team — create the migration, don't apply it
-
-# Gotchas
-- The test database resets between runs — don't rely on seed data across tests
-- IMPORTANT: `src/legacy/` is being deprecated. Read from it but write new code in `src/lib/`.
-- Environment variables: copy `.env.example` to `.env.local` for local dev
-```
-
-**What's better:**
-- **37 lines vs 35 lines** — similar length, vastly more useful content
-- **Every line changes Claude's behavior.** Remove any line and Claude would make a mistake.
-- **Actionable commands** Claude can copy-paste and run
-- **Positive framing** — "use named exports" not "don't use default exports"
-- **Real architectural context** Claude can't infer — the auth strategy, the Zod convention, the legacy module warning
-- **Emphasis only where it matters** — one IMPORTANT tag on the rule that would cause the most damage if violated
 
 ---
 

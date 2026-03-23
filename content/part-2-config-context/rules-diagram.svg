@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 720" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" stroke-width="1"/>
+    </pattern>
+    <marker id="arrowright" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse">
+      <path d="M 0 2.5 L 10 5 L 0 7.5 z" fill="#16a34a"/>
+    </marker>
+    <marker id="arrowright-gray" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse">
+      <path d="M 0 2.5 L 10 5 L 0 7.5 z" fill="#94a3b8"/>
+    </marker>
+    
+    <filter id="shadow" x="-5%" y="-5%" width="120%" height="120%">
+      <feDropShadow dx="2" dy="2" stdDeviation="4" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <!-- Phase 1: Session Start -->
+  <g transform="translate(30, 20)">
+    <rect width="820" height="310" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M0,10 a10,10 0 0,1 10,-10 h800 a10,10 0 0,1 10,10 v30 h-820 v-30" fill="#0f172a" />
+    <text x="410" y="26" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">SESSION START — Claude scans .claude/rules/</text>
+
+    <!-- Unscoped rules -->
+    <g transform="translate(20, 60)">
+      <rect width="370" height="230" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="185" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#15803d">Unscoped (no frontmatter)</text>
+      <text x="185" y="48" text-anchor="middle" font-size="13" font-weight="bold" fill="#16a34a">LOAD FULL CONTENT</text>
+
+      <rect x="25" y="65" width="320" height="32" rx="5" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="40" y="86" font-size="13" font-family="monospace" fill="#14532d">.claude/rules/code-style.md</text>
+
+      <rect x="25" y="105" width="320" height="32" rx="5" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="40" y="126" font-size="13" font-family="monospace" fill="#14532d">.claude/rules/testing.md</text>
+
+      <text x="185" y="160" text-anchor="middle" font-size="12" fill="#64748b">Example inside file:</text>
+      <rect x="25" y="170" width="320" height="40" rx="4" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="35" y="188" font-size="11" font-family="monospace" fill="#334155"># Code Style Rules</text>
+      <text x="35" y="202" font-size="11" font-family="monospace" fill="#334155">- Always use camelCase...</text>
+    </g>
+
+    <!-- Path-scoped rules -->
+    <g transform="translate(430, 60)">
+      <rect width="370" height="230" rx="8" fill="#fefce8" stroke="#ca8a04" stroke-width="2"/>
+      <text x="185" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#a16207">Path-scoped (has frontmatter)</text>
+      <text x="185" y="48" text-anchor="middle" font-size="13" font-weight="bold" fill="#ca8a04">INDEX ONLY — not loaded yet</text>
+
+      <rect x="25" y="65" width="320" height="32" rx="5" fill="#fefce8" stroke="#fde68a" stroke-width="1"/>
+      <text x="35" y="86" font-size="12" font-family="monospace" fill="#713f12">.claude/rules/frontend/react.md</text>
+      <text x="335" y="86" font-size="12" fill="#a16207" text-anchor="end">src/**/*.tsx</text>
+
+      <rect x="25" y="105" width="320" height="32" rx="5" fill="#fefce8" stroke="#fde68a" stroke-width="1"/>
+      <text x="35" y="126" font-size="12" font-family="monospace" fill="#713f12">.claude/rules/backend/api.md</text>
+      <text x="335" y="126" font-size="12" fill="#a16207" text-anchor="end">src/api/**/*.ts</text>
+
+      <!-- Code Snippet Box -->
+      <g transform="translate(25, 145)">
+        <rect width="320" height="65" rx="5" fill="#1e293b" filter="url(#shadow)"/>
+        <text x="10" y="16" font-size="11" font-family="monospace" fill="#94a3b8">---</text>
+        <text x="10" y="30" font-size="11" font-family="monospace" fill="#38bdf8">paths:</text>
+        <text x="10" y="44" font-size="11" font-family="monospace" fill="#a3e635">  - "src/**/*.tsx"</text>
+        <text x="10" y="58" font-size="11" font-family="monospace" fill="#94a3b8">---</text>
+        <text x="130" y="16" font-size="10" font-family="sans-serif" font-style="italic" fill="#cbd5e1">← this frontmatter</text>
+        <text x="130" y="30" font-size="10" font-family="sans-serif" font-style="italic" fill="#cbd5e1">tells Claude when</text>
+        <text x="130" y="44" font-size="10" font-family="sans-serif" font-style="italic" fill="#cbd5e1">to load the file.</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Phase 2: During Session -->
+  <g transform="translate(30, 350)">
+    <rect width="820" height="330" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M0,10 a10,10 0 0,1 10,-10 h800 a10,10 0 0,1 10,10 v30 h-820 v-30" fill="#334155" />
+    <text x="410" y="26" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">DURING SESSION — File reads trigger path-scoped rules</text>
+
+    <!-- Trigger 1 -->
+    <g transform="translate(20, 60)">
+      <rect width="250" height="50" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+      <text x="125" y="21" text-anchor="middle" font-size="13" fill="#0369a1">Claude reads file</text>
+      <text x="125" y="40" text-anchor="middle" font-size="14" font-family="monospace" font-weight="bold" fill="#0c4a6e">src/api/users.ts</text>
+
+      <path d="M 260 25 L 310 25" fill="none" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrowright)"/>
+      <text x="285" y="15" text-anchor="middle" font-size="12" font-weight="bold" fill="#16a34a">match</text>
+
+      <rect x="320" y="0" width="320" height="50" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="480" y="21" text-anchor="middle" font-size="13" font-family="monospace" font-weight="bold" fill="#15803d">.claude/rules/backend/api.md</text>
+      <text x="480" y="40" text-anchor="middle" font-size="12" font-weight="bold" fill="#16a34a">LOADS into context</text>
+    </g>
+
+    <!-- Trigger 2 -->
+    <g transform="translate(20, 140)">
+      <rect width="250" height="50" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+      <text x="125" y="21" text-anchor="middle" font-size="13" fill="#0369a1">Claude reads file</text>
+      <text x="125" y="40" text-anchor="middle" font-size="14" font-family="monospace" font-weight="bold" fill="#0c4a6e">src/components/Button.tsx</text>
+
+      <path d="M 260 25 L 310 25" fill="none" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrowright)"/>
+      <text x="285" y="15" text-anchor="middle" font-size="12" font-weight="bold" fill="#16a34a">match</text>
+
+      <rect x="320" y="0" width="320" height="50" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="480" y="21" text-anchor="middle" font-size="12" font-family="monospace" font-weight="bold" fill="#15803d">.claude/rules/frontend/react.md</text>
+      <text x="480" y="40" text-anchor="middle" font-size="12" font-weight="bold" fill="#16a34a">LOADS into context</text>
+    </g>
+
+    <!-- No match -->
+    <g transform="translate(20, 220)">
+      <rect width="250" height="50" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+      <text x="125" y="21" text-anchor="middle" font-size="13" fill="#0369a1">Claude reads file</text>
+      <text x="125" y="40" text-anchor="middle" font-size="14" font-family="monospace" font-weight="bold" fill="#0c4a6e">README.md</text>
+
+      <path d="M 260 25 L 310 25" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#arrowright-gray)"/>
+      <text x="285" y="15" text-anchor="middle" font-size="12" font-weight="bold" fill="#94a3b8">no match</text>
+
+      <rect x="320" y="0" width="320" height="50" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <text x="480" y="21" text-anchor="middle" font-size="14" font-weight="bold" fill="#64748b">No rules triggered</text>
+      <text x="480" y="40" text-anchor="middle" font-size="12" font-weight="bold" fill="#94a3b8">database.md stays indexed</text>
+    </g>
+
+    <!-- Side note -->
+    <g transform="translate(680, 60)">
+      <rect width="120" height="210" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="60" y="55" text-anchor="middle" font-size="13" font-weight="bold" fill="#15803d">Once loaded,</text>
+      <text x="60" y="75" text-anchor="middle" font-size="13" font-weight="bold" fill="#15803d">stays loaded</text>
+      <text x="60" y="95" text-anchor="middle" font-size="13" font-weight="bold" fill="#15803d">for the whole</text>
+      <text x="60" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="#15803d">session.</text>
+
+      <text x="60" y="155" text-anchor="middle" font-size="12" fill="#64748b">Rules don't</text>
+      <text x="60" y="175" text-anchor="middle" font-size="12" fill="#64748b">reload or</text>
+      <text x="60" y="195" text-anchor="middle" font-size="12" fill="#64748b">unload.</text>
+    </g>
+  </g>
+</svg>

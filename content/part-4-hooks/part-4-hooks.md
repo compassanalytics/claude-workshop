@@ -4,7 +4,7 @@
 
 ## The Distinction (~1 min)
 
-Everything so far — CLAUDE.md, rules, skills — is guidance. Claude sees it, usually follows it. "Usually" isn't always good enough.
+Everything so far — CLAUDE.md, rules, skills — is guidance. Claude sees it, usually follows it. But "usually" isn't always good enough.
 
 Hooks are shell commands that execute at specific points in Claude Code's lifecycle. They don't ask Claude to do something — they do it. Claude doesn't decide whether a hook runs. The system runs it unconditionally.
 
@@ -13,11 +13,35 @@ Hooks are shell commands that execute at specific points in Claude Code's lifecy
 
 ---
 
-## Anatomy of a Hook (~3 min)
+## What a Hook Looks Like (~2 min)
 
-Three parts: an **event** (when does it fire?), a **matcher** (which tools trigger it?), and a **command** (what runs?).
+Before we break down the pieces, here's the simplest useful hook — a desktop notification for when Claude needs your attention:
 
-**Events** — Claude Code has 22 lifecycle events ([hooks docs](https://code.claude.com/docs/en/hooks)). The ones you'll use most:
+```json
+{
+  "hooks": {
+    "Notification": [{
+      "matcher": "",
+      "hooks": [{
+        "type": "command",
+        "command": "osascript -e 'display notification \"Claude needs your attention\" with title \"Claude Code\"'"
+      }]
+    }]
+  }
+}
+```
+
+This lives in your `settings.json`. Three parts: an **event** (`Notification` — when does it fire?), a **matcher** (`""` — which tools trigger it? empty means all), and a **command** (the shell script that runs).
+
+You kick off a task, switch to Slack, and get a notification when Claude needs you. That's the "go get coffee" hook.
+
+---
+
+## How Hooks Work (~3 min)
+
+Now let's break down each piece.
+
+**Events** — specific points in Claude's lifecycle where a hook can fire. The ones you'll use most:
 
 | Event | When it fires | Can block? |
 |---|---|---|
@@ -28,7 +52,7 @@ Three parts: an **event** (when does it fire?), a **matcher** (which tools trigg
 | `SessionStart` | Session begins or resumes | No |
 | `UserPromptSubmit` | User submits a prompt | Yes |
 
-**Matchers** — regex patterns that filter which tools trigger the hook. What the matcher filters on depends on the event: tool name for `PreToolUse`/`PostToolUse`, notification type for `Notification`, session type for `SessionStart`.
+**Matchers** — regex patterns that filter which tools trigger the hook:
 
 ```
 "Bash"              → only Bash commands
@@ -51,61 +75,7 @@ Exit code 2 is the kill switch. A `PreToolUse` hook that exits 2 cancels the too
 
 ---
 
-## Configuration (~1 min)
-
-Hooks live in `settings.json`, not markdown files:
-
-| Location | Scope |
-|---|---|
-| `~/.claude/settings.json` | All projects (personal) |
-| `.claude/settings.json` | This project (committed) |
-| `.claude/settings.local.json` | This project (gitignored) |
-| Managed policy settings | Organization-wide (admin) |
-
-The JSON structure:
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/my-script.sh",
-            "timeout": 30
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-An event can have multiple matcher groups, each with multiple hooks. The hook command receives context as JSON via stdin — tool input, tool output, session info.
-
-Four hook types exist (`command`, `http`, `prompt`, `agent`), but `command` covers 90% of cases. `prompt` hooks send a condition to an LLM for evaluation; `agent` hooks spawn a subagent for judgment calls. Start with `command`, reach for the others when you need understanding rather than pattern matching.
-
----
-
-## Examples (~5 min)
-
-**Desktop notifications** — the "go get coffee" hook. You kick off a task, switch to Slack, and get notified when Claude needs you:
-
-```json
-{
-  "hooks": {
-    "Notification": [{
-      "matcher": "",
-      "hooks": [{
-        "type": "command",
-        "command": "osascript -e 'display notification \"Claude needs your attention\" with title \"Claude Code\"'"
-      }]
-    }]
-  }
-}
-```
+## More Examples (~3 min)
 
 **Block commits with sensitive files** — a `PreToolUse` hook that prevents committing `.env`, `.key`, `.pem` files:
 
@@ -156,16 +126,21 @@ exit 0
 
 Always exits 0 — formatting is best-effort, shouldn't block Claude.
 
-Use `/hooks` to browse what's configured — it shows all hooks by event, matcher, and source. You can also ask Claude to write hooks for you: "Write a hook that blocks writes to the migrations folder."
+Use `/hooks` to browse what's configured. You can also ask Claude to write hooks for you: "Write a hook that blocks writes to the migrations folder."
 
 ---
 
-## The Escalation Ladder (~1 min)
+## Where Hooks Live
 
-| Situation | Use |
+Hooks are configured in `settings.json`, not markdown files:
+
+| Location | Scope |
 |---|---|
-| Claude usually does this correctly | Don't add anything |
-| Claude sometimes forgets | CLAUDE.md or a rule |
-| Claude keeps ignoring the rule | Promote to a hook |
-| Must happen every time, no exceptions | Hook from the start |
-| Must happen AND Claude can't override it | `PreToolUse` hook with exit 2 |
+| `~/.claude/settings.json` | All projects (personal) |
+| `.claude/settings.json` | This project (committed) |
+| `.claude/settings.local.json` | This project (gitignored) |
+
+The hook command receives context as JSON via stdin — tool input, tool output, session info. This is how the block-secrets script knows what command Claude is running.
+
+Hooks aren't limited to shell scripts either. You can use `prompt` hooks that trigger LLM inference, or `agent` hooks that spawn a Claude subagent to review or evaluate something. For example, a `PreToolUse` agent hook could have Claude review every commit message before it's created, or evaluate whether a code change follows your architecture patterns — deterministically triggered, with AI-level judgment.
+

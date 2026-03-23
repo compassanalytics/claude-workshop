@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 540" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" stroke-width="1"/>
+    </pattern>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M 0 2 L 10 5 L 0 8 z" fill="#0ea5e9"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M 0 2 L 10 5 L 0 8 z" fill="#10b981"/>
+    </marker>
+    <filter id="shadow" x="-5%" y="-5%" width="120%" height="120%">
+      <feDropShadow dx="2" dy="2" stdDeviation="4" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <!-- Main Conversation Column (Left) -->
+  <g transform="translate(40, 40)">
+    <rect width="400" height="460" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M0,10 a10,10 0 0,1 10,-10 h380 a10,10 0 0,1 10,10 v40 h-400 v-40" fill="#0f172a"/>
+    <text x="200" y="32" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">MAIN CONVERSATION</text>
+    
+    <!-- Vertical timeline line -->
+    <line x1="200" y1="50" x2="200" y2="400" stroke="#e2e8f0" stroke-width="3" stroke-dasharray="8 4"/>
+
+    <!-- User Prompt Bubble -->
+    <g transform="translate(40, 80)">
+      <rect width="320" height="50" rx="8" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="160" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#0369a1">"Research how auth tokens work"</text>
+    </g>
+
+    <!-- Context Result Box -->
+    <g transform="translate(40, 290)">
+      <rect width="320" height="90" rx="8" fill="#f0fdf4" stroke="#34d399" stroke-width="1.5" filter="url(#shadow)"/>
+      <text x="160" y="26" text-anchor="middle" font-size="13" font-weight="bold" fill="#047857">Subagent Returns Summary:</text>
+      <text x="160" y="48" text-anchor="middle" font-size="12" fill="#065f46">"Auth uses JWT in httpOnly cookies.</text>
+      <text x="160" y="64" text-anchor="middle" font-size="12" fill="#065f46">Refresh via /api/auth/refresh with rotating</text>
+      <text x="160" y="80" text-anchor="middle" font-size="12" fill="#065f46">tokens. Session middleware validates."</text>
+    </g>
+
+    <!-- Clean Context Badge -->
+    <g transform="translate(40, 405)">
+      <rect width="320" height="35" rx="6" fill="#10b981" filter="url(#shadow)"/>
+      <text x="160" y="22" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">Your context: clean. Just the summary.</text>
+    </g>
+  </g>
+
+  <!-- Subagent Column (Right) -->
+  <g transform="translate(540, 100)">
+    <rect width="300" height="280" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 4" filter="url(#shadow)"/>
+    <path d="M0,10 a10,10 0 0,1 10,-10 h280 a10,10 0 0,1 10,10 v30 h-300 v-30" fill="#64748b"/>
+    <text x="150" y="26" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">SUBAGENT (Isolated Context)</text>
+    
+    <!-- Action 1 -->
+    <g transform="translate(30, 70)">
+      <rect width="240" height="36" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="120" y="23" text-anchor="middle" font-size="13" fill="#475569">📁 Reads 15 files</text>
+    </g>
+
+    <!-- Action 2 -->
+    <g transform="translate(30, 120)">
+      <rect width="240" height="36" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="120" y="23" text-anchor="middle" font-size="13" fill="#475569">🔎 Greps for "auth", "JWT"</text>
+    </g>
+
+    <!-- Context Cost Warning -->
+    <g transform="translate(30, 170)">
+      <rect width="240" height="40" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+      <text x="120" y="18" text-anchor="middle" font-size="12" fill="#b91c1c">Subagent absorbs the massive</text>
+      <text x="120" y="32" text-anchor="middle" font-size="12" fill="#b91c1c">context window cost internally</text>
+    </g>
+  </g>
+
+  <!-- Flow Arrows -->
+  <g>
+    <!-- Outbound prompt to subagent (Blue) -->
+    <line x1="440" y1="145" x2="530" y2="145" stroke="#0ea5e9" stroke-width="4" marker-end="url(#arrow-blue)"/>
+    <text x="490" y="135" text-anchor="middle" font-size="13" font-weight="bold" fill="#0284c7">Spawns Subagent</text>
+
+    <!-- Return summary arrow (Green) -->
+    <line x1="540" y1="350" x2="450" y2="350" stroke="#10b981" stroke-width="4" marker-end="url(#arrow-green)"/>
+    <text x="495" y="340" text-anchor="middle" font-size="13" font-weight="bold" fill="#047857">Returns Result</text>
+  </g>
+
+</svg>
