@@ -547,6 +547,19 @@
     white-space: pre;
     word-wrap: normal;
   }
+  .section-image {
+    display: block;
+    max-width: 100%;
+    margin: 24px auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .section-image.small {
+    max-width: 400px;
+  }
+  .section-image.medium {
+    max-width: 600px;
+  }
 </style>
 </head>
 <body>
@@ -594,7 +607,7 @@ const sections = [
     number: "2a",
     title: "CLAUDE.md",
     duration: "",
-    author: "colleague",
+    author: "richard",
     content: null
   },
   {
@@ -602,7 +615,7 @@ const sections = [
     number: "2b",
     title: "Rules",
     duration: "",
-    author: "colleague",
+    author: "richard",
     content: null
   },
   {
@@ -610,7 +623,7 @@ const sections = [
     number: "3",
     title: "Skills & Commands",
     duration: "",
-    author: "colleague",
+    author: "richard",
     content: null
   },
   {
@@ -626,7 +639,7 @@ const sections = [
     number: "5",
     title: "Hooks",
     duration: "",
-    author: "colleague",
+    author: "richard",
     content: null
   },
   {
@@ -634,7 +647,7 @@ const sections = [
     number: "6",
     title: "Subagents & Teams",
     duration: "",
-    author: "colleague",
+    author: "richard",
     content: null
   },
   {
@@ -665,125 +678,106 @@ const sections = [
 
 // --- MARKDOWN CONTENT ---
 
-sections[0].content = `# Part 1: The Evolution  -  From Autocomplete to Agent Orchestration
+sections[0].content = `# Part 1: The Evolution — From Autocomplete to Agent Orchestration
 
 ---
 
-## Opening
+<img src="images/img-20251222171251.png" alt="Harness engineering as a subset of Context Engineering" class="section-image">
 
-### Setting the stage
+## The Journey — Four Phases
 
-Alright, let\u2019s start with where we\u2019ve been and where we are  -  because the speed of this shift is genuinely remarkable. We\u2019re going to walk through the last five years of AI-assisted coding, and I want to ground it in what actually happened, with dates, products, and real numbers. Not vibes.
+**Phase 1: Autocomplete (2021-2022)** — "IntelliSense on steroids"
+- GitHub Copilot launches mid-2021, built on OpenAI Codex
+- AI predicts lines/blocks from context — but fundamentally passive
+- You type, it suggests, you accept or reject. Developer drives every keystroke
 
-The reason this matters: if you understand *how* we got here, the rest of the workshop  -  the config, the tools, the agent orchestration  -  stops feeling like a bag of tricks and starts feeling like the logical next step.
+**Phase 2: Conversational coding (2023-early 2024)** — "Ask it, don't just type"
+- ChatGPT (late 2022), GPT-4 (March 2023) change the interface entirely
+- Copilot Chat, Cursor (March 2023) — AI becomes a second coding interface
+- Still chat + autocomplete. Developer drives everything. Quality control is human
 
-**[Image placeholder: timeline of AI coding evolution, four phases from 2021 to 2026]**
+**Phase 3: Agentic coding (late 2024-2025)** — "Delegate, don't dictate"
+- Cursor Agent Mode (Nov 2024) — reads terminal, runs commands, multi-file changes
+- Claude Code launches (Feb 2025) — terminal-native, no IDE
+- Copilot agent mode (May 2025), Codex, Windsurf follow
+- AI isn't suggesting — it's *executing tasks*
+- Cursor's flip: went from 2.5x more tab users to 2x more agent users in under a year
 
----
+**Phase 4: Multi-agent orchestration (early 2026 — now)**
+- Agent teams, parallel execution, peer-to-peer communication
+- From "AI autocomplete" to "managing a team of AI engineers" in ~5 years
 
-## The Journey  -  Four Phases
+> Agentic isn't one tool — it's a mode of working all major players converged on simultaneously. Different interfaces, same shift.
 
-### Phase 1: Autocomplete (2021-2022)  -  \u201CIntelliSense on steroids\u201D
-
-GitHub Copilot launches mid-2021, built on OpenAI\u2019s Codex. For the first time, AI is predicting entire lines and blocks of code from context. You\u2019re writing a function signature, and it fills in the body. You\u2019re writing a comment, and it writes the code underneath.
-
-Impressive  -  but fundamentally passive. You type, it suggests, you accept or reject. Every decision is still yours. The developer drives every keystroke. Think of it like a really good autocomplete that occasionally reads your mind. The ceiling is \u201CI type less.\u201D The floor is \u201CI hit Escape a lot.\u201D
-
-### Phase 2: Conversational coding (2023-early 2024)  -  \u201CAsk it, don\u2019t just type\u201D
-
-ChatGPT drops in late 2022, GPT-4 follows in March 2023, and the interface changes completely. Copilot Chat arrives. AI stops being just inline suggestions and becomes a second interface for coding  -  you can ask for patterns, debug explanations, scaffolding, alternative implementations. Cursor launches in March 2023 as a VS Code fork with AI baked in.
-
-At this stage it\u2019s still chat plus autocomplete. Powerful, yes  -  but the developer drives everything. You ask a question, you get an answer, you copy-paste it in, you verify it works. Quality control is entirely human. The AI is a knowledgeable colleague sitting next to you, but you\u2019re still the one with your hands on the keyboard.
-
-### Phase 3: Agentic coding emerges (late 2024-2025)  -  \u201CDelegate, don\u2019t dictate\u201D
-
-This is where the paradigm actually shifts.
-
-Cursor ships Agent Mode in November 2024  -  the AI can now read terminal output, run commands, make multi-file changes, and iterate on errors inside the IDE. Claude Code launches in February 2025 as terminal-native: no IDE at all, just an agent that reads your codebase, plans, executes, and loops. Copilot adds agent mode in May 2025. Codex, Windsurf, and others follow.
-
-The AI isn\u2019t suggesting code anymore  -  it\u2019s *executing tasks*. You describe intent; the agent handles execution. \u201CAdd pagination to the users endpoint\u201D stops being a prompt you paste into a chat window, and becomes a task the agent plans, implements across multiple files, runs the tests, and fixes its own errors.
-
-Here\u2019s a number that tells the story: by late 2025, Cursor reports a dramatic flip. Where they once had 2.5x more tab-completion users than agent users, they now have 2x more agent users than tab users. The majority of their user base shifted from \u201Csuggest code for me\u201D to \u201Cdo the task for me\u201D in under a year.
-
-**The key distinction here:** agentic isn\u2019t one tool  -  it\u2019s a mode of working that all the major players converged on roughly simultaneously. Cursor does it inside the IDE. Claude Code does it in the terminal. Copilot does it across GitHub. Different interfaces, same fundamental shift from \u201Cyou type, AI suggests\u201D to \u201Cyou describe, AI executes.\u201D
-
-### Phase 4: Multi-agent orchestration (early 2026  -  where we are now)
-
-And now we\u2019re here. Agent teams. Parallel execution. Peer-to-peer communication between agents. One lead coordinates, teammates work independently with their own context windows. You\u2019re not just delegating a single task anymore  -  you\u2019re managing a team of AI engineers working in parallel.
-
-We\u2019ve gone from \u201CAI autocomplete\u201D to \u201Cmanaging a team of AI engineers\u201D in under five years. That\u2019s the trajectory. And it\u2019s why \u201CI use Copilot for suggestions sometimes\u201D and \u201CI orchestrate multiple agents working on my codebase\u201D are now fundamentally different skill sets.
-
-**[Image placeholder: four-phase diagram showing the shift from passive to autonomous  -  autocomplete, chat, single agent, multi-agent]**
+<img src="images/img-20251222163310.png" alt="Skills, Agents, Models — concentric circles" class="section-image medium">
 
 ---
 
-## Where We Actually Are Right Now  -  The Numbers
+## The Numbers
 
-### Adoption
+**Adoption:**
+- **84%+** of devs using or planning to use AI coding tools (Stack Overflow 2025)
+- **64%** started using agentic tools — 25% regularly, 39% experimenting (Sonar 2026)
+- **41%** of all code estimated AI-generated (early 2026)
 
-Let\u2019s ground this in real data. These come from Anthropic\u2019s 2026 Agentic Coding Trends Report, the Sonar State of Code survey, Stack Overflow, and independent studies.
+**Productivity:**
+- **~3.6 hours/week** saved on average; 75% say AI reduces toil (DX Q4 2025, 135K+ devs)
+- **22%** of merged code is AI-authored — actual repo telemetry, not surveys
+- **15-22%** agent adoption across 129K+ GitHub projects
 
-- **84%+ of developers** are now using or planning to use AI coding tools (Stack Overflow 2025). 51% of professional developers use AI daily.
-- **64% of developers** have started using agentic AI tools specifically  -  25% regularly, another 39% experimenting (Sonar State of Code 2026).
-- **41% of all code** is now estimated to be AI-generated (global estimates, early 2026).
+<img src="images/img-20251222163834.png" alt="Software Engineering Productivity Increases from AI Use — quadrant" class="section-image">
 
-So the question is no longer \u201Care people using this.\u201D The question is \u201Chow well are people using this.\u201D
-
-### Productivity
-
-- **Developers save ~3.6 hours per week** on average; daily users save more. 75% say AI reduces \u201Ctoil work\u201D  -  the repetitive, low-creativity stuff nobody enjoys. That\u2019s from the DX Q4 2025 report, surveying 135,000+ developers.
-- **22% of merged code** is AI-authored based on actual repo telemetry (DX analysis). Not survey responses  -  actual commit data.
-- GitHub studied 129K+ projects and found **15-22% agent adoption**  -  remarkable for technology that\u2019s only been available for months.
-
-### Enterprise case studies
-
-These are the ones that tend to land with people who are still on the fence:
-
-- **Rakuten:** Claude Code completed activation vector extraction across a 12.5 million-line codebase in 7 autonomous hours, achieving 99.9% numerical accuracy.
-- **TELUS:** 13,000+ custom AI solutions, engineering code shipped 30% faster, 500,000 total hours saved.
-- **Zapier:** 89-97% AI adoption across their *entire* organization  -  not just engineering.
-- **Stripe:** Cursor adoption went from single digits to over 80% of developers.
-- **Salesforce:** 90% of 20,000 developers using AI coding tools.
-
-These aren\u2019t startups experimenting. These are large organizations seeing measurable results at scale.
+**Enterprise cases:**
+- **Rakuten** — 12.5M-line codebase, 7 autonomous hours, 99.9% accuracy
+- **TELUS** — 13K+ AI solutions, 30% faster shipping, 500K hours saved
+- **Zapier** — 89-97% AI adoption across entire org
+- **Stripe** — Cursor adoption: single digits → 80%+ of developers
+- **Salesforce** — 90% of 20K developers on AI tools
 
 ---
 
-## Where It\u2019s All Headed
+## Where It's Headed
 
-### The near-term
+- Agents progressing from short tasks → hours/days of continuous work
+- Multi-agent coordination becoming standard — agents share findings, challenge each other
+- All tools converging: config files, tool use, planning, delegation
+- Open standards (MCP, Agent Skills spec) mean skills work across tools
+- Role shift: writing code → *orchestrating agents that write code*
 
-This section is about giving everyone a reason to invest in learning the tooling properly  -  because it\u2019s not slowing down.
-
-**In 2026,** agents are progressing from short tasks to work that continues for hours or days. Multi-agent coordination is becoming standard  -  not just parallelism, but agents that share findings, challenge each other, and coordinate independently. And non-engineers  -  security, ops, design, data, legal, marketing  -  are starting to build their own tools using agents.
-
-### The convergence
-
-Compare Claude Code, Codex, Copilot CLI, Gemini CLI, Cursor, Windsurf  -  they\u2019re all converging on the same architecture under the hood. Config files (CLAUDE.md, AGENTS.md). Tool use. Multi-step planning. Agent delegation. The open standards  -  MCP for tools, Agent Skills spec for skills  -  mean skills work across Claude Code, Codex CLI, Gemini CLI, and Cursor without modification. This isn\u2019t a walled garden; the ecosystem is standardizing.
-
-That\u2019s actually good news for you. The patterns you learn today aren\u2019t locked to one vendor.
-
-### The role shift
-
-Anthropic\u2019s report frames it bluntly: engineering is shifting from writing code to *orchestrating agents that write code*. The developer becomes a conductor, not a composer. The gap between \u201Cperson who prompts a chatbot\u201D and \u201Cperson who orchestrates an AI workforce\u201D is widening fast.
-
-That\u2019s what this workshop is about  -  making sure everyone in the room is on the right side of that gap.
+<img src="images/img-20251222171122.png" alt="Problem complexity vs context engineering effort" class="section-image">
 
 ---
 
-## The Honest Caveats
+## The New Programming Paradigm
 
-### What\u2019s still hard
+Traditional software engineering is **deterministic** — you write code, it executes exactly as written. Same input, same output, every time. You control everything.
 
-I want to be upfront about the limitations too, because overselling this helps nobody.
+LLMs are **probabilistic** — you give instructions, the model interprets and responds with judgment. Similar input, slightly different output. You guide, not control.
 
-- **Developers still fully delegate only 0-20% of tasks.** This isn\u2019t \u201CAI replaces you\u201D  -  it\u2019s \u201CAI amplifies you.\u201D The vast majority of work is still collaborative, not autonomous. That\u2019s from Anthropic\u2019s own report.
-- **CodeRabbit\u2019s analysis found roughly 1.7x more issues in AI-coauthored PRs.** Verification matters. The code gets written faster, but that doesn\u2019t mean it\u2019s correct by default.
-- **Long sessions suffer from context rot.** Assumptions compound. The agent starts confidently building on mistakes it made 200 messages ago.
-- **75% of devs still manually review every AI snippet before merging.** That\u2019s healthy  -  and it\u2019s going to stay that way for a while.
-- **The tools are powerful but need proper setup to be reliable.** Which is exactly what the rest of this session covers.
+**AI engineering is the integration of both.**
 
-So the framing for everything that follows: these tools are genuinely transformative when configured well, and genuinely frustrating when they\u2019re not. Let\u2019s make sure yours are configured well.`;
+| | Deterministic | Probabilistic |
+|---|---|---|
+| **What** | Hooks, permissions, config, tests | Skills, agents, LLM judgment |
+| **Guarantee** | Runs exactly the same every time | Usually right, not always |
+| **Control** | You dictate | You guide |
+| **Example** | "Block commits with .env files" | "Review this PR for security issues" |
+
+The skill of modern AI engineering isn't choosing one over the other — it's knowing **which layer to put each requirement in**. Safety-critical rule? Deterministic (hook). Architecture convention? Probabilistic (CLAUDE.md). Complex workflow? Probabilistic with deterministic guardrails.
+
+> That's what the rest of this workshop is about — building the full stack, from deterministic foundations to probabilistic capabilities.
+
+---
+
+## Honest Caveats
+
+<img src="images/img-20251222165636.png" alt="Do Not Outsource the Thinking — Jake Nations" class="section-image medium">
+
+- Only **0-20%** of tasks fully delegated — AI amplifies, doesn't replace
+- **~1.7x more issues** in AI-coauthored PRs (CodeRabbit) — verification matters
+- Long sessions → context rot → compounding assumptions
+- **75%** of devs still manually review every AI snippet
+- Tools are powerful but need proper setup — which is what the rest of this covers`;
 
 
 sections[1].content = `# Part 2a: CLAUDE.md  -  Your Onboarding Doc for the Agent
@@ -1270,105 +1264,111 @@ Older tutorials reference \`.claude/commands/\` as a separate system. Commands a
 Skills follow the [Agent Skills specification](https://agentskills.io)  -  an open standard with 32+ adopters including Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI, and JetBrains Junie. A skill you write for Claude Code works in Cursor without modification.`;
 
 
-sections[4].content = `# Part 4: MCP  -  Connecting Claude to Everything
+sections[4].content = `# Part 4: MCP — Connecting Claude to Everything
 
 ---
 
-## What MCP Actually Is
+## What MCP Is
 
-So far, everything we\u2019ve covered  -  CLAUDE.md, rules, skills, hooks  -  operates within Claude Code\u2019s built-in capabilities. Claude can read files, run shell commands, and call the Anthropic API. That\u2019s it. If you need Claude to interact with your issue tracker, your database, your design tool, or your monitoring stack, it has no way to do that natively.
+Everything so far operates within Claude Code's built-in capabilities: read files, run shell commands, call the API. **MCP extends that to everything else.**
 
-**Model Context Protocol** fixes that. MCP is an open standard  -  developed by Anthropic, now adopted widely  -  that defines how AI assistants connect to external tools. It uses a JSON-RPC-style protocol over stdio or HTTP. The important thing is you don\u2019t need to understand the protocol details. What matters is the mental model.
+<img src="images/mcp-architecture.png" alt="MCP standardized protocol — AI applications on the left, data sources and tools on the right, bidirectional data flow" class="section-image">
 
-**[Image placeholder: MCP architecture diagram showing Claude Code in the center, with arrows pointing to MCP servers for GitHub, Jira, PostgreSQL, Figma, Slack]**
+**Model Context Protocol** — open standard for connecting AI assistants to external tools via JSON-RPC over stdio or HTTP. Not Claude-specific — adopted by Claude Code, Copilot, Goose, VS Code, and others.
 
-MCP servers are bridges. Each server exposes two things:
-
-- **Tools**  -  callable functions. \u201CCreate a GitHub PR,\u201D \u201Cquery this PostgreSQL table,\u201D \u201Cpost a Slack message.\u201D
-- **Resources**  -  readable data. Database records, API responses, document contents.
-
-There\u2019s also a third primitive  -  **Prompts**  -  reusable templates for workflows, though you\u2019ll encounter tools and resources far more often in practice.
+**Three primitives:**
+- **Tools** — callable functions ("create a PR", "query this table", "post to Slack")
+- **Resources** — readable data (database records, API responses, documents)
+- **Prompts** — reusable templates (less common in practice)
 
 ---
 
 ## What Becomes Possible
 
-Without MCP, you\u2019d have to copy-paste between Claude and your tools, or write custom shell scripts to bridge the gap. With MCP servers connected, Claude can work across your entire toolchain in a single conversation. Here are real examples of what that looks like:
-
-- \u201CImplement the feature described in JIRA issue ENG-4521 and create a PR on GitHub\u201D
-- \u201CCheck Sentry and Statsig to check usage of this feature\u201D
-- \u201CFind emails of 10 users who used feature X, based on our PostgreSQL database\u201D
-- \u201CUpdate our email template based on the new Figma designs posted in Slack\u201D
-
-Each of these would be painful without MCP  -  you\u2019d be alt-tabbing, copying issue descriptions, pasting query results. With the right servers connected, Claude handles the entire workflow.
+- "Implement the feature described in JIRA issue ENG-4521 and create a PR on GitHub"
+- "Check Sentry and Statsig to check usage of this feature"
+- "Find emails of 10 users who used feature X, based on our PostgreSQL database"
+- "Update our email template based on the new Figma designs posted in Slack"
 
 ---
 
-## Adding and Configuring Servers
+## Building a Server Is Simple
 
-### Adding a server
+Python with FastMCP — a server is ~20 lines:
 
-Two transport types. HTTP is recommended for remote services, stdio for local tools:
+\`\`\`python
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("my-server")
+
+@mcp.tool()
+async def get_data(query: str) -> str:
+    """Fetch data based on a query."""
+    # your logic here
+    return result
+\`\`\`
+
+TypeScript, Java, Kotlin, C#, Ruby, Rust, Go all supported. Type hints and docstrings become tool definitions automatically.
+
+---
+
+## MCP Apps (new)
+
+Servers can now return **interactive HTML UIs** that render directly in the conversation — dashboards, forms, data visualizations, config panels.
+
+- App runs in a sandboxed iframe — can't escape, can't access host
+- Bidirectional: app can call MCP tools, host can push data to app
+- No separate web app needed — context stays in the conversation
+- Supported in Claude Desktop, VS Code Copilot, Goose, and others
+
+---
+
+## Configuration
 
 \`\`\`bash
-# HTTP (recommended for remote services)
+# HTTP (remote services)
 claude mcp add --transport http notion https://mcp.notion.com/mcp
 
-# Stdio (for local tools)
+# Stdio (local tools)
 claude mcp add postgres --command "npx" --args "-y @modelcontextprotocol/server-postgres"
 \`\`\`
 
-That\u2019s it. Once added, Claude can see the tools that server exposes and use them in conversation.
+**Scopes:**
 
-### Configuration scopes
-
-MCP servers follow the same scoping pattern you\u2019ve seen with CLAUDE.md and settings:
-
-| Scope | Where it lives | Who sees it |
+| Scope | Location | Visibility |
 |---|---|---|
-| **Local** (default) | \`~/.claude.json\` under project path | Just you, this project |
-| **Project** | \`.claude/.mcp.json\` | Committed to git, shared with your team |
-| **User** | \`~/.claude.json\` | You, across all projects |
-
-If your whole team needs the GitHub and Jira servers, put them in \`.claude/.mcp.json\` and commit it. If you personally use a Notion server for your own notes, keep it in your user config.
+| **Local** | \`~/.claude.json\` under project path | Just you, this project |
+| **Project** | \`.claude/.mcp.json\` | Committed, team-shared |
+| **User** | \`~/.claude.json\` | You, all projects |
 
 ---
 
-## The Ecosystem
+## Key Ecosystem Servers
 
-The MCP ecosystem has grown quickly. Here are the servers you\u2019re most likely to reach for:
+<img src="images/img-20251222163339.png" alt="Agent architecture — MCP servers and Skills" class="section-image">
 
 | Server | What it gives Claude |
 |---|---|
 | **GitHub** | PRs, issues, code search, reviews |
 | **Atlassian** | Jira issues, Confluence pages |
 | **Notion** | Pages, databases, comments |
-| **Figma** | Design files, components, annotations |
+| **Figma** | Design files, components |
 | **Supabase** | Database queries, auth, storage |
-| **Playwright** | Browser automation, testing, screenshots |
+| **Playwright** | Browser automation, screenshots |
 | **PostgreSQL** | Direct database queries |
-| **Filesystem** | Extended file operations |
 | **Context7** | Live library documentation |
 | **Slack** | Messages, channels, threads |
-| **Google Workspace** | Docs, Sheets, Gmail |
-
-You don\u2019t need all of these. Connect the ones that match your actual workflow.
-
-**[Image placeholder: grid or icon layout of key MCP ecosystem servers]**
 
 ---
 
-## When Not to Overdo It
+## Don't Overdo It
 
-Every MCP server you connect adds to Claude\u2019s context. Each server\u2019s tools need to be described so Claude knows what\u2019s available, and that eats tokens.
+<img src="images/img-20251222165124.png" alt="Context window — the more you use, the worse outcomes" class="section-image medium">
 
-The good news: MCP now supports **Tool Search**, which enables lazy loading. Instead of loading every tool description upfront, Claude discovers tools on demand. This reduces context usage by up to 95% for large server configurations.
-
-But even with lazy loading, don\u2019t connect 50 servers \u201Cjust in case.\u201D Each connection is a process running on your machine, and more tools means more potential for Claude to reach for the wrong one. Connect what you actually use. If you find yourself needing a server once a month, add it when you need it and remove it after.
-
-The rule of thumb: if you wouldn\u2019t keep the app open on your desktop all day, don\u2019t keep the MCP server connected all day.
-
----`;
+- Every server adds to context (tool descriptions eat tokens)
+- **Tool Search** enables lazy loading — up to 95% context reduction
+- But don't connect 50 servers "just in case" — more tools = more confusion
+- Rule of thumb: if you wouldn't keep the app open all day, don't keep the server connected all day`;
 
 
 sections[5].content = `# Part 4: Hooks  -  Deterministic Control
@@ -1737,167 +1737,210 @@ Claude spawns teammates, creates a shared task list, and coordinates. Use **Shif
 ---`;
 
 
-sections[7].content = `# Part 7: Plugins  -  Bundling It All Together
+sections[7].content = `# Part 7: Plugins — Bundling It All Together
 
 ---
 
 ## What Plugins Solve
 
-By this point, you\u2019ve seen skills, hooks, MCP servers, and subagents as individual concepts. Each one lives in its own file or config. That works fine when everything is scoped to a single repo. But what happens when you want the same workflow across multiple projects? Or when you want to share a setup with your team that includes a skill, a couple of hooks, and an MCP server that all work together?
+You've seen skills, hooks, MCP servers, subagents — each in its own file/config. Works for one repo. But across projects or teams? You end up copying files and writing setup docs.
 
-You copy files around. You write setup instructions. Someone forgets a step. Things break.
+**Plugins are the packaging layer.** Bundle any combination into a single installable unit.
 
-**Plugins are the packaging layer.** They bundle any combination of skills, subagents, hooks, and MCP servers into a single installable unit. One install, everything configured.
+<img src="images/img-20251222163329.png" alt="Exploring how Skills evolve — users sharing" class="section-image">
 
 ---
 
-## What a Plugin Contains
+## What's Inside
 
-A plugin is a directory with a \`.claude-plugin/plugin.json\` manifest. Everything else is optional  -  you include what you need:
+<img src="images/img-20251222163359.png" alt="Skills are just folders" class="section-image small">
 
 \`\`\`
 my-team-plugin/
-\u251C\u2500\u2500 .claude-plugin/
-\u2502   \u2514\u2500\u2500 plugin.json       # Manifest: name, description, version
-\u251C\u2500\u2500 .mcp.json              # MCP server config (optional)
-\u251C\u2500\u2500 commands/              # Slash commands (optional)
-\u251C\u2500\u2500 agents/                # Subagent definitions (optional)
-\u251C\u2500\u2500 skills/                # Skill definitions (optional)
-\u2514\u2500\u2500 README.md
+├── .claude-plugin/
+│   └── plugin.json       # Manifest (required)
+├── .mcp.json              # MCP servers (optional)
+├── commands/              # Slash commands (optional)
+├── agents/                # Subagent definitions (optional)
+├── skills/                # Skill definitions (optional)
+└── README.md
 \`\`\`
 
-The \`plugin.json\` manifest is the only required piece  -  it declares the plugin\u2019s name, description, and version. The rest of the structure mirrors what you already know: skills go in \`skills/\`, subagents go in \`agents/\`, MCP config goes in \`.mcp.json\`, and hooks go in the settings.
-
-**The decision rule is simple:** if it\u2019s just for one repo, keep things in \`.claude/\`. If you need the same workflow across multiple projects or across your team, bundle it into a plugin.
+**Simple rule:** one repo → keep in \`.claude/\`. Multiple projects or team → plugin.
 
 ---
 
-## Installing and Managing Plugins
+## The Ecosystem (March 2026)
 
-### The plugin ecosystem (as of March 2026)
-
-Plugins are distributed through marketplaces:
-
-- **Official Anthropic marketplace** (\`claude-plugins-official\`)  -  these are automatically available, no extra setup needed.
-- **Community marketplaces**  -  43+ marketplaces with 834+ plugins catalogued. Install a marketplace first, then browse its plugins.
+- **Official marketplace** (\`claude-plugins-official\`) — automatically available
+- **Community** — 43+ marketplaces, 834+ plugins
 
 \`\`\`bash
-# Add a community marketplace
 /plugin marketplace add <owner/repo>
-
-# Install a plugin from any available marketplace
 /plugin install <name>
 \`\`\`
 
-### Scopes
+**Scopes:**
 
-Just like everything else in Claude Code, plugins support scoping:
+| Scope | Use for |
+|---|---|
+| **User** | Personal workflow tools (all projects) |
+| **Project** | Team standards (committed) |
+| **Local** | This repo only (personal) |
+| **Managed** | Org-wide policies (admin-deployed) |
 
-| Scope | Who sees it | Use for |
-|---|---|---|
-| **User** | You, all projects | Personal workflow tools |
-| **Project** | Committed, team-shared | Team standards and workflows |
-| **Local** | You, this repo only | Project-specific personal tools |
-| **Managed** | Admin-deployed | Organization-wide policies |
+---
+
+## Real Example: Compass Superpowers
+
+Here's **compass-superpowers** — a private marketplace I made for Compass specifically, with the intention of anyone being able to contribute and add plugins they think could be useful to share across our org:
+
+\`\`\`bash
+/plugin marketplace add compassanalytics/claude-compass-superpowers
+/plugin install general-dev@compassanalytics
+\`\`\`
+
+| Plugin | What it does |
+|---|---|
+| **general-dev** | 31 skills for TDD, debugging, refactoring, git workflows |
+| **ticket-driven-dev** | Context-preserving orchestration with knowledge graph + autonomous ticket engine |
+| **deep-feature** | Multi-agent analysis → fat tickets → implementation (7-phase lifecycle) |
+| **deep-docs** | 5-dimension documentation generation with Confluence export |
+| **agent-swarm** | Multi-agent swarm orchestration with 4 topologies + RARV verification |
+| **jira-compass** | Jira/Atlassian integration — read, create, update, expand tickets |
+| **databricks-compass** | Spark, Delta Lake, ETL pipelines |
+| **dataiku-compass** | Dataiku DSS, ML pipelines |
+| **skill-manager** | Validate, score, scaffold, and persist skills |
+
+Shared MCP servers (knowledge graph, plugin analytics, ticket engine, swarm state) are used across plugins — one install, everything wired up.
+
+This is what a mature plugin ecosystem looks like. Started with a few skills in \`.claude/\`, grew into a full marketplace the team shares.
+
+---
+
+## The Bigger Picture: Agent Skills as Open Standard
+
+Skills follow the **Agent Skills specification** (agentskills.io) — announced Dec 2025, now adopted by **16+ tools and 30+ products**:
+
+Claude Code, OpenAI Codex CLI, Google Gemini CLI, GitHub Copilot, Cursor, JetBrains Junie, VS Code, Goose (Block), Amp, OpenHands, and more.
+
+A skill you write for Claude Code works in Cursor without modification. The ecosystem isn't siloed.
+
+**AGENTS.md** — the open format for agent configuration — is now in **60,000+ repos** and stewarded by the Linux Foundation. Adopted by Stripe, OpenAI, Anthropic, Google.
 
 ---
 
 ## LSP Plugins
 
-Worth calling out specifically: the official marketplace includes **LSP plugins**  -  Language Server Protocol integrations that give Claude real code intelligence. Jump to definition, find references, see type errors immediately after edits.
+Official marketplace includes **11 LSP plugins** — C/C++, C#, Go, Java, Kotlin, Lua, PHP, Python, Rust, Swift, TypeScript.
 
-These are configured per language and require the language server binary installed on your system. But when they\u2019re set up, Claude stops guessing about types and symbol locations  -  it uses the same language intelligence your editor does.
+- **Automatic diagnostics** after every edit — errors push back instantly
+- **Go-to-definition, find-references, type info** — same language intelligence your editor uses
+- **Speed**: symbol lookups go from 30-60s (grep) to **~50ms** with 100% precision
 
 ---
 
-## When to Reach for a Plugin
+## Scale of the Ecosystem (early 2026)
 
-Not everything needs to be a plugin. Here\u2019s the quick decision framework:
+- **~9,000+ total extensions** across official + community marketplaces
+- **Official Anthropic marketplace**: 33 plugins (code intelligence, integrations, workflows, output styles)
+- **Community**: \`buildwithclaude.com\` (492+), \`claudemarketplaces.com\`, GitHub repos
+- **awesome-agent-skills**: 500+ cross-platform skills
+
+---
+
+## When to Plugin
 
 | Situation | Approach |
 |---|---|
-| One-off workflow for a single repo | Keep it in \`.claude/\`  -  skills, hooks, agents directly |
-| Same workflow needed across 2-3 of your repos | Consider a user-scoped plugin |
-| Team-wide standards and tooling | Project-scoped plugin, committed to each repo |
-| Organization-wide policies and guardrails | Managed plugin, admin-deployed |
+| One-off workflow, single repo | \`.claude/\` directly |
+| Same workflow across your repos | User-scoped plugin |
+| Team-wide standards | Project-scoped plugin |
+| Org-wide policies | Managed plugin |
 
-Plugins are the natural end state when a workflow matures. You start with a skill in one repo, realize you want it everywhere, and promote it to a plugin. The building blocks are the same  -  plugins just handle the distribution.
-
----`;
+Plugins are the natural end state when a workflow matures.`;
 
 
 sections[8].content = `# Part 8: Permissions & \`--dangerously-skip-permissions\`
 
 ---
 
-## The Permission System
+## The Problem
 
-Claude Code asks for permission before executing anything potentially dangerous  -  bash commands, file modifications, network operations, dependency installation. This is correct from a security standpoint. You don\u2019t want an agent silently running \`rm -rf\` or \`curl\`-ing your credentials to a remote server.
-
-But in practice, it creates real workflow friction. Claude asks roughly 100 permission prompts per hour during active sessions. That\u2019s a prompt every 36 seconds. And what happens is predictable: you stop reading them. You start rubber-stamping. Click accept, accept, accept without evaluating whether each operation is actually safe.
-
-One LessWrong commenter put it well: this creates a false sense of security that may be *worse* than no permissions at all. You think you have a safety net, but you\u2019re not actually using it. You\u2019re just adding latency.
-
-So the question becomes: how do you get the safety guarantees you need without the friction that undermines them?
+- Claude asks ~100 permission prompts/hour → one every 36 seconds
+- You stop reading them → rubber-stamping → false sense of security
+- Need: safety guarantees without friction that undermines them
 
 ---
 
-## The Five Permission Modes
+## The Five Modes
 
-There are five ways to handle permissions, from most restrictive to least. Think of them as a spectrum.
-
-**[Image placeholder: permission modes spectrum, from "Default" on the left to "Bypass" on the right, with friction decreasing and risk increasing]**
-
-| Mode | How it works | When to use |
+| Mode | How it works | When |
 |---|---|---|
-| **Default** | Prompts for everything potentially dangerous | First time using Claude Code, unfamiliar codebases |
-| **Auto-accept (Shift+Tab)** | Proceeds without pausing, but remains interactive  -  you can still watch and intervene | Active pairing sessions where you\u2019re watching the output |
-| **AllowedTools whitelist** | Configure specific tools/commands in \`settings.json\` that skip approval | Day-to-day development  -  allow your common commands |
-| **Deny rules** | Explicitly block specific tools/commands (takes precedence over allow) | Guardrails for dangerous operations you never want |
-| **\`--dangerously-skip-permissions\`** | Disables ALL permission checks | Containerized/sandboxed environments only |
+| **Default** | Prompts for everything dangerous | New to Claude Code |
+| **Auto-accept (Shift+Tab)** | Proceeds without pausing, still interactive | Pairing sessions |
+| **AllowedTools whitelist** | Specific commands skip approval | Day-to-day dev |
+| **Deny rules** | Block specific commands (trumps allow) | Safety guardrails |
+| **\`--dangerously-skip-permissions\`** | Disables ALL checks | Containers only |
 
-The sweet spot for most people is a combination of AllowedTools and deny rules. You whitelist the commands you run constantly  -  \`npm run\`, \`git commit\`, version checks  -  and you explicitly deny the ones that are genuinely dangerous. More on that in a moment.
+Sweet spot: **AllowedTools + deny rules**
 
 ---
 
-## The Flag Everyone\u2019s Curious About
+## The Flag
 
-Let\u2019s talk about \`--dangerously-skip-permissions\`. It does exactly what it says. No confirmation dialogs, no pauses, no human-in-the-loop. Claude executes whatever it decides to execute. It\u2019s technically equivalent to \`--permission-mode bypassPermissions\`.
+\`--dangerously-skip-permissions\` — no dialogs, no pauses, no human-in-the-loop.
 
-Three critical details that most people miss:
+**Three things people miss:**
+1. **Subagent inheritance** — ALL subagents get full autonomous access. Can't override
+2. **Name is deliberate** — no \`-y\`, no shortcut. You type it every time. By design
+3. **Hooks still fire** — a PreToolUse exit 2 still blocks, even in bypass mode
 
-**First  -  subagent inheritance.** When you run in bypass mode, ALL subagents inherit full autonomous access. You can\u2019t override this. You can\u2019t say \u201Cskip permissions for the main session but ask for subagents.\u201D It\u2019s all or nothing, and subagents get the same unrestricted access.
+**Real incidents:**
+- Wolak (Oct 2025) — \`rm -rf\` from root on a firmware project. OS file permissions were the only save
+- 32% of bypass users hit unintended file modifications; 9% reported data loss
 
-**Second  -  the name is deliberate.** There\u2019s no \`-y\` shortcut. No \`--yes\` alias. No abbreviated form. You type \`--dangerously-skip-permissions\` every single time. Anthropic made it inconvenient on purpose. The friction of typing that flag is the last line of defense.
+**When it's appropriate:**
+- Docker container / VM (Anthropic's own recommendation)
+- \`--network none\` to block external connections
+- Git checkpoints before every session
+- Anthropic's engineers use it — "(Run this in a container, not your actual machine.)"
 
-**Third  -  hooks still fire.** Even in bypass mode, a \`PreToolUse\` hook can block a tool call. So if you have a hook that exits 2 on \`rm -rf\`, that hook still runs and still cancels the command. Hooks are the one safety mechanism that survives bypass mode.
+<img src="images/img-20251222170347.png" alt="Code Review — Hierarchy of Needs" class="section-image small">
 
-### The real risks
+---
 
-These aren\u2019t theoretical.
+## If You Want YOLO: Do It Right
 
-In October 2025, a developer named Wolak reported that Claude Code executed \`rm -rf\` from root on a firmware project. The error logs showed thousands of \u201CPermission denied\u201D messages for system paths  -  the command tried to delete everything on the machine. The operating system\u2019s own file permissions were the only thing that limited the damage.
+I built **claude-yolo** — a Docker-based sandbox that lets you run \`--dangerously-skip-permissions\` safely:
 
-A study found that 32% of developers using the flag encountered unintended file modifications. 9% reported actual data loss.
+\`\`\`bash
+cd /path/to/any/project
+claude-yolo                    # launch in sandboxed yolo mode
+claude-yolo "fix the tests"    # pass arguments through
+\`\`\`
 
-### When it\u2019s actually appropriate
+**What it does:**
+- Ubuntu container with Node.js, git, uv, Claude Code CLI
+- Reuses host auth (extracts macOS Keychain creds), SSH keys, and plugins
+- Auto-patches hardcoded paths in plugin configs for the container
+- Remaps UID/GID so file ownership stays correct
+- Handles git worktrees (mounts parent repo when inside a worktree)
+- Host files are **never modified** — patched copies are mounted read-only
 
-Anthropic\u2019s own engineers use bypass mode. But the context matters. Their blog post about building a C compiler with parallel Claude sessions includes the parenthetical: \u201C(Run this in a container, not your actual machine.)\u201D
+| File | Purpose |
+|---|---|
+| \`Dockerfile\` | Ubuntu 22.04 + Node.js 22 + Claude Code CLI |
+| \`entrypoint.sh\` | UID/GID remapping, git SSH config, privilege drop via \`gosu\` |
+| \`claude-yolo.sh\` | Host launcher: auth extraction, path patching, docker run with all mounts |
 
-That\u2019s the rule. Bypass mode belongs inside isolation boundaries:
+**Setup:** Drop 3 files in \`~/.claude/docker/\`, build the image, add an alias. Full instructions in the gist.
 
-- **Docker container or VM** with no access to your real filesystem
-- **\`--network none\`** to prevent external connections
-- **Git checkpoints** before every session so you can roll back
-- **Well-scoped tasks** with clear specifications and test-driven verification
-
-If you\u2019re not in a container, you probably shouldn\u2019t be using this flag.
+This is the pattern Anthropic recommends — container isolation + yolo mode. You get full autonomous execution with zero risk to your host machine.
 
 ---
 
 ## The Better Alternative
-
-For most people, the right answer is granular AllowedTools configuration in \`settings.json\`. You get 90% of the speed without the risk.
 
 \`\`\`json
 {
@@ -1905,9 +1948,7 @@ For most people, the right answer is granular AllowedTools configuration in \`se
     "allow": [
       "Bash(npm run *)",
       "Bash(git commit *)",
-      "Bash(* --version)",
-      "Bash(uv run *)",
-      "Bash(npx prettier *)"
+      "Bash(* --version)"
     ],
     "deny": [
       "Bash(git push *)",
@@ -1917,86 +1958,170 @@ For most people, the right answer is granular AllowedTools configuration in \`se
 }
 \`\`\`
 
-Allow patterns let Claude run common dev commands without asking. Deny patterns block operations you never want  -  and deny always takes precedence over allow. So even if \`Bash(rm -rf *)\` somehow matched an allow pattern, the deny rule wins.
-
-**[Image placeholder: flowchart showing permission evaluation  -  deny checked first, then allow, then default prompt]**
-
-Start by running Claude Code normally for a day. Pay attention to which permissions you\u2019re rubber-stamping  -  those are your allow list. Pay attention to which ones make you nervous  -  those are your deny list. Then configure accordingly.
-
-Combine this with hooks for the operations that must be blocked deterministically. An AllowedTools deny rule prevents Claude from running a command. A \`PreToolUse\` hook with exit 2 does the same thing  -  but the hook can also inspect the arguments, check the environment, and make more nuanced decisions. Use both.
-
----`;
+- Deny always beats allow
+- Build your list: rubber-stamp prompts → allow list. Nervous prompts → deny list
+- Combine with hooks for deterministic blocking`;
 
 
-sections[9].content = `# Closing: Tying It All Together
+sections[9].content = `# Closing: A New Programming Paradigm
 
 ---
 
-## The Layered Architecture
+## This Is Software 3.0
 
-We\u2019ve covered a lot of ground. Let\u2019s zoom out and look at the whole picture  -  because all of these pieces fit together in a specific way.
+Karpathy laid out the trajectory:
+- **Software 1.0** — hand-written code. Deterministic. You control everything
+- **Software 2.0** (2017) — neural network weights. Learned from data. You control the training
+- **Software 3.0** (2025) — natural language prompts. You describe intent. The model executes
 
-\`\`\`
-\u250C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510
-\u2502  Agent Teams (experimental, multi-session)       \u2502
-\u251C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524
-\u2502  Subagents (isolated workers, own context)       \u2502
-\u251C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524
-\u2502  Plugins (bundled shareable packages)            \u2502
-\u251C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524
-\u2502  MCP Servers (external tool connections)         \u2502
-\u251C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524
-\u2502  Hooks (deterministic lifecycle control)         \u2502
-\u251C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524
-\u2502  Skills (probabilistic prompt-based)             \u2502
-\u251C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524
-\u2502  Rules (.claude/rules/ - scoped guidance)        \u2502
-\u251C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524
-\u2502  CLAUDE.md (persistent project context)          \u2502
-\u251C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524
-\u2502  Permissions (safety & access control)           \u2502
-\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518
-\`\`\`
+> "The hottest new programming language is English." — Andrej Karpathy, January 2023
 
-**[Image placeholder: layered architecture diagram as a visual stack, color-coded by deterministic vs. probabilistic]**
+We're building entire applications through a new computing stack:
 
-Each layer builds on the one below. You don\u2019t need all of them on day one. Start with a good CLAUDE.md. Add hooks for the things that must be deterministic. Connect MCP servers for your actual tools. Build up from there as the need arises.
+| Traditional Computing | AI Engineering |
+|---|---|
+| Processor (CPU) | **Model (LLM)** |
+| Operating System | **Coding Agent** (Claude Code, Cursor, Copilot) |
+| Applications | **Skills, Plugins, Workflows** |
+| RAM | **Context Window** |
+| Config files | **CLAUDE.md, rules, hooks** |
+| Middleware | **Hooks** (pre/post execution) |
+| Microservices | **Skills** (single responsibility, independently loadable) |
+| Dependency injection | **CLAUDE.md** (injects behavioral context at runtime) |
+
+<img src="images/img-20251222163310.png" alt="Skills, Agents, Models — concentric circles" class="section-image medium">
 
 ---
 
-## The Mental Model That Matters
+## Same Principles, New Medium
 
-If there\u2019s one thing to take away from this session, it\u2019s the distinction between deterministic and probabilistic control. Everything we covered falls into one of those two categories.
+The software engineering principles you already know **all still apply**:
+
+- **DRY** — CLAUDE.md prevents repeating the same instructions in every prompt. Skills prevent rewriting the same workflow. Plugins prevent copying files across repos
+- **Separation of concerns** — rules are scoped by file path, skills have single responsibilities, subagents isolate context
+- **Encapsulation** — subagents hide their intermediate work, returning only results. Skills encapsulate complex workflows behind a simple \`/command\`
+- **Modularity** — plugins bundle related capabilities. MCP servers are swappable bridges. Each layer is independently configurable
+- **Interface contracts** — skill frontmatter defines the interface (name, description, arguments). The implementation is the markdown body
+
+The difference: these "applications" are written in natural language, not code.
+
+---
+
+## Everything Is Still Logic
+
+Don't be fooled by the natural language. What we're writing is still:
+- **Instructions** — step-by-step procedures
+- **Conditions** — "if the file is a test, do X; if it's a migration, do Y"
+- **Constraints** — "never commit secrets", "always validate input"
+- **Architecture** — which agent owns which files, how context flows between them
+
+It's programming. It's just in English now.
+
+---
+
+## The Tradeoffs of Natural Language
+
+**What you gain:**
+- More expressive — handles edge cases through judgment, not explicit branching
+- More accessible — non-engineers can contribute to workflows
+- Faster iteration — change behavior by editing a markdown file, not recompiling
+- Cross-tool portability — same skill works in Claude Code, Cursor, Codex CLI
+
+**What you lose:**
+- **Precision** — same instruction can produce different results (non-deterministic)
+- **Testability** — no unit tests for natural language instructions (evals exist, but immature)
+- **Debuggability** — "why did it do that?" has no stack trace pointing to line 42
+- **Trust gap** — developer trust in AI code accuracy dropped from 40% to 29% (Stack Overflow 2026)
+
+> **45%** of developers cite "almost right, but not quite" as their top AI frustration
+
+This is the core tension: the same property (non-determinism) is both the **main feature** and the **main defect**.
+
+<img src="images/img-20251222165059.png" alt="Performance = Correctness² × Completeness / Size" class="section-image medium">
+
+---
+
+## Do Not Outsource the Thinking
+
+<img src="images/img-20251222165636.png" alt="Do Not Outsource the Thinking — Jake Nations" class="section-image medium">
+
+Jake Nations (Staff Engineer, Netflix): AI makes the **easy** parts effortless. But it conflates "easy" with "simple." Simple systems require architectural judgment — the genuinely hard work — which AI cannot do for you.
+
+His framework: **Research → Planning → Implementation**. Never skip straight to implementation. The compression step — synthesizing research into a minimal, well-understood plan — is the irreducibly human contribution.
+
+> "The hard work of thinking can't be outsourced to AI, only amplified by it."
+
+<img src="images/img-20251222171020.png" alt="Research → Planning → Implementation phases with human review" class="section-image">
+
+<img src="images/img-20251222170512.png" alt="Plan reliability vs readability sweet spot" class="section-image medium">
+
+---
+
+## Context Engineering: The New Discipline
+
+The field has a name now. **Context engineering** — coined by Karpathy and Tobi Lutke (Shopify CEO) in mid-2025, endorsed by Gartner:
+
+> "The delicate art and science of filling the context window with just the right information for the next step." — Karpathy
+
+> "Context engineering is in, and prompt engineering is out." — Gartner, July 2025
+
+Everything we covered today IS context engineering:
+- CLAUDE.md = persistent context
+- Rules = scoped context
+- Skills = on-demand context
+- Hooks = deterministic enforcement
+- MCP = external context bridges
+- Subagents = isolated context
+- Plugins = shareable context packages
+
+<img src="images/img-20251222171251.png" alt="Harness engineering as a subset of Context Engineering" class="section-image">
+
+<img src="images/img-20251222165325.png" alt="Frequent Intentional Compaction" class="section-image medium">
+
+---
+
+## Programming Was Never About Code
+
+We're writing applications in natural language now. But at the end of the day — it's still logic. Steps of instructions. Conditionals. Architecture.
+
+The **classic principles** still apply:
+- **DRY** — don't repeat context across prompts, skills, or sessions
+- **Encapsulation** — subagents hide complexity, skills wrap workflows behind a command
+- **Separation of Concerns** — rules scoped by file path, agents scoped by responsibility
+
+And **new principles** have emerged:
+- **Context Rot** — performance degrades as context grows stale or bloated. Compact intentionally
+- **Context Isolation** — subagents and forked skills protect your main session from noise
+- **Progressive Disclosure** — load only what's needed: skill descriptions at startup, full body on invocation, rules only when file patterns match
+
+Programming has never been about writing "code." The intent has always been **formulating logic to accomplish a task**. The medium changes — assembly, C, Python, YAML, now English — but the discipline doesn't.
+
+> No matter the medium, keep being a programmer.
+
+---
+
+## The Deterministic ↔ Probabilistic Stack
 
 | Layer | Type | Guarantee |
 |---|---|---|
-| CLAUDE.md / Rules | Guidance | Claude sees it, usually follows it |
-| Skills | Probabilistic | Claude may auto-invoke, or you invoke manually |
-| Subagents | Probabilistic | Claude may delegate, or you request it explicitly |
-| Hooks | **Deterministic** | Runs every time, no exceptions |
-| Permissions | **Deterministic** | Allow/deny enforced regardless of Claude\u2019s intent |
+| CLAUDE.md / Rules | Guidance | Usually follows |
+| Skills | Probabilistic | May auto-invoke |
+| Subagents | Probabilistic | May delegate |
+| Hooks | **Deterministic** | Every time, no exceptions |
+| Permissions | **Deterministic** | Enforced regardless of intent |
 
-The rule of thumb is simple:
+> **Must happen 100%** → hook or permission rule
+> **Should happen when relevant** → skill, subagent, or CLAUDE.md
 
-If something **must** happen 100% of the time  -  use a hook or a permission rule. Block secrets from commits. Run formatters on every edit. Deny force pushes. These are deterministic. Claude doesn\u2019t get a vote.
-
-If something **should** happen when relevant  -  use a skill, a subagent, or CLAUDE.md guidance. Code review patterns. Architecture conventions. Research delegation. These are probabilistic. Claude uses judgment, and judgment is usually right  -  but not always.
-
-When people get frustrated with Claude Code, it\u2019s almost always because they put something in the probabilistic category that belongs in the deterministic one. They write \u201Cnever commit .env files\u201D in CLAUDE.md and get burned when Claude does it anyway on a long session. The fix isn\u2019t a better prompt  -  it\u2019s a hook.
+The common mistake: putting deterministic needs in probabilistic layers. The fix isn't a better prompt — it's a hook.
 
 ---
 
-## Bridge to Session 2
+## Session 2 Preview
 
-Session 2 is hands-on. We\u2019re going to take everything we just covered and actually build it.
+Hands-on: set up CLAUDE.md, configure hooks, connect MCP servers, write a custom skill, build a subagent, spin up an agent team.
 
-You\u2019ll set up a real CLAUDE.md for your project. Configure hooks that enforce your team\u2019s conventions. Connect MCP servers to your actual tools. Write a custom skill. Build a subagent. And if time allows, spin up an agent team.
-
-Come with a real project or codebase you want to work with. The more real the context, the more useful the session will be.
-
-See you there.
-
----`;
+**Bring a real project.**`;
 
 // --- APP LOGIC ---
 
