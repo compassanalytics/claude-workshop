@@ -32,18 +32,18 @@ sequenceDiagram
     participant S as 📊 state.json
 
     activate D
-    D->>K: + decision: "OAuth2 + PKCE" (user-req)
-    D->>K: + assumption: "Postgres only" (unconfirmed)
-    D->>K: + open question: "Rate limiting?"
+    D->>K: + decision: "Use Stripe for payments" (user-req)
+    D->>K: + assumption: "Single currency only" (unconfirmed)
+    D->>K: + open question: "Refund policy?"
     D->>S: discovery → complete
     D-->>D: writes discovery.md
     deactivate D
 
     activate R
     R->>K: reads decisions + assumptions
-    K-->>R: "OAuth2 + PKCE", "Postgres assumed"
-    R->>K: confirm: "Postgres" ✓
-    R->>K: + constraint: "next-auth v5 for PKCE"
+    K-->>R: "Use Stripe", "Single currency assumed"
+    R->>K: confirm: "Single currency" ✓
+    R->>K: + constraint: "Stripe requires webhook for async payments"
     R->>S: research → complete
     R-->>R: writes research.md
     deactivate R
@@ -51,15 +51,15 @@ sequenceDiagram
     activate RF
     RF->>K: reads all knowledge
     K-->>RF: 1 open question unresolved
-    RF->>K: resolve: "Rate limit = 100 req/min"
+    RF->>K: resolve: "Refunds within 30 days, auto-approve"
     RF->>S: refinement → complete
     RF-->>RF: writes refined-spec.md
     deactivate RF
 
     rect rgb(254, 226, 226)
         Note over RF,R: ⚠️ Gaps found → loop back
-        RF->>R: "Research missed token rotation"
-        R->>K: + finding: "Token rotation needed"
+        RF->>R: "Research missed idempotency keys"
+        R->>K: + finding: "Idempotency keys needed"
         R->>S: research → complete (re-run)
     end
 
