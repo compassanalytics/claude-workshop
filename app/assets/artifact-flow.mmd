@@ -1,0 +1,66 @@
+---
+config:
+  theme: base
+  themeVariables:
+    fontSize: 13px
+    actorBkg: "#f8fafc"
+    actorBorder: "#64748b"
+    actorTextColor: "#1e293b"
+    signalColor: "#475569"
+    signalTextColor: "#1e293b"
+    noteBkgColor: "#fefce8"
+    noteBorderColor: "#ca8a04"
+    noteTextColor: "#713f12"
+    activationBkgColor: "#f0f9ff"
+    activationBorderColor: "#0284c7"
+    sequenceNumberColor: "#ffffff"
+  sequence:
+    mirrorActors: false
+    messageMargin: 30
+    actorMargin: 40
+    noteMargin: 8
+    useMaxWidth: false
+    width: 160
+---
+sequenceDiagram
+    autonumber
+
+    participant D as 🔍 Discover
+    participant R as 📚 Research
+    participant RF as ✏️ Refine
+    participant K as 📦 knowledge.json
+    participant S as 📊 state.json
+
+    activate D
+    D->>K: + decision: "OAuth2 + PKCE" (user-req)
+    D->>K: + assumption: "Postgres only" (unconfirmed)
+    D->>K: + open question: "Rate limiting?"
+    D->>S: discovery → complete
+    D-->>D: writes discovery.md
+    deactivate D
+
+    activate R
+    R->>K: reads decisions + assumptions
+    K-->>R: "OAuth2 + PKCE", "Postgres assumed"
+    R->>K: confirm: "Postgres" ✓
+    R->>K: + constraint: "next-auth v5 for PKCE"
+    R->>S: research → complete
+    R-->>R: writes research.md
+    deactivate R
+
+    activate RF
+    RF->>K: reads all knowledge
+    K-->>RF: 1 open question unresolved
+    RF->>K: resolve: "Rate limit = 100 req/min"
+    RF->>S: refinement → complete
+    RF-->>RF: writes refined-spec.md
+    deactivate RF
+
+    rect rgb(254, 226, 226)
+        Note over RF,R: ⚠️ Gaps found → loop back
+        RF->>R: "Research missed token rotation"
+        R->>K: + finding: "Token rotation needed"
+        R->>S: research → complete (re-run)
+    end
+
+    Note over D,S: Pattern continues: Plan → Implement → Review<br/>Same read/write cycle on knowledge.json + state.json

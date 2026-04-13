@@ -529,15 +529,19 @@ sections[1].content = `# Designing Workflows That Work
 
 ---
 
-Three things determine whether a phased workflow holds together or falls apart:
+**Without structure:** \u201CAdd OAuth to my app.\u201D Claude picks a library, guesses your architecture, forgets the compliance requirement from three messages ago. You spend thirty minutes correcting decisions that were never tracked.
 
-**Persistence & state** \u2014 where artifacts live on disk, how phases find each other\u2019s output, how you resume after closing a session. Get this wrong and the chain is broken before it starts.
+**With structure:** Discovery captures the compliance requirement. Research finds your existing auth patterns. The plan respects both. Review catches drift.
 
-**Knowledge flow** \u2014 what survives between phases and what gets lost. Phases generate six distinct types of knowledge. Most of them die at phase boundaries unless you design otherwise.
+The difference is whether knowledge survives between steps. Not every task justifies this \u2014 for quick fixes and small changes, just prompt and iterate. But when features span sessions, when rework is expensive, or when context needs to outlive a conversation, three design decisions determine whether the workflow holds:
 
-**Orchestration** \u2014 how the user invokes the workflow, where humans stay in the loop, how the system handles loops and re-runs. Without this, you have individual skills that don\u2019t feel like a workflow.
+**Persistence & state** \u2014 where artifacts live, how phases find each other\u2019s output, how you resume after closing a session.
 
-These are the design decisions you\u2019ll make in the hands-on. No right answers \u2014 just tradeoffs. We\u2019ll walk through each one, then you build yours.`;
+**Knowledge flow** \u2014 what survives between phases. Decisions, assumptions, constraints, open questions \u2014 each will die at phase boundaries unless you design otherwise.
+
+**Orchestration** \u2014 how the user invokes the workflow, where humans stay in the loop, how the system handles non-linear flow.
+
+No right answers \u2014 just tradeoffs.`;
 
 
 // --- SECTION 3: Persistence & State ---
@@ -545,15 +549,13 @@ sections[2].content = `# Persistence & State
 
 ---
 
-What does a workflow actually look like on disk?
-
-Every phase produces an artifact \u2014 a discovery summary, a research report, a plan, implementation notes, a review. Those artifacts need to live somewhere that every other phase can find, and that survives when you close the session and come back tomorrow. This is the foundation everything else builds on.
+What does a workflow actually look like on disk? Each phase produces an artifact. Those artifacts need to live somewhere every other phase can find, and persist when you close the session. Beyond the artifacts themselves, you need state tracking (where am I in the workflow?) and a way to manage knowledge transfer between phases \u2014 which we\u2019ll dig into in the next section.
 
 ---
 
 ## Directory Layout
 
-The most common approach is **per-feature directories** \u2014 each feature or task gets its own folder containing all its phase artifacts:
+A common approach is **per-feature directories** \u2014 each feature gets its own folder:
 
 \`\`\`
 .sdlc/features/
@@ -567,74 +569,99 @@ The most common approach is **per-feature directories** \u2014 each feature or t
     \u2514\u2500\u2500 discovery.md
 \`\`\`
 
-Multiple features in progress at once. Completed features stay as documentation and history. The agent needs to know which feature directory is active \u2014 either passed as an argument, stored in a root-level state file, or derived from the current working context.
+Multiple features in progress at once. Completed features stay as documentation. The agent needs to know which directory is active \u2014 passed as an argument, stored in a root-level state file, or derived from context.
 
-The exact layout is up to you. What matters is that **every skill in your workflow agrees on it.** If discovery writes to one path and research reads from another, the chain is broken.
+**Every skill in your workflow must agree on the layout.** A shared conventions file that all skills read on startup is the simplest way \u2014 change the layout in one place, every skill follows.
 
 ---
 
 ## Artifact Formats
 
-Each phase writes an artifact. The format determines what downstream phases can do with it.
+Each phase writes an artifact. The format determines what downstream phases can do with it. In practice you combine formats \u2014 prose for humans, structured data for agents, git for code history.
 
-**Prose artifacts** \u2014 markdown files (\`discovery.md\`, \`plan.md\`). Survive sessions. Human-readable \u2014 you can open them in your editor. Natural format for specs and plans. The tradeoff: hard to query programmatically. \u201CWhat did we decide about auth?\u201D means re-reading three pages.
+### Prose Artifacts
 
-**Structured data** \u2014 JSON or YAML files that track decisions, assumptions, open questions, and constraints as typed fields. Queryable by topic. Tracks status (\u201Cconfirmed\u201D, \u201Cunresolved\u201D). Easy to diff between phases. The tradeoff: verbose for narrative content.
+Markdown files that humans open in their editor. Natural format for specs, plans, and summaries.
 
-**Git checkpoints** \u2014 a commit or branch at each phase boundary. Full history. Native rollback. The tradeoff: only captures code changes \u2014 no decisions, intent, constraints, or rationale.
+\`\`\`markdown
+# Discovery: Auth System
 
-**In practice, you combine them.** Prose artifacts for specs and plans that humans read. A structured JSON file for decisions, assumptions, and open questions that the agent queries. Git commits for code checkpoints you can roll back. Each mechanism handles what it\u2019s good at.
+## Goals
+- Replace custom JWT middleware with standards-compliant OAuth2
+- Support PKCE flow for public clients (mobile, SPA)
+- All PII must be encrypted at rest (legal/compliance requirement)
+
+## Existing System
+- Custom JWT middleware in \\\`src/lib/auth/middleware.ts\\\`
+- Session tokens stored in Redis, 24h TTL
+- 3 protected API routes, 12 public routes
+
+## Open Questions
+- Rate limiting strategy for token endpoint?
+- Migration path for existing sessions?
+\`\`\`
+
+*Readable, not queryable.* \u201CWhat did we decide about auth?\u201D means reading the whole document.
+
+### Structured Data
+
+JSON or YAML files that track decisions, assumptions, and open questions as typed fields. Queryable by topic. Easy to diff between phases.
 
 \`\`\`json
-// knowledge.json \u2014 grows across phases
 {
   "decisions": [
-    { "phase": "discovery", "topic": "auth",
-      "decision": "OAuth2 + PKCE, no session tokens",
-      "rationale": "compliance requirement from legal" },
-    { "phase": "research", "topic": "auth",
-      "decision": "Use next-auth v5",
-      "rationale": "native PKCE, actively maintained, team has experience" }
+    { "topic": "auth", "decision": "OAuth2 + PKCE",
+      "rationale": "compliance requirement",
+      "phase": "discovery", "source": "user-requirement" }
   ],
   "assumptions": [
     { "assumption": "Postgres is the only datastore",
-      "madeIn": "discovery", "status": "confirmed",
-      "confirmedIn": "research" }
+      "madeIn": "discovery", "status": "confirmed" }
   ],
   "openQuestions": [
     { "question": "Rate limiting strategy?",
-      "raisedIn": "refinement", "status": "unresolved",
-      "blocksPhase": "implementation" }
+      "raisedIn": "refinement", "blocksPhase": "implementation" }
   ]
 }
 \`\`\`
 
-Now any phase can check \u201Cwhat\u2019s been decided about auth?\u201D without parsing three pages of prose. Assumptions carry their confirmation status. Open questions explicitly block the phases that depend on them.
+*Queryable, not readable.* Any phase can check \u201Cwhat\u2019s been decided about auth?\u201D without parsing pages of prose.
+
+### Git Checkpoints
+
+A commit or branch at each phase boundary. Full history, native rollback. *Versioned, but code-only* \u2014 captures file changes, not decisions, intent, or rationale.
+
+### MCP Resources
+
+MCP servers can also serve as artifact storage and retrieval backends. A local MCP server exposes artifacts as **resources** (read) and **tools** (write), letting phases access them through a standard protocol rather than direct file paths. The official MCP reference servers include a **Memory server** that stores entities and relations in a local knowledge graph \u2014 a real example of structured artifact storage via MCP.
 
 ---
 
-## How Skills Find Each Other\u2019s Output
+## How Others Do It
 
-This is the plumbing that actually breaks in practice. Your research skill needs to read discovery\u2019s output \u2014 how does it know where that file is?
+These aren\u2019t theoretical patterns \u2014 real tools use them today:
 
-| Approach | How it works | Tradeoff |
-|---|---|---|
-| **Hard-coded paths** | Skill instructions say \u201Cread \`.sdlc/discovery.md\`\u201D | Dead simple. Change the layout and you update every skill |
-| **Naming conventions** | Skills follow a shared rule: artifacts are \`{phase}.md\` in the active feature directory | Flexible. Agent needs to resolve which directory is active \u2014 from state, arguments, or context |
-| **Pointers in state** | State file maps artifact names to paths: \`{ "artifacts": { "discovery": "features/auth/discovery.md" } }\` | Most flexible. Extra indirection \u2014 every skill reads state first |
-| **Shared conventions file** | A single reference doc (loaded by all skills) that documents the directory structure, naming rules, and where each phase reads/writes | Skills stay decoupled from specific paths. One file to update if the layout changes. Common in multi-skill plugins |
+| Tool | Persistence approach |
+|---|---|
+| **Devin** | Full persistent VM sandbox \u2014 filesystem, processes, and environment survive for the duration of a task |
+| **GitHub Copilot Workspace** | Server-side persistence of spec \u2192 plan \u2192 code. Each step is editable before the next runs |
+| **LangGraph** | Typed \`State\` object passed between nodes. Checkpointers (SQLite, Postgres) persist state across sessions |
 
-Most workflows start with hard-coded paths or a shared conventions file. Evolve to state-based pointers if you need the flexibility.
+The pattern: phased workflows need artifacts on disk (or in a database) and a state mechanism that survives session boundaries. The specific backend varies \u2014 filesystem, server-side storage, typed state with checkpointers \u2014 but the need is the same.
 
 ---
 
 ## State Tracking
 
-State tells the workflow where it is: which phases are done, which is in progress, and what comes next. Three real approaches:
+Beyond artifacts, the workflow needs to know where it is: which phases are done, which is in progress, what comes next. This is also what enables resume, phase gating, and context loading \u2014 the state file tells each skill what\u2019s happened and what to read.
 
-**Implicit state** \u2014 the simplest. No state file at all. If \`plan.md\` exists, planning is done. If it doesn\u2019t, it hasn\u2019t run yet. Zero overhead, but you can\u2019t distinguish \u201Cin progress\u201D from \u201Ccomplete\u201D (what if the session died mid-write?), and you can\u2019t enforce ordering without extra checks in each skill.
+### Implicit
 
-**Explicit state file** \u2014 the most common. A JSON file that every skill reads and updates:
+No state file. If \`plan.md\` exists, planning is done. Zero overhead, but you can\u2019t tell \u201Cin progress\u201D from \u201Ccomplete\u201D \u2014 a session crash mid-write leaves a partial artifact that looks finished. *Fragile.*
+
+### Explicit State File
+
+A JSON file every skill reads and updates:
 
 \`\`\`json
 {
@@ -650,9 +677,19 @@ State tells the workflow where it is: which phases are done, which is in progres
 }
 \`\`\`
 
-Gives you resume (\u201Cyou left off mid-planning\u201D), phase gating (\u201Ccan\u2019t implement without a plan\u201D), and status at a glance. Every skill reads it on entry and updates it on completion.
+Resume (\u201Cyou left off mid-planning\u201D), phase gating (\u201Ccan\u2019t implement without a plan\u201D), status at a glance. *Reliable.* This is what LangGraph\u2019s checkpointers do under the hood.
 
-**Embedded metadata** \u2014 each artifact carries status in its own YAML frontmatter (\`status: complete\`, \`created: 2026-04-10\`). No single state file to corrupt, but getting a workflow overview means reading every artifact. Works well as a supplement alongside a state file, less well as the only mechanism.`;
+### Embedded Metadata
+
+Each artifact carries status in YAML frontmatter (\`status: complete\`, \`created: 2026-04-10\`). No single state file to corrupt, but getting a workflow overview means reading every artifact. Supplements the approaches above. *Supplementary.*
+
+### MCP-Backed
+
+A local MCP server (e.g., SQLite-backed) that skills query and update via tool calls. Transactional, queryable, survives crashed sessions. The MCP spec\u2019s experimental Tasks primitive provides built-in lifecycle states (\`working\`, \`completed\`, \`failed\`). More setup, but if you\u2019re already using MCP for artifact storage, extending it to state tracking is natural. *Robust, more setup.*
+
+---
+
+What happens when the knowledge inside these artifacts is wrong \u2014 or when the right knowledge never makes it in?`;
 
 
 // --- SECTION 4: Knowledge Flow ---
@@ -660,50 +697,90 @@ sections[3].content = `# How Knowledge Flows Between Phases
 
 ---
 
-You know where artifacts live and how skills find them. Now: what goes IN those files \u2014 and what happens when the wrong things get lost?
-
-Each phase doesn\u2019t just produce a document. It generates several distinct types of knowledge, and each one matters differently downstream.
+That\u2019s the question. Each phase doesn\u2019t just produce a document \u2014 it generates distinct types of knowledge, and each type has different consequences when it disappears.
 
 ---
 
 ## Types of Knowledge
 
-| Type | Example | Generated \u2192 Used |
+| Type | Example | Why it matters |
 |---|---|---|
-| **Decisions** | \u201CUse OAuth2 + PKCE, no session tokens\u201D | Made in discovery or research \u2192 implementation follows them, review checks they were followed |
-| **Context** | \u201CExisting auth uses custom JWT middleware in \`src/lib/auth\`\u201D | Gathered in discovery/research \u2192 planning designs around it, implementation knows where to put code |
-| **Constraints** | \u201CCompliance requires all PII encrypted at rest\u201D | Surfaced by the user in discovery, or discovered technically in research \u2192 planning and implementation must respect them |
-| **Assumptions** | \u201CAssuming Postgres is the only datastore\u201D | Made implicitly in any phase \u2192 must be validated in research/refinement, or they become bugs in implementation |
-| **Open questions** | \u201CRate limiting strategy TBD\u201D | Raised in any phase \u2192 must be resolved before the phase that depends on them. If untracked, they get forgotten |
-| **Rationale** | \u201CChose next-auth v5 for native PKCE support\u201D | Accompanies decisions in discovery/research \u2192 review checks whether the reasoning still holds, not just the choice |
+| **Decisions** | \u201CUse OAuth2 + PKCE, no session tokens\u201D | Implementation must follow them. Review must verify they were followed |
+| **Context** | \u201CExisting auth uses custom JWT middleware in \`src/lib/auth\`\u201D | Planning designs around it. Implementation knows where to put code |
+| **Constraints** | \u201CCompliance requires all PII encrypted at rest\u201D | Non-negotiable \u2014 planning and implementation must respect them |
+| **Assumptions** | \u201CAssuming Postgres is the only datastore\u201D | Must be validated before dependent phases, or they become bugs |
+| **Open questions** | \u201CRate limiting strategy TBD\u201D | Must be resolved before the phase that depends on them. Untracked, they will be forgotten |
+| **Rationale** | \u201CChose next-auth v5 for native PKCE support\u201D | Review checks whether the reasoning still holds, not just the choice |
 
-If you only pass prose summaries between phases, decisions get buried in paragraphs. Assumptions stay implicit. Open questions get mentioned once and forgotten 50k tokens later. The agent doesn\u2019t lose knowledge because it\u2019s dumb \u2014 it loses knowledge because nobody designed a way to keep it.
+Each type flows differently. Decisions made in discovery travel forward \u2014 implementation follows them, review checks them. Assumptions made implicitly in any phase travel sideways \u2014 they must be validated in research or refinement before they reach implementation. Open questions block forward progress \u2014 if untracked, the phase that needed the answer guesses instead.
 
-That \`knowledge.json\` from the previous section exists for exactly this reason. Prose alone can\u2019t reliably carry decisions, assumptions, and open questions across phase boundaries. The structured layer is how knowledge survives.
+> The agent doesn\u2019t lose knowledge because it\u2019s dumb \u2014 it loses knowledge because nobody designed a way to keep it.
+
+This is why prose alone isn\u2019t enough. Decisions get buried in paragraphs. Assumptions stay implicit. Open questions get mentioned once and are forgotten 50,000 tokens later. You need a structured layer alongside your prose artifacts \u2014 something every phase can query:
+
+\`\`\`json
+// knowledge.json \u2014 grows across phases
+{
+  "decisions": [
+    { "phase": "discovery", "topic": "auth",
+      "decision": "OAuth2 + PKCE, no session tokens",
+      "rationale": "compliance requirement from legal",
+      "source": "user-requirement" }
+  ],
+  "assumptions": [
+    { "assumption": "Postgres is the only datastore",
+      "madeIn": "discovery", "status": "confirmed",
+      "confirmedIn": "research" }
+  ],
+  "openQuestions": [
+    { "question": "Rate limiting strategy?",
+      "raisedIn": "refinement", "status": "unresolved",
+      "blocksPhase": "implementation" }
+  ]
+}
+\`\`\`
+
+Notice the \`source\` field on decisions. Tracking where knowledge came from \u2014 user requirement, research finding, or agent recommendation the user confirmed \u2014 matters downstream. A user requirement carries more weight than an agent suggestion. When plans change, you need to know what\u2019s load-bearing and what\u2019s negotiable. This is **provenance**, and it\u2019s the difference between confidently changing a decision and accidentally overriding a compliance requirement.
 
 ---
 
 ## What Goes Wrong in Practice
 
-The most common failure mode is implicit assumptions. A discovery conversation reveals the user wants PostgreSQL. This gets mentioned in passing in the discovery summary. Research doesn\u2019t surface it as a constraint. Planning doesn\u2019t check it. Implementation uses SQLite because the agent never saw a firm decision \u2014 just a mention buried in a paragraph.
+The most common failure mode is **knowledge decay** \u2014 knowledge that was generated but wasn\u2019t structured to survive.
 
-The knowledge was generated. It just wasn\u2019t designed to survive.
+A discovery conversation reveals the user wants PostgreSQL. This gets mentioned in passing in the discovery summary. Research doesn\u2019t surface it as a constraint. Planning doesn\u2019t check it. Implementation uses SQLite because the agent never saw a firm decision \u2014 just a mention buried in a paragraph.
+
+Now consider what happens next. Implementation builds SQLite migrations, writes repository patterns around SQLite\u2019s type system, structures tests accordingly. Review checks the implementation against the plan \u2014 which also doesn\u2019t mention PostgreSQL \u2014 and passes it. Four phases built on a wrong foundation. This is **error propagation**: a single piece of lost knowledge compounds through every downstream phase, and the later you catch it, the more expensive the fix. If each step in a pipeline is 95% reliable, a ten-step pipeline is only about 60% reliable.
+
+This is why refinement and review exist as explicit phases. Refinement catches knowledge decay *before* planning builds on it. Review catches implementation drift *after*. Without both, errors propagate silently.
 
 ---
 
 ## How Much Each Phase Reads
 
-Even with well-structured artifacts, there\u2019s a question of how much context each phase should load. The agent\u2019s context window is finite \u2014 what you load shapes what it pays attention to and what it misses.
+Even with well-structured artifacts, you\u2019re making a tradeoff every time a phase loads context. The agent\u2019s context window is finite \u2014 and it\u2019s not just about capacity. Research shows LLMs attend less to information in the middle of long contexts (Liu et al., \u201CLost in the Middle,\u201D Stanford 2023). What you load shapes what the agent pays attention to and what it silently ignores.
 
-| Strategy | What the phase reads | When it works | When it breaks |
+| Strategy | What the phase reads | Strength | Risk |
 |---|---|---|---|
-| **Minimal** | Only the previous phase\u2019s output | Short workflows, simple features | Telephone problem \u2014 original intent mutates through 4 rounds of paraphrasing |
-| **Cumulative** | Every artifact from every prior phase | Complex features where details matter | Agent drowns. Burns tokens on content it doesn\u2019t need for this specific phase |
-| **Spec-anchored** | Direct input from previous phase + the original spec. Everything else available on disk | Most workflows | Requires the skill to explicitly reference where extra context lives |
+| **Minimal** | Only the previous phase\u2019s output | Focused, fast | **Intent drift** \u2014 original intent mutates through rounds of paraphrasing |
+| **Cumulative** | Every artifact from every prior phase | Complete picture | **Attention dilution** \u2014 agent drowns in content, mid-context information gets ignored |
+| **Spec-anchored** | Original spec + direct input from previous phase. Everything else on disk if needed | Aligned to user intent | Requires the skill to explicitly reference where extra context lives |
 
-The spec-anchored approach works best in most cases. The original spec acts as an anchor \u2014 it keeps every phase aligned to what the user actually asked for, even after multiple rounds of research and refinement. Without that anchor, intent drifts.
+We recommend spec-anchored for most cases. The original spec keeps every phase aligned to what the user actually asked for, even after multiple rounds of research and refinement. Without that anchor, intent drifts. This aligns with Anthropic\u2019s guidance on building effective agents: keep a ground truth document that every step references.
 
-You can also mix strategies per phase. Research might load minimally (just the discovery summary). Planning might load cumulatively (spec + research + refinement). Implementation might be spec-anchored (plan + original spec). Each phase has different needs \u2014 the right strategy depends on what that phase does.`;
+But the real insight is that **different phases should use different strategies.** Research loads minimally \u2014 just the discovery summary, because it needs focus, not breadth. Planning loads more \u2014 spec plus research plus refinement, because it needs the full picture. Implementation is spec-anchored \u2014 plan plus original spec, so it doesn\u2019t drift from either. The right strategy depends on what the phase does, not a one-size-fits-all rule.
+
+Cumulative loading on a complex feature can burn 100K+ tokens per phase \u2014 that\u2019s real cost and real latency. Choose deliberately.
+
+---
+
+## Putting It Together
+
+Here\u2019s what the persistence + knowledge flow actually looks like in practice \u2014 three phases, concrete data, showing exactly what gets read, written, and carried forward:
+
+<img src="assets/artifact-flow.png" alt="Persistence and Knowledge Flow in Practice" style="max-width: 100%; border-radius: 8px;" />
+
+The pattern repeats for Plan, Implement, and Review. Each phase reads what it needs from knowledge.json, does its work, writes its artifact, and updates shared state. When something breaks \u2014 gaps found, drift detected \u2014 the loop-back updates the same files.`;
 
 
 // --- SECTION 5: Orchestration ---
@@ -711,31 +788,17 @@ sections[4].content = `# Orchestration
 
 ---
 
-You know what\u2019s stored and how knowledge flows between phases. Now: how does someone actually use this \u2014 and how does the system handle the messy reality of real workflows?
-
----
-
-## Mode Detection
-
-The same workflow behaves very differently on a greenfield project vs. an existing codebase:
-
-| | Greenfield | Existing codebase |
-|---|---|---|
-| **Discovery** | Deep interview \u2014 stack, architecture, conventions from scratch | Scan the project first, then ask targeted questions based on what\u2019s there |
-| **Research** | Best practices and reference architectures for the chosen stack | Explore existing patterns, find conventions already in use |
-| **Planning** | Architect from a blank slate | Design within existing constraints and patterns |
-
-Detection is straightforward: the user tells you explicitly, you store a flag in state, or you auto-detect. A simple heuristic \u2014 check file count, look for package.json or go.mod, see if there\u2019s meaningful code beyond boilerplate \u2014 works surprisingly well in practice.
+You know what\u2019s stored and how knowledge flows. Now: how does someone actually *use* this?
 
 ---
 
 ## How Phases Connect
 
-Three patterns for invoking the workflow:
+Four patterns for wiring phases into a workflow:
 
 ### Single orchestrator
 
-One command \u2014 \`/my-sdlc\` \u2014 that reads state, figures out which phase to run next, and runs it. Handles ordering, resume, mode detection.
+One command that manages the whole flow \u2014 reads state, figures out what\u2019s next, runs it.
 
 \`\`\`
 /my-sdlc          \u2192  reads state, runs next phase
@@ -743,34 +806,52 @@ One command \u2014 \`/my-sdlc\` \u2014 that reads state, figures out which phase
 /my-sdlc resume   \u2192  picks up where you left off
 \`\`\`
 
-Most natural for end-to-end workflows. The tradeoff: less flexibility for the user to jump around or skip phases.
+Most natural for end-to-end workflows. You\u2019d think this is simpler than managing separate commands \u2014 but the orchestrator must handle every edge case (skipping phases, re-runs, mode detection), which makes it the hardest pattern to build well.
 
 ### Manual per-phase
 
-Each phase is its own slash command \u2014 \`/discover\`, \`/research\`, \`/plan\`, \`/implement\`. The user calls them in whatever order makes sense. Each skill checks its own prerequisites: \u201Cis there a discovery artifact? If not, run /discover first.\u201D
+Each phase is its own command. The user calls them in whatever order makes sense.
 
-More control. The tradeoff: no central coordination, more cognitive load on the user.
+\`\`\`
+/discover \u2192 /research \u2192 /refine \u2192 /plan \u2192 /implement \u2192 /review
+\`\`\`
+
+Each skill checks its own prerequisites: \u201Cis there a discovery artifact? If not, run /discover first.\u201D More control, less hand-holding. The tradeoff: more cognitive load on the user, no central coordination.
 
 ### Hybrid
 
-An orchestrator with escape hatches. \`/my-sdlc next\` follows the standard flow. \`/my-sdlc plan\` jumps straight to a specific phase. Guided when you want it, direct access when you don\u2019t.
+An orchestrator with escape hatches. Guided when you want it, direct access when you don\u2019t.
+
+\`\`\`
+/my-sdlc next     \u2192  follows the standard flow
+/my-sdlc plan     \u2192  jumps straight to planning
+/my-sdlc status   \u2192  shows where you are
+\`\`\`
+
+This is often the right balance. The orchestrator handles the happy path and resume logic. Direct phase access lets users skip, re-run, or jump to what they need. Coordination without rigidity.
+
+### State machine
+
+Phases are states. Transitions are conditional: \u201Cif research found blockers, route to refinement; if clean, skip to planning.\u201D The orchestrator evaluates conditions at each boundary and routes accordingly.
+
+This is how LangGraph \u2014 the most widely adopted agent orchestration framework \u2014 models workflows. More powerful than a linear pipeline because it encodes decision logic into the flow itself, but requires defining transition conditions up front. Andrew Ng\u2019s taxonomy of agentic design patterns (2024) calls this the \u201Cplanning\u201D pattern \u2014 the agent decides its own next step based on state.
 
 ---
 
 ## Human Checkpoints
 
-Some phases should pause for the user; others should run autonomously. This is an orchestration decision.
+Some phases should pause for the user; others should run autonomously. The deciding factor is **cost of error** \u2014 phases where a wrong call cascades expensively should be interactive; phases where the downside is wasted tokens can run on their own.
 
-| Phase | Typically... |
-|---|---|
-| **Discovery** | Interactive \u2014 the agent interviews the user |
-| **Research** | Autonomous \u2014 agent investigates, presents findings |
-| **Refinement** | Checkpoint \u2014 \u201Chere\u2019s what research found, here\u2019s how it changes the ask \u2014 do you agree?\u201D |
-| **Planning** | Mixed \u2014 might present options for the user to choose between |
-| **Implementation** | Varies \u2014 hands-off, or pause after each major component |
-| **Review** | Report \u2014 agent presents findings, user decides what to act on |
+| Phase | Pattern | Why this default |
+|---|---|---|
+| **Discovery** | Interactive \u2014 agent interviews the user | Wrong requirements cascade through every downstream phase |
+| **Research** | Autonomous \u2014 agent investigates, presents findings | Worst case is wasted effort, not wrong decisions |
+| **Refinement** | Checkpoint \u2014 \u201Chere\u2019s what changed, do you agree?\u201D | User must validate before planning builds on assumptions |
+| **Planning** | Mixed \u2014 agent presents options, user chooses | Architectural decisions are hard to reverse in implementation |
+| **Implementation** | Configurable \u2014 hands-off or pause per component | Depends on trust in the plan and team preference |
+| **Review** | Report \u2014 agent presents findings, user acts on them | User decides what to fix, what to accept, what to defer |
 
-You decide where the agent stops and asks vs. where it proceeds. The orchestrator enforces it.
+Note what review can and can\u2019t catch. Review verifies implementation against the spec \u2014 it catches drift, missed requirements, quality issues. But it can\u2019t catch a bad spec. If discovery captured the wrong requirement, review will confirm the wrong thing was built correctly.
 
 ---
 
@@ -779,7 +860,7 @@ You decide where the agent stops and asks vs. where it proceeds. The orchestrato
 Real workflows aren\u2019t pipelines \u2014 they loop.
 
 <div class="svg-diagram">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 120" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 830 140" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
   <defs>
     <marker id="af" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#d97757"/></marker>
     <marker id="ab" markerWidth="8" markerHeight="8" refX="0" refY="4" orient="auto"><path d="M 8 0 L 0 4 L 8 8 z" fill="#ef4444"/></marker>
@@ -789,26 +870,42 @@ Real workflows aren\u2019t pipelines \u2014 they loop.
   <rect x="290" y="35" width="110" height="45" rx="8" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/><text x="345" y="63" text-anchor="middle" font-size="12" font-weight="bold" fill="#a16207">Refine</text>
   <rect x="430" y="35" width="110" height="45" rx="8" fill="#fce7f3" stroke="#db2777" stroke-width="2"/><text x="485" y="63" text-anchor="middle" font-size="12" font-weight="bold" fill="#be185d">Plan</text>
   <rect x="570" y="35" width="110" height="45" rx="8" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/><text x="625" y="63" text-anchor="middle" font-size="12" font-weight="bold" fill="#7e22ce">Implement</text>
+  <rect x="710" y="35" width="110" height="45" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="765" y="63" text-anchor="middle" font-size="12" font-weight="bold" fill="#b45309">Review</text>
   <line x1="122" y1="57" x2="146" y2="57" stroke="#d97757" stroke-width="2" marker-end="url(#af)"/>
   <line x1="262" y1="57" x2="286" y2="57" stroke="#d97757" stroke-width="2" marker-end="url(#af)"/>
   <line x1="402" y1="57" x2="426" y2="57" stroke="#d97757" stroke-width="2" marker-end="url(#af)"/>
   <line x1="542" y1="57" x2="566" y2="57" stroke="#d97757" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="682" y1="57" x2="706" y2="57" stroke="#d97757" stroke-width="2" marker-end="url(#af)"/>
   <path d="M 340 35 Q 340 12 265 12 Q 210 12 210 33" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ab)"/>
-  <path d="M 620 80 Q 620 105 490 105 Q 440 105 440 82" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ab)"/>
+  <path d="M 620 80 Q 620 108 548 108 Q 490 108 490 82" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ab)"/>
+  <path d="M 760 80 Q 760 128 690 128 Q 630 128 630 82" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ab)"/>
   <text x="275" y="9" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="600">gaps found</text>
-  <text x="530" y="115" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="600">plan doesn\u2019t hold</text>
+  <text x="555" y="121" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="600">plan doesn\u2019t hold</text>
+  <text x="695" y="140" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="600">spec mismatch</text>
 </svg>
 </div>
 
 - Refinement reveals research missed something \u2192 re-run research with a narrower scope
 - Implementation hits a constraint the plan didn\u2019t anticipate \u2192 update the plan, or re-run planning
-- Review finds the implementation doesn\u2019t match the spec \u2192 loop back
+- Review finds the implementation doesn\u2019t match the spec \u2192 loop back to implementation or planning
 
-This means your workflow needs **re-run safety**. Every phase must handle \u201Cthis artifact already exists\u201D gracefully:
+**Who decides when to loop?** Three options, and most workflows use a mix:
+
+- **Agent-driven**: the phase itself detects the problem and triggers a re-run. Works for clear signals (tests fail, linter errors). Breaks on judgment calls.
+- **User-driven**: the phase surfaces findings and the user decides. Safer, but adds latency and interruption.
+- **Criteria-based**: define conditions up front. \u201CIf research surfaces more than 3 unresolved blockers, route to refinement before planning.\u201D Deterministic, but you need to anticipate the conditions.
+
+This means every phase needs **re-run safety** \u2014 it will be run more than once:
 
 - Don\u2019t silently overwrite \u2014 you lose the previous version and can\u2019t compare what changed
 - Acknowledge what was there, record what\u2019s different and why
-- Append a changelog entry, or version the artifact (rename the old one before writing the new)
+- Append a changelog entry, or version the artifact
+
+---
+
+## Adapting to Context
+
+Your phases should detect whether they\u2019re working with an existing codebase or starting fresh, and adapt. Discovery scans the project first for existing code and asks informed questions; for greenfield, it goes deeper on stack and architecture decisions. Research explores existing patterns vs. researching best practices. A simple heuristic \u2014 check file count, look for package.json, see if there\u2019s meaningful code \u2014 works in practice. Store the result in state so every phase knows the mode.
 
 ---
 
@@ -816,18 +913,18 @@ This means your workflow needs **re-run safety**. Every phase must handle \u201C
 
 Everything from last session has a role here:
 
-| Concept | How it\u2019s used |
+| Concept | Role in the workflow |
 |---|---|
-| **Skills** | Each phase becomes a SKILL.md with instructions for what the agent does, what it reads, and what it writes. The orchestrator is also a skill |
-| **Subagents** | Research can spawn parallel investigators \u2014 one for security, one for existing patterns, one for library evaluation \u2014 each in its own clean context. Review benefits from a fresh-context agent that only sees the spec and the code, without the build history coloring its judgment |
-| **Hooks** | Deterministic guardrails around the workflow. A PreToolUse hook that blocks file writes if no plan artifact exists yet. A PostToolUse hook that runs the linter after every implementation edit. A Stop hook that reminds the agent to update state before ending |
-| **Plugins** | The finished package. Phase skills, agent definitions, hooks, and a plugin.json manifest \u2014 all bundled into a directory you can install once and use on every project |
+| **Skills** | Each phase becomes a SKILL.md with instructions for what the agent does, reads, and writes. The orchestrator is also a skill |
+| **Subagents** | Research spawns parallel investigators (security, patterns, libraries) each in clean context. Review benefits from a fresh-context agent that sees only the spec and code |
+| **Hooks** | Deterministic guardrails. PreToolUse blocks file writes without a plan. PostToolUse runs the linter after edits. Stop reminds the agent to update state |
+| **Plugins** | The finished package \u2014 phase skills, agents, hooks, and plugin.json bundled into a shareable directory |
 
 ---
 
 ## Now You Build Yours
 
-Invoke \`/sdlc-coach\` \u2014 it walks you through designing every decision we just covered. Persistence, state, routing, knowledge flow, orchestration, phase logic. Your answers shape your plugin.
+Invoke \`/sdlc-coach\` \u2014 it walks you through designing every decision we just covered. Persistence, state, knowledge flow, orchestration, phase logic. Your answers shape your plugin.
 
 There is no single right architecture. Type \`hint\` if you get stuck. \`/sdlc-coach resume\` to pick up where you left off.
 
