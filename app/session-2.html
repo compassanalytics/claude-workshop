@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Workshop — Agentic SDLC Workflows</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  :root {
+    --bg: #fafaf8;
+    --sidebar-bg: #1a1a2e;
+    --sidebar-text: #c8c8d8;
+    --sidebar-active: #ffffff;
+    --accent: #d97757;
+    --accent-light: #f0c4b0;
+    --text: #2d2d2d;
+    --text-muted: #6b6b7b;
+    --code-bg: #1e1e2e;
+    --code-text: #cdd6f4;
+    --border: #e0ddd8;
+    --blockquote-bg: #f5f3ef;
+    --table-stripe: #f7f6f3;
+    --sidebar-width: 280px;
+    --progress-height: 3px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  #progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: var(--progress-height);
+    background: var(--accent);
+    z-index: 1000;
+    transition: width 0.3s ease;
+  }
+
+  #sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+  }
+
+  #sidebar-header {
+    padding: 28px 22px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }
+
+  #sidebar-header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+
+  #sidebar-header .subtitle {
+    font-size: 12.5px;
+    color: var(--accent-light);
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .session-switcher {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .session-link {
+    font-size: 11.5px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    background: rgba(255,255,255,0.06);
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .session-link:hover {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+  }
+
+  .session-link.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  #nav-list {
+    list-style: none;
+    padding: 12px 0;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px 22px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s ease;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,255,255,0.04);
+    border-left-color: rgba(217, 119, 87, 0.4);
+  }
+
+  .nav-item.active {
+    background: rgba(217, 119, 87, 0.1);
+    border-left-color: var(--accent);
+  }
+
+  .nav-item.active .nav-title { color: #ffffff; }
+
+  .nav-number {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(217, 119, 87, 0.15);
+    border-radius: 4px;
+    min-width: 24px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .nav-info { flex: 1; min-width: 0; }
+
+  .nav-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sidebar-text);
+    line-height: 1.3;
+    display: block;
+    transition: color 0.15s;
+  }
+
+  .nav-meta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 2px;
+  }
+
+  .nav-duration {
+    font-size: 11px;
+    color: rgba(200, 200, 216, 0.5);
+  }
+
+  .nav-author {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .nav-author.julien {
+    background: rgba(217, 119, 87, 0.2);
+    color: var(--accent-light);
+  }
+
+  .nav-author.richard {
+    background: rgba(100, 160, 220, 0.2);
+    color: #9cc5e8;
+  }
+
+  #sidebar-footer {
+    padding: 16px 22px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 12px;
+    color: rgba(200, 200, 216, 0.5);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #sidebar-footer .total-icon { font-size: 14px; }
+
+  #main {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    padding-top: var(--progress-height);
+  }
+
+  #content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  #content h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  #content h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 48px;
+    margin-bottom: 16px;
+    letter-spacing: -0.3px;
+  }
+
+  #content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 32px;
+    margin-bottom: 12px;
+  }
+
+  #content h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: 24px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  #content p { margin-bottom: 16px; font-size: 15.5px; }
+
+  #content a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(217, 119, 87, 0.3);
+    transition: border-color 0.15s;
+  }
+  #content a:hover { border-bottom-color: var(--accent); }
+  #content strong { font-weight: 650; }
+  #content em { font-style: italic; }
+
+  #content ul, #content ol { margin-bottom: 16px; padding-left: 24px; }
+  #content li { margin-bottom: 6px; font-size: 15.5px; }
+  #content li::marker { color: var(--accent); }
+
+  #content hr { border: none; height: 1px; background: var(--border); margin: 40px 0; }
+
+  #content blockquote {
+    border-left: 4px solid var(--accent);
+    background: var(--blockquote-bg);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 15px;
+  }
+  #content blockquote p { margin-bottom: 8px; }
+  #content blockquote p:last-child { margin-bottom: 0; }
+
+  #content code {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+    font-size: 13.5px;
+  }
+
+  #content :not(pre) > code {
+    background: rgba(30, 30, 46, 0.08);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #c7254e;
+  }
+
+  #content pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 20px 24px;
+    border-radius: 10px;
+    overflow-x: auto;
+    margin: 20px 0;
+    line-height: 1.55;
+    position: relative;
+    white-space: pre;
+    word-wrap: normal;
+  }
+
+  #content pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    color: inherit;
+    font-size: 13.5px;
+  }
+
+  #content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14.5px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  #content thead { background: #f0ede8; }
+
+  #content th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 650;
+    font-size: 13.5px;
+    color: var(--text);
+    border-bottom: 2px solid var(--border);
+  }
+
+  #content td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  #content tbody tr:nth-child(even) { background: var(--table-stripe); }
+  #content tbody tr:hover { background: rgba(217, 119, 87, 0.04); }
+
+  .svg-diagram { margin: 24px 0; text-align: center; }
+  .svg-diagram svg { max-width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--border); }
+
+  .section-image {
+    display: block;
+    max-width: 100%;
+    margin: 24px auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .section-image.small { max-width: 400px; }
+  .section-image.medium { max-width: 600px; }
+
+  #hamburger {
+    display: none;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 200;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: var(--sidebar-bg);
+    border: none;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  #hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #fff;
+    border-radius: 1px;
+    transition: all 0.2s ease;
+  }
+
+  #overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 90;
+  }
+
+  .keyboard-hint {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    opacity: 0.6;
+    z-index: 50;
+    pointer-events: none;
+  }
+
+  .keyboard-hint kbd {
+    background: rgba(255,255,255,0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 11px;
+    margin: 0 2px;
+  }
+
+  @media (max-width: 768px) {
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0; }
+    #content { padding: 60px 20px 80px; }
+    #hamburger { display: flex; }
+    #overlay.open { display: block; }
+    .keyboard-hint { display: none; }
+  }
+
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  #nav-list::-webkit-scrollbar { width: 4px; }
+  #nav-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<button id="hamburger" onclick="toggleSidebar()" aria-label="Toggle navigation">
+  <span></span><span></span><span></span>
+</button>
+<div id="overlay" onclick="toggleSidebar()"></div>
+
+<nav id="sidebar">
+  <div id="sidebar-header">
+    <h1>Claude Code Workshop</h1>
+    <div class="subtitle">Session 2: Agentic SDLC Workflows</div>
+    <div class="session-switcher">
+      <a href="session-1.html" class="session-link">Session 1</a>
+      <a href="session-2.html" class="session-link active">Session 2</a>
+    </div>  </div>
+  <ul id="nav-list"></ul>
+  <div id="sidebar-footer">
+    <span class="total-icon">&#9202;</span>
+    <span>~15 min presentation + hands-on</span>
+  </div>
+</nav>
+
+<main id="main">
+  <div id="content"></div>
+</main>
+
+<div class="keyboard-hint">
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navigate sections
+</div>
+
+<script>
+const sections = [
+  {
+    id: "part-1",
+    number: "1",
+    title: "Introduction",
+    duration: "",
+    author: "julien",
+    content: null
+  },
+  {
+    id: "part-2",
+    number: "2",
+    title: "Designing Workflows",
+    duration: "",
+    author: "richard",
+    content: null
+  },
+  {
+    id: "part-3",
+    number: "3",
+    title: "Persistence & State",
+    duration: "",
+    author: "richard",
+    content: null
+  },
+  {
+    id: "part-4",
+    number: "4",
+    title: "Knowledge Flow",
+    duration: "",
+    author: "richard",
+    content: null
+  },
+  {
+    id: "part-5",
+    number: "5",
+    title: "Orchestration",
+    duration: "",
+    author: "richard",
+    content: null
+  }
+];
+
+
+// --- SECTION 1: Introduction (Julien) ---
+sections[0].content = `# Introduction
+
+---
+
+*Section to be completed.*`;
+
+
+// --- SECTION 2: Designing Workflows (Richard) ---
+sections[1].content = `# Designing Workflows That Work
+
+---
+
+Three things determine whether a phased workflow holds together or falls apart:
+
+**Persistence & state** \u2014 where artifacts live on disk, how phases find each other\u2019s output, how you resume after closing a session. Get this wrong and the chain is broken before it starts.
+
+**Knowledge flow** \u2014 what survives between phases and what gets lost. Phases generate six distinct types of knowledge. Most of them die at phase boundaries unless you design otherwise.
+
+**Orchestration** \u2014 how the user invokes the workflow, where humans stay in the loop, how the system handles loops and re-runs. Without this, you have individual skills that don\u2019t feel like a workflow.
+
+These are the design decisions you\u2019ll make in the hands-on. No right answers \u2014 just tradeoffs. We\u2019ll walk through each one, then you build yours.`;
+
+
+// --- SECTION 3: Persistence & State ---
+sections[2].content = `# Persistence & State
+
+---
+
+What does a workflow actually look like on disk?
+
+Every phase produces an artifact \u2014 a discovery summary, a research report, a plan, implementation notes, a review. Those artifacts need to live somewhere that every other phase can find, and that survives when you close the session and come back tomorrow. This is the foundation everything else builds on.
+
+---
+
+## Directory Layout
+
+The most common approach is **per-feature directories** \u2014 each feature or task gets its own folder containing all its phase artifacts:
+
+\`\`\`
+.sdlc/features/
+\u251C\u2500\u2500 auth-system/
+\u2502   \u251C\u2500\u2500 discovery.md
+\u2502   \u251C\u2500\u2500 research.md
+\u2502   \u251C\u2500\u2500 plan.md
+\u2502   \u251C\u2500\u2500 knowledge.json
+\u2502   \u2514\u2500\u2500 state.json
+\u2514\u2500\u2500 payment-flow/
+    \u2514\u2500\u2500 discovery.md
+\`\`\`
+
+Multiple features in progress at once. Completed features stay as documentation and history. The agent needs to know which feature directory is active \u2014 either passed as an argument, stored in a root-level state file, or derived from the current working context.
+
+The exact layout is up to you. What matters is that **every skill in your workflow agrees on it.** If discovery writes to one path and research reads from another, the chain is broken.
+
+---
+
+## Artifact Formats
+
+Each phase writes an artifact. The format determines what downstream phases can do with it.
+
+**Prose artifacts** \u2014 markdown files (\`discovery.md\`, \`plan.md\`). Survive sessions. Human-readable \u2014 you can open them in your editor. Natural format for specs and plans. The tradeoff: hard to query programmatically. \u201CWhat did we decide about auth?\u201D means re-reading three pages.
+
+**Structured data** \u2014 JSON or YAML files that track decisions, assumptions, open questions, and constraints as typed fields. Queryable by topic. Tracks status (\u201Cconfirmed\u201D, \u201Cunresolved\u201D). Easy to diff between phases. The tradeoff: verbose for narrative content.
+
+**Git checkpoints** \u2014 a commit or branch at each phase boundary. Full history. Native rollback. The tradeoff: only captures code changes \u2014 no decisions, intent, constraints, or rationale.
+
+**In practice, you combine them.** Prose artifacts for specs and plans that humans read. A structured JSON file for decisions, assumptions, and open questions that the agent queries. Git commits for code checkpoints you can roll back. Each mechanism handles what it\u2019s good at.
+
+\`\`\`json
+// knowledge.json \u2014 grows across phases
+{
+  "decisions": [
+    { "phase": "discovery", "topic": "auth",
+      "decision": "OAuth2 + PKCE, no session tokens",
+      "rationale": "compliance requirement from legal" },
+    { "phase": "research", "topic": "auth",
+      "decision": "Use next-auth v5",
+      "rationale": "native PKCE, actively maintained, team has experience" }
+  ],
+  "assumptions": [
+    { "assumption": "Postgres is the only datastore",
+      "madeIn": "discovery", "status": "confirmed",
+      "confirmedIn": "research" }
+  ],
+  "openQuestions": [
+    { "question": "Rate limiting strategy?",
+      "raisedIn": "refinement", "status": "unresolved",
+      "blocksPhase": "implementation" }
+  ]
+}
+\`\`\`
+
+Now any phase can check \u201Cwhat\u2019s been decided about auth?\u201D without parsing three pages of prose. Assumptions carry their confirmation status. Open questions explicitly block the phases that depend on them.
+
+---
+
+## How Skills Find Each Other\u2019s Output
+
+This is the plumbing that actually breaks in practice. Your research skill needs to read discovery\u2019s output \u2014 how does it know where that file is?
+
+| Approach | How it works | Tradeoff |
+|---|---|---|
+| **Hard-coded paths** | Skill instructions say \u201Cread \`.sdlc/discovery.md\`\u201D | Dead simple. Change the layout and you update every skill |
+| **Naming conventions** | Skills follow a shared rule: artifacts are \`{phase}.md\` in the active feature directory | Flexible. Agent needs to resolve which directory is active \u2014 from state, arguments, or context |
+| **Pointers in state** | State file maps artifact names to paths: \`{ "artifacts": { "discovery": "features/auth/discovery.md" } }\` | Most flexible. Extra indirection \u2014 every skill reads state first |
+| **Shared conventions file** | A single reference doc (loaded by all skills) that documents the directory structure, naming rules, and where each phase reads/writes | Skills stay decoupled from specific paths. One file to update if the layout changes. Common in multi-skill plugins |
+
+Most workflows start with hard-coded paths or a shared conventions file. Evolve to state-based pointers if you need the flexibility.
+
+---
+
+## State Tracking
+
+State tells the workflow where it is: which phases are done, which is in progress, and what comes next. Three real approaches:
+
+**Implicit state** \u2014 the simplest. No state file at all. If \`plan.md\` exists, planning is done. If it doesn\u2019t, it hasn\u2019t run yet. Zero overhead, but you can\u2019t distinguish \u201Cin progress\u201D from \u201Ccomplete\u201D (what if the session died mid-write?), and you can\u2019t enforce ordering without extra checks in each skill.
+
+**Explicit state file** \u2014 the most common. A JSON file that every skill reads and updates:
+
+\`\`\`json
+{
+  "feature": "auth-system",
+  "mode": "existing-codebase",
+  "currentPhase": "planning",
+  "phases": {
+    "discovery": { "status": "complete", "completedAt": "2026-04-10T10:30:00Z" },
+    "research":  { "status": "complete", "completedAt": "2026-04-10T11:00:00Z" },
+    "planning":  { "status": "in-progress", "startedAt": "2026-04-10T11:15:00Z" },
+    "implement": { "status": "not-started" }
+  }
+}
+\`\`\`
+
+Gives you resume (\u201Cyou left off mid-planning\u201D), phase gating (\u201Ccan\u2019t implement without a plan\u201D), and status at a glance. Every skill reads it on entry and updates it on completion.
+
+**Embedded metadata** \u2014 each artifact carries status in its own YAML frontmatter (\`status: complete\`, \`created: 2026-04-10\`). No single state file to corrupt, but getting a workflow overview means reading every artifact. Works well as a supplement alongside a state file, less well as the only mechanism.`;
+
+
+// --- SECTION 4: Knowledge Flow ---
+sections[3].content = `# How Knowledge Flows Between Phases
+
+---
+
+You know where artifacts live and how skills find them. Now: what goes IN those files \u2014 and what happens when the wrong things get lost?
+
+Each phase doesn\u2019t just produce a document. It generates several distinct types of knowledge, and each one matters differently downstream.
+
+---
+
+## Types of Knowledge
+
+| Type | Example | Generated \u2192 Used |
+|---|---|---|
+| **Decisions** | \u201CUse OAuth2 + PKCE, no session tokens\u201D | Made in discovery or research \u2192 implementation follows them, review checks they were followed |
+| **Context** | \u201CExisting auth uses custom JWT middleware in \`src/lib/auth\`\u201D | Gathered in discovery/research \u2192 planning designs around it, implementation knows where to put code |
+| **Constraints** | \u201CCompliance requires all PII encrypted at rest\u201D | Surfaced by the user in discovery, or discovered technically in research \u2192 planning and implementation must respect them |
+| **Assumptions** | \u201CAssuming Postgres is the only datastore\u201D | Made implicitly in any phase \u2192 must be validated in research/refinement, or they become bugs in implementation |
+| **Open questions** | \u201CRate limiting strategy TBD\u201D | Raised in any phase \u2192 must be resolved before the phase that depends on them. If untracked, they get forgotten |
+| **Rationale** | \u201CChose next-auth v5 for native PKCE support\u201D | Accompanies decisions in discovery/research \u2192 review checks whether the reasoning still holds, not just the choice |
+
+If you only pass prose summaries between phases, decisions get buried in paragraphs. Assumptions stay implicit. Open questions get mentioned once and forgotten 50k tokens later. The agent doesn\u2019t lose knowledge because it\u2019s dumb \u2014 it loses knowledge because nobody designed a way to keep it.
+
+That \`knowledge.json\` from the previous section exists for exactly this reason. Prose alone can\u2019t reliably carry decisions, assumptions, and open questions across phase boundaries. The structured layer is how knowledge survives.
+
+---
+
+## What Goes Wrong in Practice
+
+The most common failure mode is implicit assumptions. A discovery conversation reveals the user wants PostgreSQL. This gets mentioned in passing in the discovery summary. Research doesn\u2019t surface it as a constraint. Planning doesn\u2019t check it. Implementation uses SQLite because the agent never saw a firm decision \u2014 just a mention buried in a paragraph.
+
+The knowledge was generated. It just wasn\u2019t designed to survive.
+
+---
+
+## How Much Each Phase Reads
+
+Even with well-structured artifacts, there\u2019s a question of how much context each phase should load. The agent\u2019s context window is finite \u2014 what you load shapes what it pays attention to and what it misses.
+
+| Strategy | What the phase reads | When it works | When it breaks |
+|---|---|---|---|
+| **Minimal** | Only the previous phase\u2019s output | Short workflows, simple features | Telephone problem \u2014 original intent mutates through 4 rounds of paraphrasing |
+| **Cumulative** | Every artifact from every prior phase | Complex features where details matter | Agent drowns. Burns tokens on content it doesn\u2019t need for this specific phase |
+| **Spec-anchored** | Direct input from previous phase + the original spec. Everything else available on disk | Most workflows | Requires the skill to explicitly reference where extra context lives |
+
+The spec-anchored approach works best in most cases. The original spec acts as an anchor \u2014 it keeps every phase aligned to what the user actually asked for, even after multiple rounds of research and refinement. Without that anchor, intent drifts.
+
+You can also mix strategies per phase. Research might load minimally (just the discovery summary). Planning might load cumulatively (spec + research + refinement). Implementation might be spec-anchored (plan + original spec). Each phase has different needs \u2014 the right strategy depends on what that phase does.`;
+
+
+// --- SECTION 5: Orchestration ---
+sections[4].content = `# Orchestration
+
+---
+
+You know what\u2019s stored and how knowledge flows between phases. Now: how does someone actually use this \u2014 and how does the system handle the messy reality of real workflows?
+
+---
+
+## Mode Detection
+
+The same workflow behaves very differently on a greenfield project vs. an existing codebase:
+
+| | Greenfield | Existing codebase |
+|---|---|---|
+| **Discovery** | Deep interview \u2014 stack, architecture, conventions from scratch | Scan the project first, then ask targeted questions based on what\u2019s there |
+| **Research** | Best practices and reference architectures for the chosen stack | Explore existing patterns, find conventions already in use |
+| **Planning** | Architect from a blank slate | Design within existing constraints and patterns |
+
+Detection is straightforward: the user tells you explicitly, you store a flag in state, or you auto-detect. A simple heuristic \u2014 check file count, look for package.json or go.mod, see if there\u2019s meaningful code beyond boilerplate \u2014 works surprisingly well in practice.
+
+---
+
+## How Phases Connect
+
+Three patterns for invoking the workflow:
+
+### Single orchestrator
+
+One command \u2014 \`/my-sdlc\` \u2014 that reads state, figures out which phase to run next, and runs it. Handles ordering, resume, mode detection.
+
+\`\`\`
+/my-sdlc          \u2192  reads state, runs next phase
+/my-sdlc status   \u2192  shows progress and current phase
+/my-sdlc resume   \u2192  picks up where you left off
+\`\`\`
+
+Most natural for end-to-end workflows. The tradeoff: less flexibility for the user to jump around or skip phases.
+
+### Manual per-phase
+
+Each phase is its own slash command \u2014 \`/discover\`, \`/research\`, \`/plan\`, \`/implement\`. The user calls them in whatever order makes sense. Each skill checks its own prerequisites: \u201Cis there a discovery artifact? If not, run /discover first.\u201D
+
+More control. The tradeoff: no central coordination, more cognitive load on the user.
+
+### Hybrid
+
+An orchestrator with escape hatches. \`/my-sdlc next\` follows the standard flow. \`/my-sdlc plan\` jumps straight to a specific phase. Guided when you want it, direct access when you don\u2019t.
+
+---
+
+## Human Checkpoints
+
+Some phases should pause for the user; others should run autonomously. This is an orchestration decision.
+
+| Phase | Typically... |
+|---|---|
+| **Discovery** | Interactive \u2014 the agent interviews the user |
+| **Research** | Autonomous \u2014 agent investigates, presents findings |
+| **Refinement** | Checkpoint \u2014 \u201Chere\u2019s what research found, here\u2019s how it changes the ask \u2014 do you agree?\u201D |
+| **Planning** | Mixed \u2014 might present options for the user to choose between |
+| **Implementation** | Varies \u2014 hands-off, or pause after each major component |
+| **Review** | Report \u2014 agent presents findings, user decides what to act on |
+
+You decide where the agent stops and asks vs. where it proceeds. The orchestrator enforces it.
+
+---
+
+## Non-Linear Flow
+
+Real workflows aren\u2019t pipelines \u2014 they loop.
+
+<div class="svg-diagram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 120" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
+  <defs>
+    <marker id="af" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M 0 0 L 8 4 L 0 8 z" fill="#d97757"/></marker>
+    <marker id="ab" markerWidth="8" markerHeight="8" refX="0" refY="4" orient="auto"><path d="M 8 0 L 0 4 L 8 8 z" fill="#ef4444"/></marker>
+  </defs>
+  <rect x="10" y="35" width="110" height="45" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/><text x="65" y="63" text-anchor="middle" font-size="12" font-weight="bold" fill="#0369a1">Discover</text>
+  <rect x="150" y="35" width="110" height="45" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="205" y="63" text-anchor="middle" font-size="12" font-weight="bold" fill="#15803d">Research</text>
+  <rect x="290" y="35" width="110" height="45" rx="8" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/><text x="345" y="63" text-anchor="middle" font-size="12" font-weight="bold" fill="#a16207">Refine</text>
+  <rect x="430" y="35" width="110" height="45" rx="8" fill="#fce7f3" stroke="#db2777" stroke-width="2"/><text x="485" y="63" text-anchor="middle" font-size="12" font-weight="bold" fill="#be185d">Plan</text>
+  <rect x="570" y="35" width="110" height="45" rx="8" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/><text x="625" y="63" text-anchor="middle" font-size="12" font-weight="bold" fill="#7e22ce">Implement</text>
+  <line x1="122" y1="57" x2="146" y2="57" stroke="#d97757" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="262" y1="57" x2="286" y2="57" stroke="#d97757" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="402" y1="57" x2="426" y2="57" stroke="#d97757" stroke-width="2" marker-end="url(#af)"/>
+  <line x1="542" y1="57" x2="566" y2="57" stroke="#d97757" stroke-width="2" marker-end="url(#af)"/>
+  <path d="M 340 35 Q 340 12 265 12 Q 210 12 210 33" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ab)"/>
+  <path d="M 620 80 Q 620 105 490 105 Q 440 105 440 82" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ab)"/>
+  <text x="275" y="9" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="600">gaps found</text>
+  <text x="530" y="115" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="600">plan doesn\u2019t hold</text>
+</svg>
+</div>
+
+- Refinement reveals research missed something \u2192 re-run research with a narrower scope
+- Implementation hits a constraint the plan didn\u2019t anticipate \u2192 update the plan, or re-run planning
+- Review finds the implementation doesn\u2019t match the spec \u2192 loop back
+
+This means your workflow needs **re-run safety**. Every phase must handle \u201Cthis artifact already exists\u201D gracefully:
+
+- Don\u2019t silently overwrite \u2014 you lose the previous version and can\u2019t compare what changed
+- Acknowledge what was there, record what\u2019s different and why
+- Append a changelog entry, or version the artifact (rename the old one before writing the new)
+
+---
+
+## Where Session 1 Concepts Fit
+
+Everything from last session has a role here:
+
+| Concept | How it\u2019s used |
+|---|---|
+| **Skills** | Each phase becomes a SKILL.md with instructions for what the agent does, what it reads, and what it writes. The orchestrator is also a skill |
+| **Subagents** | Research can spawn parallel investigators \u2014 one for security, one for existing patterns, one for library evaluation \u2014 each in its own clean context. Review benefits from a fresh-context agent that only sees the spec and the code, without the build history coloring its judgment |
+| **Hooks** | Deterministic guardrails around the workflow. A PreToolUse hook that blocks file writes if no plan artifact exists yet. A PostToolUse hook that runs the linter after every implementation edit. A Stop hook that reminds the agent to update state before ending |
+| **Plugins** | The finished package. Phase skills, agent definitions, hooks, and a plugin.json manifest \u2014 all bundled into a directory you can install once and use on every project |
+
+---
+
+## Now You Build Yours
+
+Invoke \`/sdlc-coach\` \u2014 it walks you through designing every decision we just covered. Persistence, state, routing, knowledge flow, orchestration, phase logic. Your answers shape your plugin.
+
+There is no single right architecture. Type \`hint\` if you get stuck. \`/sdlc-coach resume\` to pick up where you left off.
+
+> Go build something.`;
+
+
+// --- APP LOGIC ---
+let currentSection = 0;
+
+function buildNav() {
+  const list = document.getElementById('nav-list');
+  list.innerHTML = sections.map((s, i) => `
+    <li>
+      <a class="nav-item${i === currentSection ? ' active' : ''}" href="#${s.id}" onclick="goToSection(${i}); return false;" data-index="${i}">
+        <span class="nav-number">${s.number}</span>
+        <span class="nav-info">
+          <span class="nav-title">${s.title}</span>
+          <span class="nav-meta">
+            ${s.duration ? `<span class="nav-duration">${s.duration}</span>` : ''}
+            <span class="nav-author ${s.author}">${s.author === 'julien' ? 'Julien' : 'Richard'}</span>
+          </span>
+        </span>
+      </a>
+    </li>
+  `).join('');
+}
+
+function renderSection(index) {
+  const section = sections[index];
+  let html = marked.parse(section.content);
+  html = html.replace(/<p><strong>\[Image placeholder:\s*(.*?)\]<\/strong><\/p>/g, (match, desc) => {
+    return `<div class="image-placeholder"><div class="placeholder-icon">&#128444;</div><div class="placeholder-text">${desc}</div></div>`;
+  });
+  document.getElementById('content').innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToSection(index) {
+  if (index < 0 || index >= sections.length) return;
+  currentSection = index;
+  renderSection(index);
+  updateNav();
+  updateProgress();
+  history.replaceState(null, '', '#' + sections[index].id);
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+}
+
+function updateNav() {
+  const items = document.querySelectorAll('.nav-item');
+  items.forEach((item, i) => {
+    item.classList.toggle('active', i === currentSection);
+  });
+}
+
+function updateProgress() {
+  const pct = ((currentSection + 1) / sections.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    goToSection(currentSection + 1);
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    goToSection(currentSection - 1);
+  }
+});
+
+marked.setOptions({ breaks: false, gfm: true });
+
+function init() {
+  buildNav();
+  const hash = window.location.hash.replace('#', '');
+  if (hash) {
+    const idx = sections.findIndex(s => s.id === hash);
+    if (idx >= 0) currentSection = idx;
+  }
+  renderSection(currentSection);
+  updateNav();
+  updateProgress();
+}
+
+init();
+</script>
+
+</body>
+</html>

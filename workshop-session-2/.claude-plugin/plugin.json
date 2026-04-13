@@ -1,10 +1,10 @@
 {
-  "name": "sdd-workshop",
-  "description": "Workshop plugin: build your own Spec-Driven Development framework with guided coaching",
+  "name": "sdlc-workshop",
+  "description": "Workshop plugin: build your own Software Development Lifecycle framework with guided coaching",
   "version": "1.0.0",
   "author": {
     "name": "Richard El-Chaar"
   },
   "license": "MIT",
-  "keywords": ["workshop", "sdd", "spec-driven-development", "plugin-building"]
+  "keywords": ["workshop", "sdlc", "software-development-lifecycle", "plugin-building"]
 }

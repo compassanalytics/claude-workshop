@@ -49,9 +49,7 @@ Path fields accept string or array. Custom paths REPLACE defaults — to keep de
 ```yaml
 ---
 name: skill-name                     # Kebab-case, max 64 chars. Falls back to directory name.
-description: |                       # What it does + when to use it. Max 1024 chars.
-  Use when [trigger]. Does [action].
-  Triggers: "keyword1", "keyword2"
+description: "What it does and when to use it. Triggers: keyword1, keyword2"  # Quoted single-line string. Max 1024 chars.
 argument-hint: "<required> [optional]" # Autocomplete hint
 disable-model-invocation: true       # true = user-only via /name
 user-invocable: false                # false = Claude-only, hidden from / menu

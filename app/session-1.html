@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Workshop — From Basics to Power User</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  :root {
+    --bg: #fafaf8;
+    --sidebar-bg: #1a1a2e;
+    --sidebar-text: #c8c8d8;
+    --sidebar-active: #ffffff;
+    --accent: #d97757;
+    --accent-light: #f0c4b0;
+    --text: #2d2d2d;
+    --text-muted: #6b6b7b;
+    --code-bg: #1e1e2e;
+    --code-text: #cdd6f4;
+    --border: #e0ddd8;
+    --blockquote-bg: #f5f3ef;
+    --table-stripe: #f7f6f3;
+    --sidebar-width: 280px;
+    --progress-height: 3px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Progress bar */
+  #progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: var(--progress-height);
+    background: var(--accent);
+    z-index: 1000;
+    transition: width 0.3s ease;
+  }
+
+  /* Sidebar */
+  #sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+  }
+
+  #sidebar-header {
+    padding: 28px 22px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }
+
+  #sidebar-header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+
+  #sidebar-header .subtitle {
+    font-size: 12.5px;
+    color: var(--accent-light);
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .session-switcher {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .session-link {
+    font-size: 11.5px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    color: var(--sidebar-text);
+    text-decoration: none;
+    background: rgba(255,255,255,0.06);
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .session-link:hover {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+  }
+
+  .session-link.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  #nav-list {
+    list-style: none;
+    padding: 12px 0;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  #nav-list li {
+    padding: 0;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px 22px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s ease;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,255,255,0.04);
+    border-left-color: rgba(217, 119, 87, 0.4);
+  }
+
+  .nav-item.active {
+    background: rgba(217, 119, 87, 0.1);
+    border-left-color: var(--accent);
+  }
+
+  .nav-item.active .nav-title {
+    color: #ffffff;
+  }
+
+  .nav-number {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(217, 119, 87, 0.15);
+    border-radius: 4px;
+    min-width: 24px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .nav-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .nav-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sidebar-text);
+    line-height: 1.3;
+    display: block;
+    transition: color 0.15s;
+  }
+
+  .nav-meta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 2px;
+  }
+
+  .nav-duration {
+    font-size: 11px;
+    color: rgba(200, 200, 216, 0.5);
+  }
+
+  .nav-author {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .nav-author.julien {
+    background: rgba(217, 119, 87, 0.2);
+    color: var(--accent-light);
+  }
+
+  .nav-author.colleague {
+    background: rgba(100, 160, 220, 0.2);
+    color: #9cc5e8;
+  }
+
+  #sidebar-footer {
+    padding: 16px 22px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 12px;
+    color: rgba(200, 200, 216, 0.5);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #sidebar-footer .total-icon {
+    font-size: 14px;
+  }
+
+  /* Main content */
+  #main {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    padding-top: var(--progress-height);
+  }
+
+  #content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  /* Typography */
+  #content h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  #content h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 48px;
+    margin-bottom: 16px;
+    letter-spacing: -0.3px;
+  }
+
+  #content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 32px;
+    margin-bottom: 12px;
+  }
+
+  #content h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: 24px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  #content p {
+    margin-bottom: 16px;
+    font-size: 15.5px;
+  }
+
+  #content a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(217, 119, 87, 0.3);
+    transition: border-color 0.15s;
+  }
+
+  #content a:hover {
+    border-bottom-color: var(--accent);
+  }
+
+  #content strong {
+    font-weight: 650;
+  }
+
+  #content em {
+    font-style: italic;
+  }
+
+  #content ul, #content ol {
+    margin-bottom: 16px;
+    padding-left: 24px;
+  }
+
+  #content li {
+    margin-bottom: 6px;
+    font-size: 15.5px;
+  }
+
+  #content li::marker {
+    color: var(--accent);
+  }
+
+  /* Horizontal rules */
+  #content hr {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 40px 0;
+  }
+
+  /* Blockquotes */
+  #content blockquote {
+    border-left: 4px solid var(--accent);
+    background: var(--blockquote-bg);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 15px;
+  }
+
+  #content blockquote p {
+    margin-bottom: 8px;
+  }
+
+  #content blockquote p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Code */
+  #content code {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+    font-size: 13.5px;
+  }
+
+  #content :not(pre) > code {
+    background: rgba(30, 30, 46, 0.08);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #c7254e;
+  }
+
+  #content pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 20px 24px;
+    border-radius: 10px;
+    overflow-x: auto;
+    margin: 20px 0;
+    line-height: 1.55;
+    position: relative;
+  }
+
+  #content pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    color: inherit;
+    font-size: 13.5px;
+  }
+
+  /* Simple syntax coloring inside code blocks */
+  #content pre .comment { color: #6c7086; }
+
+  /* Tables */
+  #content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14.5px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  #content thead {
+    background: #f0ede8;
+  }
+
+  #content th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 650;
+    font-size: 13.5px;
+    color: var(--text);
+    border-bottom: 2px solid var(--border);
+  }
+
+  #content td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  #content tbody tr:nth-child(even) {
+    background: var(--table-stripe);
+  }
+
+  #content tbody tr:hover {
+    background: rgba(217, 119, 87, 0.04);
+  }
+
+  /* Image placeholders */
+  .image-placeholder {
+    border: 2px dashed var(--border);
+    background: var(--blockquote-bg);
+    border-radius: 10px;
+    padding: 40px 24px;
+    margin: 24px 0;
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .image-placeholder .placeholder-icon {
+    font-size: 32px;
+    opacity: 0.4;
+    margin-bottom: 4px;
+  }
+
+  .image-placeholder .placeholder-text {
+    font-size: 14px;
+    color: var(--text-muted);
+    max-width: 400px;
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  /* SVG diagrams */
+  .svg-diagram {
+    margin: 24px 0;
+    text-align: center;
+  }
+
+  .svg-diagram svg {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  /* Hamburger menu (mobile) */
+  #hamburger {
+    display: none;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 200;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: var(--sidebar-bg);
+    border: none;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  #hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #fff;
+    border-radius: 1px;
+    transition: all 0.2s ease;
+  }
+
+  #overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 90;
+  }
+
+  /* ASCII art blocks (the layered architecture) */
+  #content pre code .ascii-box {
+    color: var(--accent-light);
+  }
+
+  /* Keyboard shortcut hints */
+  .keyboard-hint {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    opacity: 0.6;
+    z-index: 50;
+    pointer-events: none;
+  }
+
+  .keyboard-hint kbd {
+    background: rgba(255,255,255,0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 11px;
+    margin: 0 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    #sidebar {
+      transform: translateX(-100%);
+    }
+
+    #sidebar.open {
+      transform: translateX(0);
+    }
+
+    #main {
+      margin-left: 0;
+    }
+
+    #content {
+      padding: 60px 20px 80px;
+    }
+
+    #hamburger {
+      display: flex;
+    }
+
+    #overlay.open {
+      display: block;
+    }
+
+    .keyboard-hint {
+      display: none;
+    }
+  }
+
+  /* Scrollbar styling for sidebar */
+  #sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+  #sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+  }
+  #nav-list::-webkit-scrollbar {
+    width: 4px;
+  }
+  #nav-list::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+  }
+
+  /* Content pre with ASCII art - keep alignment */
+  #content pre {
+    white-space: pre;
+    word-wrap: normal;
+  }
+  .section-image {
+    display: block;
+    max-width: 100%;
+    margin: 24px auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .section-image.small {
+    max-width: 400px;
+  }
+  .section-image.medium {
+    max-width: 600px;
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<button id="hamburger" onclick="toggleSidebar()" aria-label="Toggle navigation">
+  <span></span><span></span><span></span>
+</button>
+<div id="overlay" onclick="toggleSidebar()"></div>
+
+<nav id="sidebar">
+  <div id="sidebar-header">
+    <h1>Claude Code Workshop</h1>
+    <div class="subtitle">Session 1: From Basics to Power User</div>
+    <div class="session-switcher">
+      <a href="session-1.html" class="session-link active">Session 1</a>
+      <a href="session-2.html" class="session-link">Session 2</a>
+    </div>
+  </div>
+  <ul id="nav-list"></ul>
+  <div id="sidebar-footer">
+    <span class="total-icon">&#9202;</span>
+    <span>Total: ~75 min</span>
+  </div>
+</nav>
+
+<main id="main">
+  <div id="content"></div>
+</main>
+
+<div class="keyboard-hint">
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navigate sections
+</div>
+
+<script>
+// --- SECTION DEFINITIONS ---
+const sections = [
+  {
+    id: "part-1",
+    number: "1",
+    title: "The Evolution",
+    duration: "",
+    author: "julien",
+    content: null
+  },
+  {
+    id: "part-2a",
+    number: "2a",
+    title: "CLAUDE.md",
+    duration: "",
+    author: "richard",
+    content: null
+  },
+  {
+    id: "part-2b",
+    number: "2b",
+    title: "Rules",
+    duration: "",
+    author: "richard",
+    content: null
+  },
+  {
+    id: "part-3",
+    number: "3",
+    title: "Skills & Commands",
+    duration: "",
+    author: "richard",
+    content: null
+  },
+  {
+    id: "part-4",
+    number: "4",
+    title: "MCP",
+    duration: "",
+    author: "julien",
+    content: null
+  },
+  {
+    id: "part-5",
+    number: "5",
+    title: "Hooks",
+    duration: "",
+    author: "richard",
+    content: null
+  },
+  {
+    id: "part-6",
+    number: "6",
+    title: "Subagents & Teams",
+    duration: "",
+    author: "richard",
+    content: null
+  },
+  {
+    id: "part-7",
+    number: "7",
+    title: "Plugins",
+    duration: "",
+    author: "julien",
+    content: null
+  },
+  {
+    id: "part-8",
+    number: "8",
+    title: "Permissions",
+    duration: "",
+    author: "julien",
+    content: null
+  },
+  {
+    id: "closing",
+    number: "C",
+    title: "Closing",
+    duration: "",
+    author: "julien",
+    content: null
+  }
+];
+
+// --- MARKDOWN CONTENT ---
+
+sections[0].content = `# Part 1: The Evolution — From Autocomplete to Agent Orchestration
+
+---
+
+<img src="images/img-20251222171251.png" alt="Harness engineering as a subset of Context Engineering" class="section-image">
+
+## The Journey — Four Phases
+
+**Phase 1: Autocomplete (2021-2022)** — "IntelliSense on steroids"
+- GitHub Copilot launches mid-2021, built on OpenAI Codex
+- AI predicts lines/blocks from context — but fundamentally passive
+- You type, it suggests, you accept or reject. Developer drives every keystroke
+
+**Phase 2: Conversational coding (2023-early 2024)** — "Ask it, don't just type"
+- ChatGPT (late 2022), GPT-4 (March 2023) change the interface entirely
+- Copilot Chat, Cursor (March 2023) — AI becomes a second coding interface
+- Still chat + autocomplete. Developer drives everything. Quality control is human
+
+**Phase 3: Agentic coding (late 2024-2025)** — "Delegate, don't dictate"
+- Cursor Agent Mode (Nov 2024) — reads terminal, runs commands, multi-file changes
+- Claude Code launches (Feb 2025) — terminal-native, no IDE
+- Copilot agent mode (May 2025), Codex, Windsurf follow
+- AI isn't suggesting — it's *executing tasks*
+- Cursor's flip: went from 2.5x more tab users to 2x more agent users in under a year
+
+<img src="images/data_agents_taxonomy.png" alt="Data Agents Taxonomy — autonomy levels from Level 0 (no autonomy) to Level 5 (full autonomy)" class="section-image">
+
+The trajectory is clear: AI goes from nonexistent → passive observer → active assistant → proactive agent interacting with the real world. We're somewhere around Level 2-3 right now, moving fast toward 4.
+
+**Phase 4: Multi-agent orchestration (early 2026 — now)**
+- Agent teams, parallel execution, peer-to-peer communication
+- From "AI autocomplete" to "managing a team of AI engineers" in ~5 years
+
+> Agentic isn't one tool — it's a mode of working all major players converged on simultaneously. Different interfaces, same shift.
+
+<img src="images/img-20251222163310.png" alt="Skills, Agents, Models — concentric circles" class="section-image medium">
+
+---
+
+## The Numbers
+
+**Adoption:**
+- **84%+** of devs using or planning to use AI coding tools (Stack Overflow 2025)
+- **64%** started using agentic tools — 25% regularly, 39% experimenting (Sonar 2026)
+- **41%** of all code estimated AI-generated (early 2026)
+
+**Productivity:**
+- **~3.6 hours/week** saved on average; 75% say AI reduces toil (DX Q4 2025, 135K+ devs)
+- **22%** of merged code is AI-authored — actual repo telemetry, not surveys
+- **15-22%** agent adoption across 129K+ GitHub projects
+
+<img src="images/img-20251222163834.png" alt="Software Engineering Productivity Increases from AI Use — quadrant" class="section-image">
+
+**Enterprise cases:**
+- **Rakuten** — 12.5M-line codebase, 7 autonomous hours, 99.9% accuracy
+- **TELUS** — 13K+ AI solutions, 30% faster shipping, 500K hours saved
+- **Zapier** — 89-97% AI adoption across entire org
+- **Stripe** — Cursor adoption: single digits → 80%+ of developers
+- **Salesforce** — 90% of 20K developers on AI tools
+
+---
+
+## Where It's Headed
+
+- Agents progressing from short tasks → hours/days of continuous work
+- Multi-agent coordination becoming standard — agents share findings, challenge each other
+- All tools converging: config files, tool use, planning, delegation
+- Open standards (MCP, Agent Skills spec) mean skills work across tools
+- Role shift: writing code → *orchestrating agents that write code*
+
+<img src="images/img-20251222171122.png" alt="Problem complexity vs context engineering effort" class="section-image">
+
+---
+
+## The New Programming Paradigm
+
+Traditional software engineering is **deterministic** — you write code, it executes exactly as written. Same input, same output, every time. You control everything.
+
+LLMs are **probabilistic** — you give instructions, the model interprets and responds with judgment. Similar input, slightly different output. You guide, not control.
+
+**AI engineering is the integration of both.**
+
+| | Deterministic | Probabilistic |
+|---|---|---|
+| **What** | Hooks, permissions, config, tests | Skills, agents, LLM judgment |
+| **Guarantee** | Runs exactly the same every time | Usually right, not always |
+| **Control** | You dictate | You guide |
+| **Example** | "Block commits with .env files" | "Review this PR for security issues" |
+
+The skill of modern AI engineering isn't choosing one over the other — it's knowing **which layer to put each requirement in**. Safety-critical rule? Deterministic (hook). Architecture convention? Probabilistic (CLAUDE.md). Complex workflow? Probabilistic with deterministic guardrails.
+
+> That's what the rest of this workshop is about — building the full stack, from deterministic foundations to probabilistic capabilities.
+
+---
+
+## Honest Caveats
+
+<img src="images/img-20251222165636.png" alt="Do Not Outsource the Thinking — Jake Nations" class="section-image medium">
+
+- Only **0-20%** of tasks fully delegated — AI amplifies, doesn't replace
+- **~1.7x more issues** in AI-coauthored PRs (CodeRabbit) — verification matters
+- Long sessions → context rot → compounding assumptions
+- **75%** of devs still manually review every AI snippet
+- Tools are powerful but need proper setup — which is what the rest of this covers`;
+
+
+sections[1].content = `# Part 2a: CLAUDE.md  -  Your Onboarding Doc for the Agent
+
+---
+
+Claude starts every session with no memory of previous conversations. **CLAUDE.md** is a markdown file Claude reads at the start of every session, before you type anything. It\u2019s where you persist guidance and instructions relevant to your project conventions.
+
+---
+
+## The Hierarchy
+
+CLAUDE.md can be defined at multiple levels. Each layer stacks on top of the previous one:
+
+<div class="svg-diagram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
+  <defs>
+    <pattern id="grid-2a" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" stroke-width="1"/>
+    </pattern>
+    <marker id="arrowdown-2a" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowleft-2a" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse">
+      <path d="M 10 0 L 0 5 L 10 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid-2a)" />
+  <rect x="50" y="30" width="450" height="100" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <text x="275" y="65" font-size="18" font-weight="bold" fill="#0369a1" text-anchor="middle">1. Global</text>
+  <text x="275" y="90" font-size="14" font-family="monospace" fill="#0c4a6e" text-anchor="middle">~/.claude/CLAUDE.md</text>
+  <text x="275" y="110" font-size="14" fill="#0c4a6e" text-anchor="middle">Personal defaults. Applies to every project.</text>
+  <path d="M 275 130 L 275 160" fill="none" stroke="#64748b" stroke-width="3" marker-end="url(#arrowdown-2a)"/>
+  <rect x="50" y="170" width="450" height="100" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="275" y="205" font-size="18" font-weight="bold" fill="#15803d" text-anchor="middle">2. Project Root</text>
+  <text x="275" y="230" font-size="14" font-family="monospace" fill="#14532d" text-anchor="middle">./CLAUDE.md or ./.claude/CLAUDE.md</text>
+  <text x="275" y="250" font-size="14" fill="#14532d" text-anchor="middle">Committed to git. Shared with your team.</text>
+  <path d="M 275 270 L 275 300" fill="none" stroke="#64748b" stroke-width="3" marker-end="url(#arrowdown-2a)"/>
+  <rect x="50" y="310" width="450" height="100" rx="8" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+  <text x="275" y="345" font-size="18" font-weight="bold" fill="#a16207" text-anchor="middle">3. Subdirectory</text>
+  <text x="275" y="370" font-size="14" font-family="monospace" fill="#713f12" text-anchor="middle">./subdir/CLAUDE.md</text>
+  <text x="275" y="390" font-size="14" fill="#713f12" text-anchor="middle">Loaded when Claude works in that directory.</text>
+  <path d="M 30 70 L 30 380" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4" />
+  <text x="20" y="225" font-size="13" font-weight="bold" fill="#64748b" transform="rotate(-90 20 225)" text-anchor="middle">Deeper directory wins (primary axis)</text>
+  <rect x="560" y="120" width="290" height="290" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="3" stroke-dasharray="8 6"/>
+  <text x="705" y="160" font-size="20" font-weight="bold" fill="#0f172a" text-anchor="middle">CLAUDE.local.md</text>
+  <text x="705" y="185" font-size="16" font-weight="bold" fill="#475569" text-anchor="middle">(Personal Override)</text>
+  <text x="705" y="225" font-size="14" fill="#334155" text-anchor="middle">A .local.md file can exist at</text>
+  <text x="705" y="245" font-size="14" fill="#334155" text-anchor="middle">any directory level. It overrides</text>
+  <text x="705" y="265" font-size="14" fill="#334155" text-anchor="middle">the shared CLAUDE.md at that</text>
+  <text x="705" y="285" font-size="14" fill="#334155" text-anchor="middle">same level  -  not deeper ones.</text>
+  <rect x="600" y="305" width="210" height="1" fill="#cbd5e1"/>
+  <text x="705" y="335" font-size="14" fill="#334155" text-anchor="middle">Automatically gitignored.</text>
+  <text x="705" y="355" font-size="14" fill="#334155" text-anchor="middle">Your team never sees it.</text>
+  <path d="M 555 220 L 515 220" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowleft-2a)"/>
+  <path d="M 555 360 L 515 360" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowleft-2a)"/>
+  <text x="450" y="460" text-anchor="middle" font-size="15" font-weight="bold" fill="#0f172a">Precedence (lowest \u2192 highest)</text>
+  <text x="450" y="485" text-anchor="middle" font-size="13" fill="#334155">~/.claude/CLAUDE.md \u2192 ./CLAUDE.md \u2192 ./CLAUDE.local.md \u2192 ./subdir/CLAUDE.md \u2192 ./subdir/CLAUDE.local.md</text>
+  <text x="450" y="508" text-anchor="middle" font-size="13" fill="#64748b">Directory depth is the primary axis. Personal (.local.md) beats shared only at the same level.</text>
+</svg>
+</div>
+
+- **Global** (\`~/.claude/CLAUDE.md\`)  -  loads for every project on your machine.
+- **Project root** (\`./CLAUDE.md\`)  -  stacks on top of global. Typically committed to git and shared with your team.
+- **Subdirectory** (\`./subdir/CLAUDE.md\`)  -  stacks on top of the project root. Loads when Claude works in that directory.
+
+When instructions conflict, the more specific (deeper) directory wins.
+
+**Personal overrides:** \`CLAUDE.local.md\` can exist at any directory level. It\u2019s automatically gitignored and takes priority over the shared CLAUDE.md at the same level  -  useful for personal preferences you don\u2019t want to push to the team.
+
+---
+
+## Writing Effective Instructions
+
+### The golden rule
+
+> For each line, ask: **\u201CWould removing this cause Claude to make mistakes?\u201D** If the answer is no, delete it.
+
+CLAUDE.md is loaded into context every session. Every line competes for attention. Anthropic\u2019s guidance is to **target under 200 lines per file**  -  longer files consume more context and reduce adherence.
+
+The IFScale benchmark (Jaroslawicz et al., July 2025  -  [arXiv:2507.11538](https://arxiv.org/abs/2507.11538)) tested 20 frontier models and found adherence drops significantly after ~150 instructions. Claude Code\u2019s system prompt already consumes a large portion of that budget.
+
+### What to include
+
+The core question: **can Claude figure this out on its own?** If no, it belongs in CLAUDE.md. If Claude can infer it from reading your code, leave it out.
+
+**Table from Anthropic\u2019s [Claude Code Best Practices](https://code.claude.com/docs/en/best-practices) page:**
+
+| Include | Exclude |
+|-----------|-----------|
+| Bash commands Claude can\u2019t guess | Anything Claude can figure out by reading code |
+| Code style rules that differ from defaults | Standard language conventions Claude already knows |
+| Testing instructions and preferred test runners | Detailed API documentation (link to docs instead) |
+| Repository etiquette (branch naming, PR conventions) | Information that changes frequently |
+| Architectural decisions specific to your project | Long explanations or tutorials |
+| Developer environment quirks (required env vars) | File-by-file descriptions of the codebase |
+| Common gotchas or non-obvious behaviors | Self-evident practices like \u201Cwrite clean code\u201D |
+
+### The positive instruction principle
+
+LLMs are measurably worse at following negated instructions. Research from KAIST (Jang et al., NeurIPS 2022  -  [arXiv:2209.12711](https://arxiv.org/abs/2209.12711)) found an inverse scaling law: larger models performed *worse* on negated prompts. Anthropic\u2019s own guidance: **\u201CTell Claude what to do instead of what not to do.\u201D** ([Claude Best Practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices))
+
+Frame instructions positively:
+
+| Negative | Positive |
+|------------|------------|
+| Don\u2019t create new files if one exists | Make all changes in existing files |
+| Don\u2019t push directly to main | Create a feature branch for all changes |
+| Never hardcode secrets | Load secrets from environment variables |
+| Avoid long functions | Keep functions under 40 lines, extract helpers |
+| Don\u2019t leave TODO comments | Resolve TODOs before committing or file an issue |
+
+**Exception:** Hard safety boundaries (\u201CNEVER commit .env files,\u201D \u201CNEVER expose API keys in client code\u201D) are guardrails, not style preferences. Even then, a hook is more reliable than a CLAUDE.md instruction.
+
+### Emphasis
+
+Claude responds to signal words for critical rules:
+
+\`\`\`markdown
+IMPORTANT: Always run the type checker before committing.
+YOU MUST use the shared API client from src/lib/api  -  do not create new HTTP clients.
+\`\`\`
+
+Use this sparingly. If everything is \u201CIMPORTANT,\u201D nothing is. Save emphasis for the 2-3 rules that really matter.
+
+### Import syntax
+
+CLAUDE.md files can reference other files using \`@\` syntax:
+
+\`\`\`markdown
+See @README.md for project overview.
+See @docs/api-conventions.md for API design rules.
+\`\`\`
+
+Claude reads the referenced file on demand  -  it\u2019s not loaded upfront. This keeps your CLAUDE.md lean while still giving access to detailed reference material.
+
+**Best practice ([HumanLayer blog, Nov 2025](https://www.humanlayer.dev/blog/writing-a-good-claude-md)):** Prefer pointers over copies. Don\u2019t paste code snippets into CLAUDE.md  -  they go stale. Point to the file instead: \`\u201CSee @src/lib/api/client.ts for the canonical API client pattern.\u201D\`
+
+---
+
+## Getting Started
+
+Run \`/init\` in Claude Code to generate a starter CLAUDE.md. It scans your project and produces a first draft  -  review it and cut anything Claude can already infer from your code.
+
+### How it should evolve
+
+A good CLAUDE.md grows from real friction, not upfront planning:
+
+- Every time Claude makes a mistake, ask: \u201CWould a one-line instruction have prevented this?\u201D If yes, add it.
+- Every time Claude keeps asking the same question, that\u2019s a missing instruction.
+- Commit to git so the whole team benefits and iterates together.
+
+For reference, the [HumanLayer blog (Nov 2025)](https://www.humanlayer.dev/blog/writing-a-good-claude-md) keeps their root CLAUDE.md under sixty lines. The goal is the minimum set of things Claude can\u2019t figure out on its own.`;
+
+
+sections[2].content = `# Part 2b: Rules  -  Scoped Instructions for Specific Contexts
+
+---
+
+## Why Rules
+
+As projects grow, CLAUDE.md files can become overloaded even when following best practices. Rules let you split instructions into focused files under \`.claude/rules/\`, each covering a single topic. Path-scoped rules go further  -  they only load into context when Claude reads files matching a specific glob pattern, keeping context clean and efficient.
+
+---
+
+## How Rules Work
+
+Every \`.md\` file in \`.claude/rules/\` (including subdirectories) automatically becomes part of your project context. There are two types:
+
+1. **Unscoped**  -  no frontmatter. Loads every session, behaves like extra CLAUDE.md content.
+2. **Path-scoped**  -  has a \`paths\` field in YAML frontmatter. Loads only when Claude reads files matching the pattern.
+
+<div class="svg-diagram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 720" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
+  <defs>
+    <pattern id="grid-2b" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" stroke-width="1"/>
+    </pattern>
+    <marker id="arrowright-2b" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse">
+      <path d="M 0 2.5 L 10 5 L 0 7.5 z" fill="#16a34a"/>
+    </marker>
+    <marker id="arrowright-gray-2b" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse">
+      <path d="M 0 2.5 L 10 5 L 0 7.5 z" fill="#94a3b8"/>
+    </marker>
+    <filter id="shadow-2b" x="-5%" y="-5%" width="120%" height="120%">
+      <feDropShadow dx="2" dy="2" stdDeviation="4" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid-2b)" />
+  <g transform="translate(30, 20)">
+    <rect width="820" height="310" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M0,10 a10,10 0 0,1 10,-10 h800 a10,10 0 0,1 10,10 v30 h-820 v-30" fill="#0f172a" />
+    <text x="410" y="26" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">SESSION START  -  Claude scans .claude/rules/</text>
+    <g transform="translate(20, 60)">
+      <rect width="370" height="230" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="185" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#15803d">Unscoped (no frontmatter)</text>
+      <text x="185" y="48" text-anchor="middle" font-size="13" font-weight="bold" fill="#16a34a">LOAD FULL CONTENT</text>
+      <rect x="25" y="65" width="320" height="32" rx="5" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="40" y="86" font-size="13" font-family="monospace" fill="#14532d">.claude/rules/code-style.md</text>
+      <rect x="25" y="105" width="320" height="32" rx="5" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="40" y="126" font-size="13" font-family="monospace" fill="#14532d">.claude/rules/testing.md</text>
+      <text x="185" y="160" text-anchor="middle" font-size="12" fill="#64748b">Example inside file:</text>
+      <rect x="25" y="170" width="320" height="40" rx="4" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="35" y="188" font-size="11" font-family="monospace" fill="#334155"># Code Style Rules</text>
+      <text x="35" y="202" font-size="11" font-family="monospace" fill="#334155">- Always use camelCase...</text>
+    </g>
+    <g transform="translate(430, 60)">
+      <rect width="370" height="230" rx="8" fill="#fefce8" stroke="#ca8a04" stroke-width="2"/>
+      <text x="185" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#a16207">Path-scoped (has frontmatter)</text>
+      <text x="185" y="48" text-anchor="middle" font-size="13" font-weight="bold" fill="#ca8a04">INDEX ONLY  -  not loaded yet</text>
+      <rect x="25" y="65" width="320" height="32" rx="5" fill="#fefce8" stroke="#fde68a" stroke-width="1"/>
+      <text x="35" y="86" font-size="12" font-family="monospace" fill="#713f12">.claude/rules/frontend/react.md</text>
+      <text x="335" y="86" font-size="12" fill="#a16207" text-anchor="end">src/**/*.tsx</text>
+      <rect x="25" y="105" width="320" height="32" rx="5" fill="#fefce8" stroke="#fde68a" stroke-width="1"/>
+      <text x="35" y="126" font-size="12" font-family="monospace" fill="#713f12">.claude/rules/backend/api.md</text>
+      <text x="335" y="126" font-size="12" fill="#a16207" text-anchor="end">src/api/**/*.ts</text>
+      <g transform="translate(25, 145)">
+        <rect width="320" height="65" rx="5" fill="#1e293b" filter="url(#shadow-2b)"/>
+        <text x="10" y="16" font-size="11" font-family="monospace" fill="#94a3b8">---</text>
+        <text x="10" y="30" font-size="11" font-family="monospace" fill="#38bdf8">paths:</text>
+        <text x="10" y="44" font-size="11" font-family="monospace" fill="#a3e635">  - "src/**/*.tsx"</text>
+        <text x="10" y="58" font-size="11" font-family="monospace" fill="#94a3b8">---</text>
+        <text x="130" y="16" font-size="10" font-family="sans-serif" font-style="italic" fill="#cbd5e1">\u2190 this frontmatter</text>
+        <text x="130" y="30" font-size="10" font-family="sans-serif" font-style="italic" fill="#cbd5e1">tells Claude when</text>
+        <text x="130" y="44" font-size="10" font-family="sans-serif" font-style="italic" fill="#cbd5e1">to load the file.</text>
+      </g>
+    </g>
+  </g>
+  <g transform="translate(30, 350)">
+    <rect width="820" height="330" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M0,10 a10,10 0 0,1 10,-10 h800 a10,10 0 0,1 10,10 v30 h-820 v-30" fill="#334155" />
+    <text x="410" y="26" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">DURING SESSION  -  File reads trigger path-scoped rules</text>
+    <g transform="translate(20, 60)">
+      <rect width="250" height="50" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+      <text x="125" y="21" text-anchor="middle" font-size="13" fill="#0369a1">Claude reads file</text>
+      <text x="125" y="40" text-anchor="middle" font-size="14" font-family="monospace" font-weight="bold" fill="#0c4a6e">src/api/users.ts</text>
+      <path d="M 260 25 L 310 25" fill="none" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrowright-2b)"/>
+      <text x="285" y="15" text-anchor="middle" font-size="12" font-weight="bold" fill="#16a34a">match</text>
+      <rect x="320" y="0" width="320" height="50" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="480" y="21" text-anchor="middle" font-size="13" font-family="monospace" font-weight="bold" fill="#15803d">.claude/rules/backend/api.md</text>
+      <text x="480" y="40" text-anchor="middle" font-size="12" font-weight="bold" fill="#16a34a">LOADS into context</text>
+    </g>
+    <g transform="translate(20, 140)">
+      <rect width="250" height="50" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+      <text x="125" y="21" text-anchor="middle" font-size="13" fill="#0369a1">Claude reads file</text>
+      <text x="125" y="40" text-anchor="middle" font-size="14" font-family="monospace" font-weight="bold" fill="#0c4a6e">src/components/Button.tsx</text>
+      <path d="M 260 25 L 310 25" fill="none" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrowright-2b)"/>
+      <text x="285" y="15" text-anchor="middle" font-size="12" font-weight="bold" fill="#16a34a">match</text>
+      <rect x="320" y="0" width="320" height="50" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="480" y="21" text-anchor="middle" font-size="12" font-family="monospace" font-weight="bold" fill="#15803d">.claude/rules/frontend/react.md</text>
+      <text x="480" y="40" text-anchor="middle" font-size="12" font-weight="bold" fill="#16a34a">LOADS into context</text>
+    </g>
+    <g transform="translate(20, 220)">
+      <rect width="250" height="50" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+      <text x="125" y="21" text-anchor="middle" font-size="13" fill="#0369a1">Claude reads file</text>
+      <text x="125" y="40" text-anchor="middle" font-size="14" font-family="monospace" font-weight="bold" fill="#0c4a6e">README.md</text>
+      <path d="M 260 25 L 310 25" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#arrowright-gray-2b)"/>
+      <text x="285" y="15" text-anchor="middle" font-size="12" font-weight="bold" fill="#94a3b8">no match</text>
+      <rect x="320" y="0" width="320" height="50" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <text x="480" y="21" text-anchor="middle" font-size="14" font-weight="bold" fill="#64748b">No rules triggered</text>
+      <text x="480" y="40" text-anchor="middle" font-size="12" font-weight="bold" fill="#94a3b8">database.md stays indexed</text>
+    </g>
+    <g transform="translate(680, 60)">
+      <rect width="120" height="210" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="60" y="55" text-anchor="middle" font-size="13" font-weight="bold" fill="#15803d">Once loaded,</text>
+      <text x="60" y="75" text-anchor="middle" font-size="13" font-weight="bold" fill="#15803d">stays loaded</text>
+      <text x="60" y="95" text-anchor="middle" font-size="13" font-weight="bold" fill="#15803d">for the whole</text>
+      <text x="60" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="#15803d">session.</text>
+      <text x="60" y="155" text-anchor="middle" font-size="12" fill="#64748b">Rules don\u2019t</text>
+      <text x="60" y="175" text-anchor="middle" font-size="12" fill="#64748b">reload or</text>
+      <text x="60" y="195" text-anchor="middle" font-size="12" fill="#64748b">unload.</text>
+    </g>
+  </g>
+</svg>
+</div>
+
+**The frontmatter is minimal**  -  \`paths\` is the only supported field:
+
+\`\`\`markdown
+# .claude/rules/backend/api.md
+
+---
+paths:
+  - "src/api/**/*.ts"
+  - "src/middleware/**/*.ts"
+---
+
+# API Rules
+- Validate all inputs with Zod schemas from src/lib/schemas/
+- Return consistent error shapes: { error: string, code: number, details?: object }
+- Use parameterized queries  -  never interpolate user input into SQL
+\`\`\`
+
+Standard glob syntax: \`**\` for recursive, \`*\` for wildcard, \`{ts,tsx}\` for brace expansion. Always quote patterns  -  unquoted \`*\` and \`{\` are reserved in YAML and will cause parse errors. This was a real bug in the official docs, fixed January 2026 ([GitHub #13905](https://github.com/anthropics/claude-code/issues/13905)).
+
+An **unscoped rule** is even simpler  -  no frontmatter, always loaded:
+
+\`\`\`markdown
+# .claude/rules/testing.md
+
+- Use vitest for all tests
+- Co-locate test files next to source: foo.ts \u2192 foo.test.ts
+- Prefer integration tests over unit tests for API routes
+- Always include at least one failure case per test
+\`\`\`
+
+---
+
+## Rules vs CLAUDE.md
+
+Both are project-level instructions, so when should you use which?
+
+| If the instruction... | Put it in... |
+|---|---|
+| Is a short, high-priority default (build commands, key conventions) | **CLAUDE.md** |
+| Covers a distinct topic that deserves its own file (testing, API style, code review) | **Unscoped rule** |
+| Only matters when working in specific files or directories | **Path-scoped rule** |
+
+**Think of it this way:** CLAUDE.md is your elevator pitch  -  the 10-20 most important things. Rules are the detailed handbooks organized by topic. As your CLAUDE.md grows past ~50 lines, start extracting topics into rules.
+
+**Organizing rules:** Structure the directory by domain as it grows  -  \`.claude/rules/backend/\`, \`.claude/rules/frontend/\`, \`.claude/rules/testing.md\`. Claude doesn\u2019t care about the directory structure, but your team will.
+
+---
+
+## Caveat
+
+**Path-scoped rules only trigger on file reads**  -  not writes or creates. If Claude is creating a brand new API file from scratch, your API rules won\u2019t load. If a rule is critical enough that it needs to apply even during file creation, make it unscoped.`;
+
+
+sections[3].content = `# Part 3: Skills & Commands
+
+---
+
+## What Skills Are
+
+CLAUDE.md and rules give Claude **knowledge**  -  what your project is and what conventions to follow. Skills give Claude **capabilities**  -  reusable workflows it can execute on demand.
+
+A skill is a directory with a \`SKILL.md\` file inside it. The directory can also contain supporting files (templates, scripts, reference docs). Skills eliminate the need to rewrite complex prompts and ensure consistent execution across sessions.
+
+Skills live in \`.claude/skills/<name>/SKILL.md\`.
+
+<div class="svg-diagram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 480" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
+  <defs>
+    <pattern id="grid-3" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid-3)" />
+  <g transform="translate(140, 30)">
+    <rect width="600" height="420" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M0,10 a10,10 0 0,1 10,-10 h580 a10,10 0 0,1 10,10 v35 h-600 v-35" fill="#0f172a"/>
+    <text x="300" y="28" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">Skills Directory Structure</text>
+    <g transform="translate(45, 80)" font-size="15" font-family="monospace">
+      <text x="0" y="0" fill="#64748b">workspace/</text>
+      <text x="35" y="24" fill="#64748b">\u2514\u2500\u2500 .claude/</text>
+      <text x="70" y="48" fill="#64748b">\u2514\u2500\u2500 skills/</text>
+      <text x="105" y="72" fill="#334155" font-weight="bold">\u251C\u2500\u2500 fix-issue/</text>
+      <rect x="20" y="81" width="510" height="24" rx="4" fill="#dcfce7" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="140" y="96" fill="#15803d" font-weight="bold">\u251C\u2500\u2500 SKILL.md</text>
+      <text x="520" y="95" text-anchor="end" fill="#64748b" font-size="11" font-family="sans-serif">required</text>
+      <text x="140" y="120" fill="#64748b">\u2514\u2500\u2500 templates/</text>
+      <text x="175" y="144" fill="#94a3b8">\u2514\u2500\u2500 pr-template.md</text>
+      <text x="105" y="168" fill="#334155" font-weight="bold">\u251C\u2500\u2500 deploy/</text>
+      <rect x="20" y="177" width="510" height="24" rx="4" fill="#dcfce7" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="140" y="192" fill="#15803d" font-weight="bold">\u251C\u2500\u2500 SKILL.md</text>
+      <text x="520" y="191" text-anchor="end" fill="#64748b" font-size="11" font-family="sans-serif">required</text>
+      <text x="140" y="216" fill="#64748b">\u2514\u2500\u2500 scripts/</text>
+      <text x="175" y="240" fill="#94a3b8">\u251C\u2500\u2500 validate.sh</text>
+      <text x="175" y="264" fill="#94a3b8">\u2514\u2500\u2500 rollback.sh</text>
+      <text x="105" y="288" fill="#334155" font-weight="bold">\u2514\u2500\u2500 api-conventions/</text>
+      <rect x="20" y="297" width="510" height="24" rx="4" fill="#dcfce7" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="140" y="312" fill="#15803d" font-weight="bold">\u2514\u2500\u2500 SKILL.md</text>
+      <text x="520" y="311" text-anchor="end" fill="#64748b" font-size="11" font-family="sans-serif">required</text>
+    </g>
+  </g>
+</svg>
+</div>
+
+---
+
+## Example
+
+\`\`\`yaml
+# .claude/skills/fix-issue/SKILL.md
+
+---
+name: fix-issue
+description: Fix a GitHub issue
+disable-model-invocation: true
+argument-hint: [issue-number]
+---
+
+Fix GitHub issue $ARGUMENTS following our coding standards.
+
+1. Use \\\`gh issue view $ARGUMENTS\\\` to get the issue details
+2. Search the codebase for relevant files
+3. Implement the fix
+4. Write and run tests
+5. Run linting and type checking: \\\`pnpm lint && pnpm typecheck\\\`
+6. Create a commit referencing the issue
+7. Push and create a PR with \\\`gh pr create\\\`
+\`\`\`
+
+The frontmatter (between \`---\`) is metadata controlling the skill\u2019s behavior. The body is the instructions Claude follows. Invoke with \`/fix-issue 1234\`.
+
+---
+
+## Invocation
+
+At session start, Claude reads only the \`name\` and \`description\` from each skill (~100 tokens each). The full body loads only when invoked, so dozens of skills have minimal context cost.
+
+Two invocation methods:
+
+**Manual**  -  you type \`/skill-name\` as a slash command. Reliable, predictable.
+
+\`\`\`
+/fix-issue 1234
+/deploy staging
+\`\`\`
+
+**Auto-invocation**  -  Claude decides whether to invoke a skill based on context and the skill\u2019s description. Reliability ranges from 20-50% with basic descriptions to 90%+ with well-tuned ones ([source](https://medium.com/@reliabledataengineering/claude-skills-2-0-the-self-improving-ai-capabilities-that-actually-work-dc3525eb391b)). Treat auto-invocation as a bonus  -  for critical workflows, invoke manually.
+
+**Controlling invocation:**
+
+| Frontmatter | You can invoke | Claude can invoke | Use for |
+|---|---|---|---|
+| (default) | Yes | Yes | Reference knowledge, conventions |
+| \`disable-model-invocation: true\` | Yes | No | Side effects  -  deploy, commit, send |
+| \`user-invocable: false\` | No | Yes | Background knowledge Claude should auto-apply |
+
+Skills with \`disable-model-invocation: true\` are completely invisible to Claude  -  their description isn\u2019t loaded into context.
+
+---
+
+## Frontmatter Fields
+
+| Field | What it does |
+|---|---|
+| \`name\` | Slash command name. Defaults to directory name. |
+| \`description\` | What the skill does. This is what Claude reads at startup to decide whether to auto-invoke. Write this well. |
+| \`argument-hint\` | Tells the user what arguments the skill expects (e.g. \`[issue-number]\`). In the body, \`$ARGUMENTS\` gives you everything after the slash command, \`$0\`, \`$1\` give positional args. |
+| \`disable-model-invocation\` | \`true\` = manual only. Use for anything with side effects (deploy, commit, send). |
+| \`allowed-tools\` | Restrict what the skill can do. \`Read, Grep, Glob\` for read-only skills. |
+| \`context\` | \`fork\` = run in a subagent. Keeps main conversation clean. |
+| \`model\` | Route to a specific model. \`sonnet\` for fast/cheap, \`opus\` for complex. |
+
+**Dynamic context**  -  skills can run shell commands at invocation time with \`\` !\\\`command\\\` \`\` syntax:
+
+\`\`\`markdown
+## PR Context
+- PR diff: !\\\`gh pr diff\\\`
+- Changed files: !\\\`gh pr diff --name-only\\\`
+\`\`\`
+
+These execute before Claude sees the skill content. Claude receives the rendered output, not the commands.
+
+---
+
+## Built-in Skills
+
+Five ship with Claude Code ([skills docs](https://code.claude.com/docs/en/skills)):
+
+| Skill | What it does |
+|---|---|
+| \`/simplify [focus]\` | Reviews recently changed files via three parallel agents checking reuse, quality, and efficiency. |
+| \`/batch <instruction>\` | Decomposes work into 5-30 units, spins up isolated git worktrees, executes in parallel, opens PRs. |
+| \`/loop [interval] <prompt>\` | Runs a prompt repeatedly on an interval. Defaults to 10 minutes. |
+| \`/debug [description]\` | Reads the session debug log to troubleshoot your current session. |
+| \`/claude-api\` | Loads Claude API reference material. Also auto-activates when code imports \`anthropic\` or \`@anthropic-ai/sdk\`. |
+
+Note: \`/review\` is deprecated. Install the \`code-review\` plugin instead: \`claude plugin install code-review@claude-code-marketplace\` ([commands docs](https://code.claude.com/docs/en/commands)).
+
+---
+
+## Commands vs Skills
+
+Older tutorials reference \`.claude/commands/\` as a separate system. Commands and skills have been merged  -  both \`.claude/commands/deploy.md\` and \`.claude/skills/deploy/SKILL.md\` create \`/deploy\`. Existing command files still work, but skills are the recommended format going forward (directory support, frontmatter control, auto-invocation).
+
+---
+
+## Open Standard
+
+Skills follow the [Agent Skills specification](https://agentskills.io)  -  an open standard with 32+ adopters including Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI, and JetBrains Junie. A skill you write for Claude Code works in Cursor without modification.`;
+
+
+sections[4].content = `# Part 4: MCP — Connecting Claude to Everything
+
+---
+
+## What MCP Is
+
+Everything so far operates within Claude Code's built-in capabilities: read files, run shell commands, call the API. **MCP extends that to everything else.**
+
+<img src="images/mcp-architecture.png" alt="MCP standardized protocol — AI applications on the left, data sources and tools on the right, bidirectional data flow" class="section-image">
+
+**Model Context Protocol** — open standard for connecting AI assistants to external tools via JSON-RPC over stdio or HTTP. Not Claude-specific — adopted by Claude Code, Copilot, Goose, VS Code, and others.
+
+**Three primitives:**
+- **Tools** — callable functions ("create a PR", "query this table", "post to Slack")
+- **Resources** — readable data (database records, API responses, documents)
+- **Prompts** — reusable templates (less common in practice)
+
+---
+
+## What Becomes Possible
+
+- "Implement the feature described in JIRA issue ENG-4521 and create a PR on GitHub"
+- "Check Sentry and Statsig to check usage of this feature"
+- "Find emails of 10 users who used feature X, based on our PostgreSQL database"
+- "Update our email template based on the new Figma designs posted in Slack"
+
+---
+
+## Building a Server Is Simple
+
+Python with FastMCP — a server is ~20 lines:
+
+\`\`\`python
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("my-server")
+
+@mcp.tool()
+async def get_data(query: str) -> str:
+    """Fetch data based on a query."""
+    # your logic here
+    return result
+\`\`\`
+
+TypeScript, Java, Kotlin, C#, Ruby, Rust, Go all supported. Type hints and docstrings become tool definitions automatically.
+
+---
+
+## MCP Apps (new)
+
+Servers can now return **interactive HTML UIs** that render directly in the conversation — dashboards, forms, data visualizations, config panels.
+
+- App runs in a sandboxed iframe — can't escape, can't access host
+- Bidirectional: app can call MCP tools, host can push data to app
+- No separate web app needed — context stays in the conversation
+- Supported in Claude Desktop, VS Code Copilot, Goose, and others
+
+---
+
+## Configuration
+
+\`\`\`bash
+# HTTP (remote services)
+claude mcp add --transport http notion https://mcp.notion.com/mcp
+
+# Stdio (local tools)
+claude mcp add postgres --command "npx" --args "-y @modelcontextprotocol/server-postgres"
+\`\`\`
+
+**Scopes:**
+
+| Scope | Location | Visibility |
+|---|---|---|
+| **Local** | \`~/.claude.json\` under project path | Just you, this project |
+| **Project** | \`.claude/.mcp.json\` | Committed, team-shared |
+| **User** | \`~/.claude.json\` | You, all projects |
+
+---
+
+## Key Ecosystem Servers
+
+<img src="images/img-20251222163339.png" alt="Agent architecture — MCP servers and Skills" class="section-image">
+
+| Server | What it gives Claude |
+|---|---|
+| **GitHub** | PRs, issues, code search, reviews |
+| **Atlassian** | Jira issues, Confluence pages |
+| **Notion** | Pages, databases, comments |
+| **Figma** | Design files, components |
+| **Supabase** | Database queries, auth, storage |
+| **Playwright** | Browser automation, screenshots |
+| **PostgreSQL** | Direct database queries |
+| **Context7** | Live library documentation |
+| **Slack** | Messages, channels, threads |
+
+---
+
+## Don't Overdo It
+
+<img src="images/img-20251222165124.png" alt="Context window — the more you use, the worse outcomes" class="section-image medium">
+
+- Every server adds to context (tool descriptions eat tokens)
+- **Tool Search** enables lazy loading — up to 95% context reduction
+- But don't connect 50 servers "just in case" — more tools = more confusion
+- Rule of thumb: if you wouldn't keep the app open all day, don't keep the server connected all day`;
+
+
+sections[5].content = `# Part 4: Hooks  -  Deterministic Control
+
+---
+
+## Probabilistic vs Deterministic
+
+Everything covered so far  -  CLAUDE.md, rules, skills  -  is guidance. Claude sees it and usually follows it, but \u201Cusually\u201D isn\u2019t always sufficient.
+
+Hooks are shell commands that execute at specific points in Claude Code\u2019s lifecycle. They run unconditionally  -  Claude has no say in whether a hook fires.
+
+> **Skills are probabilistic**  -  Claude uses judgment about whether to invoke them.
+> **Hooks are deterministic**  -  they run every single time, zero exceptions.
+
+---
+
+## Basic Example
+
+A desktop notification hook for when Claude needs your attention:
+
+\`\`\`json
+{
+  "hooks": {
+    "Notification": [{
+      "matcher": "",
+      "hooks": [{
+        "type": "command",
+        "command": "osascript -e 'display notification \\"Claude needs your attention\\" with title \\"Claude Code\\"'"
+      }]
+    }]
+  }
+}
+\`\`\`
+
+Configured in \`settings.json\`. Three parts: an **event** (\`Notification\`), a **matcher** (\`""\` = all tools), and a **command** (the shell script that runs).
+
+---
+
+## How Hooks Work
+
+**Events**  -  points in Claude\u2019s lifecycle where a hook can fire:
+
+| Event | When it fires | Can block? |
+|---|---|---|
+| \`PreToolUse\` | Before a tool executes | Yes (exit 2) |
+| \`PostToolUse\` | After a tool succeeds | No |
+| \`Notification\` | Claude needs your attention | No |
+| \`Stop\` | Claude finishes responding | Yes |
+| \`SessionStart\` | Session begins or resumes | No |
+| \`UserPromptSubmit\` | User submits a prompt | Yes |
+
+**Matchers**  -  regex patterns that filter which tools trigger the hook:
+
+\`\`\`
+"Bash"              \u2192 only Bash commands
+"Edit|Write"        \u2192 file edits or writes
+"mcp__github__.*"   \u2192 any GitHub MCP tool
+""                  \u2192 everything (or omit matcher entirely)
+\`\`\`
+
+Some events (\`Stop\`, \`UserPromptSubmit\`) don\u2019t support matchers  -  they always fire.
+
+**Exit codes**  -  how hooks control behavior:
+
+| Exit Code | Effect |
+|---|---|
+| 0 | Allow  -  tool proceeds normally |
+| **2** | **Block  -  tool call cancelled. Stderr shown to Claude as error.** |
+| Other | Non-blocking error. Stderr shown in verbose mode only. |
+
+Exit code 2 is the kill switch. A \`PreToolUse\` hook that exits 2 cancels the tool call unconditionally. Unlike a CLAUDE.md instruction (which Claude may eventually override in long sessions), a hook with exit 2 makes the action impossible.
+
+---
+
+## More Examples
+
+**Block commits with sensitive files**  -  \`PreToolUse\` hook preventing \`.env\`, \`.key\`, \`.pem\` files from being committed:
+
+\`\`\`bash
+#!/bin/bash
+# .claude/hooks/block-secrets.sh
+INPUT=$(cat)
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+
+if ! echo "$COMMAND" | grep -q "git commit"; then exit 0; fi
+
+STAGED=$(git diff --cached --name-only 2>/dev/null)
+if echo "$STAGED" | grep -iE '\\.(env|key|pem)$|credentials|secrets' > /dev/null 2>&1; then
+  echo "BLOCKED: Sensitive files in staged changes" >&2
+  exit 2
+fi
+exit 0
+\`\`\`
+
+\`\`\`json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{ "type": "command", "command": ".claude/hooks/block-secrets.sh" }]
+    }]
+  }
+}
+\`\`\`
+
+**Auto-format after edits**  -  \`PostToolUse\` on \`Edit|Write\` runs your formatter:
+
+\`\`\`bash
+#!/bin/bash
+# .claude/hooks/auto-format.sh
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+[ -z "$FILE_PATH" ] && exit 0
+
+case "$FILE_PATH" in
+  *.ts|*.tsx|*.js|*.jsx) npx prettier --write "$FILE_PATH" 2>/dev/null ;;
+  *.py) black "$FILE_PATH" 2>/dev/null ;;
+esac
+exit 0
+\`\`\`
+
+Always exits 0  -  formatting is best-effort and should not block Claude.
+
+Use \`/hooks\` to browse configured hooks. Claude can also write hooks for you: \u201CWrite a hook that blocks writes to the migrations folder.\u201D
+
+---
+
+## Where Hooks Live
+
+Hooks are configured in \`settings.json\`, not markdown files:
+
+| Location | Scope |
+|---|---|
+| \`~/.claude/settings.json\` | All projects (personal) |
+| \`.claude/settings.json\` | This project (committed) |
+| \`.claude/settings.local.json\` | This project (gitignored) |
+
+Hook commands receive context as JSON via stdin (tool input, tool output, session info).
+
+Hooks also support two additional types beyond shell scripts:
+- **\`prompt\` hooks**  -  trigger LLM inference
+- **\`agent\` hooks**  -  spawn a Claude subagent to review or evaluate something
+
+For example, a \`PreToolUse\` agent hook could review every commit message or evaluate whether a code change follows architecture patterns  -  deterministically triggered, with AI-level judgment.`;
+
+
+sections[6].content = `# Part 5: Subagents & Agent Teams
+
+---
+
+## 5a: Subagents
+
+### Context Isolation
+
+When Claude researches something mid-session (reading dozens of files, running greps), that output floods your main context and dilutes earlier work.
+
+Subagents solve this. A subagent is a separate Claude instance with its own context window. It performs a task  -  research, analysis, code review  -  and returns only the final summary. All intermediate work stays contained.
+
+<div class="svg-diagram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 540" style="background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif;">
+  <defs>
+    <pattern id="grid-6" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f1f5f9" stroke-width="1"/>
+    </pattern>
+    <marker id="arrow-blue-6" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M 0 2 L 10 5 L 0 8 z" fill="#0ea5e9"/>
+    </marker>
+    <marker id="arrow-green-6" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M 0 2 L 10 5 L 0 8 z" fill="#10b981"/>
+    </marker>
+    <filter id="shadow-6" x="-5%" y="-5%" width="120%" height="120%">
+      <feDropShadow dx="2" dy="2" stdDeviation="4" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid-6)" />
+  <g transform="translate(40, 40)">
+    <rect width="400" height="460" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M0,10 a10,10 0 0,1 10,-10 h380 a10,10 0 0,1 10,10 v40 h-400 v-40" fill="#0f172a"/>
+    <text x="200" y="32" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">MAIN CONVERSATION</text>
+    <line x1="200" y1="50" x2="200" y2="400" stroke="#e2e8f0" stroke-width="3" stroke-dasharray="8 4"/>
+    <g transform="translate(40, 80)">
+      <rect width="320" height="50" rx="8" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5" filter="url(#shadow-6)"/>
+      <text x="160" y="30" text-anchor="middle" font-size="14" font-weight="bold" fill="#0369a1">"Research how auth tokens work"</text>
+    </g>
+    <g transform="translate(40, 290)">
+      <rect width="320" height="90" rx="8" fill="#f0fdf4" stroke="#34d399" stroke-width="1.5" filter="url(#shadow-6)"/>
+      <text x="160" y="26" text-anchor="middle" font-size="13" font-weight="bold" fill="#047857">Subagent Returns Summary:</text>
+      <text x="160" y="48" text-anchor="middle" font-size="12" fill="#065f46">"Auth uses JWT in httpOnly cookies.</text>
+      <text x="160" y="64" text-anchor="middle" font-size="12" fill="#065f46">Refresh via /api/auth/refresh with rotating</text>
+      <text x="160" y="80" text-anchor="middle" font-size="12" fill="#065f46">tokens. Session middleware validates."</text>
+    </g>
+    <g transform="translate(40, 405)">
+      <rect width="320" height="35" rx="6" fill="#10b981" filter="url(#shadow-6)"/>
+      <text x="160" y="22" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">Your context: clean. Just the summary.</text>
+    </g>
+  </g>
+  <g transform="translate(540, 100)">
+    <rect width="300" height="280" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 4" filter="url(#shadow-6)"/>
+    <path d="M0,10 a10,10 0 0,1 10,-10 h280 a10,10 0 0,1 10,10 v30 h-300 v-30" fill="#64748b"/>
+    <text x="150" y="26" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">SUBAGENT (Isolated Context)</text>
+    <g transform="translate(30, 70)">
+      <rect width="240" height="36" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="120" y="23" text-anchor="middle" font-size="13" fill="#475569">Reads 15 files</text>
+    </g>
+    <g transform="translate(30, 120)">
+      <rect width="240" height="36" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="120" y="23" text-anchor="middle" font-size="13" fill="#475569">Greps for "auth", "JWT"</text>
+    </g>
+    <g transform="translate(30, 170)">
+      <rect width="240" height="40" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+      <text x="120" y="18" text-anchor="middle" font-size="12" fill="#b91c1c">Subagent absorbs the massive</text>
+      <text x="120" y="32" text-anchor="middle" font-size="12" fill="#b91c1c">context window cost internally</text>
+    </g>
+  </g>
+  <g>
+    <line x1="440" y1="145" x2="530" y2="145" stroke="#0ea5e9" stroke-width="4" marker-end="url(#arrow-blue-6)"/>
+    <text x="490" y="135" text-anchor="middle" font-size="13" font-weight="bold" fill="#0284c7">Spawns Subagent</text>
+    <line x1="540" y1="350" x2="450" y2="350" stroke="#10b981" stroke-width="4" marker-end="url(#arrow-green-6)"/>
+    <text x="495" y="340" text-anchor="middle" font-size="13" font-weight="bold" fill="#047857">Returns Result</text>
+  </g>
+</svg>
+</div>
+
+---
+
+### Custom Subagent Example
+
+\`\`\`markdown
+# .claude/agents/security-scanner.md
+
+---
+name: security-scanner
+description: Scans code for security vulnerabilities and OWASP issues.
+  Use proactively after code changes in auth or payment modules.
+tools: Read, Grep, Glob, Bash
+model: sonnet
+---
+
+You are a senior security engineer. Analyze the provided code for:
+- Injection vulnerabilities (SQL, XSS, command injection)
+- Auth and authorization flaws
+- Secrets or credentials in code
+- Missing input validation
+
+Provide file paths, line numbers, and suggested fixes.
+Rate each finding: Critical, Warning, or Info.
+\`\`\`
+
+Same structure as a skill  -  frontmatter on top, instructions below. Lives in \`.claude/agents/\` (project) or \`~/.claude/agents/\` (personal).
+
+Invoke with natural language (\u201Cuse the security-scanner to review src/auth/\u201D) or \`@security-scanner\`. Claude also auto-delegates based on descriptions, using the same probabilistic matching as skills.
+
+---
+
+### How Context Flows
+
+- **Parent \u2192 subagent:** Only the prompt string. The subagent does not inherit conversation history.
+- **Subagent \u2192 parent:** Only the final message. All intermediate work stays inside.
+- **Inherited:** Project context (CLAUDE.md, rules, MCP servers), permissions.
+- **Not inherited:** Skills. You must explicitly list them in the \`skills\` frontmatter field to pass them into a subagent.
+- **Limitation:** Subagents cannot spawn other subagents.
+
+### Built-in Subagents
+
+Claude uses these automatically  -  you don\u2019t need to define them:
+
+| Agent | Model | Tools | Purpose |
+|---|---|---|---|
+| **Explore** | Haiku | Read-only | File discovery, code search. Three thoroughness levels. |
+| **Plan** | Inherits | Read-only | Context gathering for plan mode |
+| **General-purpose** | Inherits | All | Complex multi-step tasks |
+
+When you ask \u201Chow does X work in our codebase?\u201D, Claude typically spawns an Explore subagent automatically.
+
+---
+
+### Frontmatter Fields
+
+| Field | What it does |
+|---|---|
+| \`name\` | How you reference the subagent. |
+| \`description\` | Drives auto-delegation  -  same as skills. Write this well. |
+| \`tools\` | Restrict what the subagent can do. \`Read, Grep, Glob\` for read-only. |
+| \`model\` | Route to a specific model. \`sonnet\` for fast/cheap tasks. |
+| \`skills\` | List of skills to inject into the subagent\u2019s context. Full content is loaded at startup. Subagents don\u2019t inherit skills  -  you must list them explicitly. |
+| \`isolation\` | \`worktree\` = run in an isolated git worktree. |
+
+Run \`/agents\` to view, create, edit, and delete subagents.
+
+---
+
+## 5b: Agent Teams
+
+### From Subagents to Teams
+
+Subagents are isolated workers within one session  -  they report back to the parent and can\u2019t communicate with each other. Agent teams are different: multiple independent Claude Code sessions, each with their own context window, communicating directly with each other.
+
+| | Subagents | Agent Teams |
+|---|---|---|
+| **Context** | Within parent session | Each has its own session |
+| **Communication** | Reports to parent only | Teammates message each other directly |
+| **Coordination** | Parent manages everything | Shared task list, self-coordination |
+| **Token cost** | Lower (summarized results) | ~7x a standard session |
+| **Status** | Stable | **Experimental** (feature flag) |
+
+---
+
+### How They Work
+
+One session acts as team lead and spawns teammates  -  separate Claude Code instances. Each teammate has its own context window and loads the same project context (CLAUDE.md, rules, MCP servers) but not the lead\u2019s conversation history.
+
+<div class="svg-diagram"><img src="agent-teams-diagram.svg" alt="Agent Teams topology diagram showing lead session spawning teammates with peer-to-peer SendMessage communication and a shared task list" style="width:100%;max-width:700px;margin:0 auto;display:block;" /></div>
+
+**Key components:**
+- **Task list**  -  shared file on disk. Tasks have states (pending, in progress, completed) and can have dependencies.
+- **Mailbox**  -  \`SendMessage\` for direct peer-to-peer communication. Teammates coordinate without going through the lead. \u201CI changed the API response shape  -  here\u2019s the new type. Update your frontend components.\u201D
+
+---
+
+### Launching a Team
+
+Agent teams are experimental. Enable in settings:
+
+\`\`\`json
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}
+\`\`\`
+
+Then launch in natural language:
+
+\`\`\`
+Create a team to refactor the auth module.
+Spawn three teammates:
+- One for the backend auth service
+- One for the frontend login flow
+- One for integration tests
+Require plan approval before they make changes.
+\`\`\`
+
+Claude spawns teammates, creates a shared task list, and coordinates. Use **Shift+Down** to cycle through teammates.
+
+---
+
+### When Teams Help
+
+- **Research and review:** Multiple investigators apply different lenses simultaneously
+- **New features:** Each teammate owns a separate layer without stepping on each other
+- **Competing hypotheses:** Test different theories in parallel
+
+**When they\u2019re overkill:** sequential tasks, same-file edits (merge conflicts), simple tasks, tight token budgets.
+
+---
+
+### Practical Guidance
+
+- **Team size:** 3-5 teammates. More isn\u2019t better  -  coordination overhead grows.
+- **Model choice:** Sonnet for teammates, Opus for the lead.
+- **Avoid file conflicts:** Break work so each teammate owns different files.
+- **Give rich context in spawn prompts:** Teammates don\u2019t inherit the lead\u2019s history. Include everything they need.
+- **Known rough edges:** experimental feature flag required, no session resumption for teammates, task status can lag, shutdown can be slow as teammates finish current work.
+
+---`;
+
+
+sections[7].content = `# Part 7: Plugins — Bundling It All Together
+
+---
+
+## What Plugins Solve
+
+You've seen skills, hooks, MCP servers, subagents — each in its own file/config. Works for one repo. But across projects or teams? You end up copying files and writing setup docs.
+
+**Plugins are the packaging layer.** Bundle any combination into a single installable unit.
+
+<img src="images/img-20251222163329.png" alt="Exploring how Skills evolve — users sharing" class="section-image">
+
+---
+
+## What's Inside
+
+<img src="images/img-20251222163359.png" alt="Skills are just folders" class="section-image small">
+
+\`\`\`
+my-team-plugin/
+├── .claude-plugin/
+│   └── plugin.json       # Manifest (required)
+├── .mcp.json              # MCP servers (optional)
+├── commands/              # Slash commands (optional)
+├── agents/                # Subagent definitions (optional)
+├── skills/                # Skill definitions (optional)
+└── README.md
+\`\`\`
+
+**Simple rule:** one repo → keep in \`.claude/\`. Multiple projects or team → plugin.
+
+---
+
+## The Ecosystem (March 2026)
+
+- **Official marketplace** (\`claude-plugins-official\`) — automatically available
+- **Community** — 43+ marketplaces, 834+ plugins
+
+\`\`\`bash
+/plugin marketplace add <owner/repo>
+/plugin install <name>
+\`\`\`
+
+**Scopes:**
+
+| Scope | Use for |
+|---|---|
+| **User** | Personal workflow tools (all projects) |
+| **Project** | Team standards (committed) |
+| **Local** | This repo only (personal) |
+| **Managed** | Org-wide policies (admin-deployed) |
+
+---
+
+## Real Example: Compass Superpowers
+
+Here's **compass-superpowers** — a private marketplace I made for Compass specifically, with the intention of anyone being able to contribute and add plugins they think could be useful to share across our org:
+
+\`\`\`bash
+/plugin marketplace add compassanalytics/claude-compass-superpowers
+/plugin install general-dev@compassanalytics
+\`\`\`
+
+| Plugin | What it does |
+|---|---|
+| **general-dev** | 31 skills for TDD, debugging, refactoring, git workflows |
+| **ticket-driven-dev** | Context-preserving orchestration with knowledge graph + autonomous ticket engine |
+| **deep-feature** | Multi-agent analysis → fat tickets → implementation (7-phase lifecycle) |
+| **deep-docs** | 5-dimension documentation generation with Confluence export |
+| **agent-swarm** | Multi-agent swarm orchestration with 4 topologies + RARV verification |
+| **jira-compass** | Jira/Atlassian integration — read, create, update, expand tickets |
+| **databricks-compass** | Spark, Delta Lake, ETL pipelines |
+| **dataiku-compass** | Dataiku DSS, ML pipelines |
+| **skill-manager** | Validate, score, scaffold, and persist skills |
+
+Shared MCP servers (knowledge graph, plugin analytics, ticket engine, swarm state) are used across plugins — one install, everything wired up.
+
+This is what a mature plugin ecosystem looks like. Started with a few skills in \`.claude/\`, grew into a full marketplace the team shares.
+
+---
+
+## The Bigger Picture: Agent Skills as Open Standard
+
+Skills follow the **Agent Skills specification** (agentskills.io) — announced Dec 2025, now adopted by **16+ tools and 30+ products**:
+
+Claude Code, OpenAI Codex CLI, Google Gemini CLI, GitHub Copilot, Cursor, JetBrains Junie, VS Code, Goose (Block), Amp, OpenHands, and more.
+
+A skill you write for Claude Code works in Cursor without modification. The ecosystem isn't siloed.
+
+**AGENTS.md** — the open format for agent configuration — is now in **60,000+ repos** and stewarded by the Linux Foundation. Adopted by Stripe, OpenAI, Anthropic, Google.
+
+---
+
+## LSP Plugins
+
+Official marketplace includes **11 LSP plugins** — C/C++, C#, Go, Java, Kotlin, Lua, PHP, Python, Rust, Swift, TypeScript.
+
+- **Automatic diagnostics** after every edit — errors push back instantly
+- **Go-to-definition, find-references, type info** — same language intelligence your editor uses
+- **Speed**: symbol lookups go from 30-60s (grep) to **~50ms** with 100% precision
+
+---
+
+## Scale of the Ecosystem (early 2026)
+
+- **~9,000+ total extensions** across official + community marketplaces
+- **Official Anthropic marketplace**: 33 plugins (code intelligence, integrations, workflows, output styles)
+- **Community**: \`buildwithclaude.com\` (492+), \`claudemarketplaces.com\`, GitHub repos
+- **awesome-agent-skills**: 500+ cross-platform skills
+
+---
+
+## When to Plugin
+
+| Situation | Approach |
+|---|---|
+| One-off workflow, single repo | \`.claude/\` directly |
+| Same workflow across your repos | User-scoped plugin |
+| Team-wide standards | Project-scoped plugin |
+| Org-wide policies | Managed plugin |
+
+Plugins are the natural end state when a workflow matures.`;
+
+
+sections[8].content = `# Part 8: Permissions & \`--dangerously-skip-permissions\`
+
+---
+
+## The Problem
+
+- Claude asks ~100 permission prompts/hour → one every 36 seconds
+- You stop reading them → rubber-stamping → false sense of security
+- Need: safety guarantees without friction that undermines them
+
+---
+
+## The Five Modes
+
+| Mode | How it works | When |
+|---|---|---|
+| **Default** | Prompts for everything dangerous | New to Claude Code |
+| **Auto-accept (Shift+Tab)** | Proceeds without pausing, still interactive | Pairing sessions |
+| **AllowedTools whitelist** | Specific commands skip approval | Day-to-day dev |
+| **Deny rules** | Block specific commands (trumps allow) | Safety guardrails |
+| **\`--dangerously-skip-permissions\`** | Disables ALL checks | Containers only |
+
+Sweet spot: **AllowedTools + deny rules**
+
+---
+
+## The Flag
+
+\`--dangerously-skip-permissions\` — no dialogs, no pauses, no human-in-the-loop.
+
+**Three things people miss:**
+1. **Subagent inheritance** — ALL subagents get full autonomous access. Can't override
+2. **Name is deliberate** — no \`-y\`, no shortcut. You type it every time. By design
+3. **Hooks still fire** — a PreToolUse exit 2 still blocks, even in bypass mode
+
+**Real incidents:**
+- Wolak (Oct 2025) — \`rm -rf\` from root on a firmware project. OS file permissions were the only save
+- 32% of bypass users hit unintended file modifications; 9% reported data loss
+
+**When it's appropriate:**
+- Docker container / VM (Anthropic's own recommendation)
+- \`--network none\` to block external connections
+- Git checkpoints before every session
+- Anthropic's engineers use it — "(Run this in a container, not your actual machine.)"
+
+<img src="images/img-20251222170347.png" alt="Code Review — Hierarchy of Needs" class="section-image small">
+
+---
+
+## If You Want YOLO: Do It Right
+
+I built **claude-yolo** — a Docker-based sandbox that lets you run \`--dangerously-skip-permissions\` safely:
+
+\`\`\`bash
+cd /path/to/any/project
+claude-yolo                    # launch in sandboxed yolo mode
+claude-yolo "fix the tests"    # pass arguments through
+\`\`\`
+
+**What it does:**
+- Ubuntu container with Node.js, git, uv, Claude Code CLI
+- Reuses host auth (extracts macOS Keychain creds), SSH keys, and plugins
+- Auto-patches hardcoded paths in plugin configs for the container
+- Remaps UID/GID so file ownership stays correct
+- Handles git worktrees (mounts parent repo when inside a worktree)
+- Host files are **never modified** — patched copies are mounted read-only
+
+| File | Purpose |
+|---|---|
+| \`Dockerfile\` | Ubuntu 22.04 + Node.js 22 + Claude Code CLI |
+| \`entrypoint.sh\` | UID/GID remapping, git SSH config, privilege drop via \`gosu\` |
+| \`claude-yolo.sh\` | Host launcher: auth extraction, path patching, docker run with all mounts |
+
+**Setup:** Drop 3 files in \`~/.claude/docker/\`, build the image, add an alias. Full instructions in the gist.
+
+This is the pattern Anthropic recommends — container isolation + yolo mode. You get full autonomous execution with zero risk to your host machine.
+
+---
+
+## The Better Alternative
+
+\`\`\`json
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(git commit *)",
+      "Bash(* --version)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "Bash(rm -rf *)"
+    ]
+  }
+}
+\`\`\`
+
+- Deny always beats allow
+- Build your list: rubber-stamp prompts → allow list. Nervous prompts → deny list
+- Combine with hooks for deterministic blocking`;
+
+
+sections[9].content = `# Closing: A New Programming Paradigm
+
+---
+
+## This Is Software 3.0
+
+Karpathy laid out the trajectory:
+- **Software 1.0** — hand-written code. Deterministic. You control everything
+- **Software 2.0** (2017) — neural network weights. Learned from data. You control the training
+- **Software 3.0** (2025) — natural language prompts. You describe intent. The model executes
+
+> "The hottest new programming language is English." — Andrej Karpathy, January 2023
+
+We're building entire applications through a new computing stack:
+
+| Traditional Computing | AI Engineering |
+|---|---|
+| Processor (CPU) | **Model (LLM)** |
+| Operating System | **Coding Agent** (Claude Code, Cursor, Copilot) |
+| Applications | **Skills, Plugins, Workflows** |
+| RAM | **Context Window** |
+| Config files | **CLAUDE.md, rules, hooks** |
+| Middleware | **Hooks** (pre/post execution) |
+| Microservices | **Skills** (single responsibility, independently loadable) |
+| Dependency injection | **CLAUDE.md** (injects behavioral context at runtime) |
+
+<img src="images/img-20251222163310.png" alt="Skills, Agents, Models — concentric circles" class="section-image medium">
+
+---
+
+## Same Principles, New Medium
+
+The software engineering principles you already know **all still apply**:
+
+- **DRY** — CLAUDE.md prevents repeating the same instructions in every prompt. Skills prevent rewriting the same workflow. Plugins prevent copying files across repos
+- **Separation of concerns** — rules are scoped by file path, skills have single responsibilities, subagents isolate context
+- **Encapsulation** — subagents hide their intermediate work, returning only results. Skills encapsulate complex workflows behind a simple \`/command\`
+- **Modularity** — plugins bundle related capabilities. MCP servers are swappable bridges. Each layer is independently configurable
+- **Interface contracts** — skill frontmatter defines the interface (name, description, arguments). The implementation is the markdown body
+
+The difference: these "applications" are written in natural language, not code.
+
+---
+
+## Everything Is Still Logic
+
+Don't be fooled by the natural language. What we're writing is still:
+- **Instructions** — step-by-step procedures
+- **Conditions** — "if the file is a test, do X; if it's a migration, do Y"
+- **Constraints** — "never commit secrets", "always validate input"
+- **Architecture** — which agent owns which files, how context flows between them
+
+It's programming. It's just in English now.
+
+---
+
+## The Tradeoffs of Natural Language
+
+**What you gain:**
+- More expressive — handles edge cases through judgment, not explicit branching
+- More accessible — non-engineers can contribute to workflows
+- Faster iteration — change behavior by editing a markdown file, not recompiling
+- Cross-tool portability — same skill works in Claude Code, Cursor, Codex CLI
+
+**What you lose:**
+- **Precision** — same instruction can produce different results (non-deterministic)
+- **Testability** — no unit tests for natural language instructions (evals exist, but immature)
+- **Debuggability** — "why did it do that?" has no stack trace pointing to line 42
+- **Trust gap** — developer trust in AI code accuracy dropped from 40% to 29% (Stack Overflow 2026)
+
+> **45%** of developers cite "almost right, but not quite" as their top AI frustration
+
+This is the core tension: the same property (non-determinism) is both the **main feature** and the **main defect**.
+
+<img src="images/img-20251222165059.png" alt="Performance = Correctness² × Completeness / Size" class="section-image medium">
+
+---
+
+## Do Not Outsource the Thinking
+
+<img src="images/img-20251222165636.png" alt="Do Not Outsource the Thinking — Jake Nations" class="section-image medium">
+
+Jake Nations (Staff Engineer, Netflix): AI makes the **easy** parts effortless. But it conflates "easy" with "simple." Simple systems require architectural judgment — the genuinely hard work — which AI cannot do for you.
+
+His framework: **Research → Planning → Implementation**. Never skip straight to implementation. The compression step — synthesizing research into a minimal, well-understood plan — is the irreducibly human contribution.
+
+> "The hard work of thinking can't be outsourced to AI, only amplified by it."
+
+<img src="images/img-20251222171020.png" alt="Research → Planning → Implementation phases with human review" class="section-image">
+
+<img src="images/img-20251222170512.png" alt="Plan reliability vs readability sweet spot" class="section-image medium">
+
+---
+
+## Context Engineering: The New Discipline
+
+The field has a name now. **Context engineering** — coined by Karpathy and Tobi Lutke (Shopify CEO) in mid-2025, endorsed by Gartner:
+
+> "The delicate art and science of filling the context window with just the right information for the next step." — Karpathy
+
+> "Context engineering is in, and prompt engineering is out." — Gartner, July 2025
+
+Everything we covered today IS context engineering:
+- CLAUDE.md = persistent context
+- Rules = scoped context
+- Skills = on-demand context
+- Hooks = deterministic enforcement
+- MCP = external context bridges
+- Subagents = isolated context
+- Plugins = shareable context packages
+
+<img src="images/img-20251222171251.png" alt="Harness engineering as a subset of Context Engineering" class="section-image">
+
+<img src="images/img-20251222165325.png" alt="Frequent Intentional Compaction" class="section-image medium">
+
+---
+
+## Programming Was Never About Code
+
+We're writing applications in natural language now. But at the end of the day — it's still logic. Steps of instructions. Conditionals. Architecture.
+
+The **classic principles** still apply:
+- **DRY** — don't repeat context across prompts, skills, or sessions
+- **Encapsulation** — subagents hide complexity, skills wrap workflows behind a command
+- **Separation of Concerns** — rules scoped by file path, agents scoped by responsibility
+
+And **new principles** have emerged:
+- **Context Rot** — performance degrades as context grows stale or bloated. Compact intentionally
+- **Context Isolation** — subagents and forked skills protect your main session from noise
+- **Progressive Disclosure** — load only what's needed: skill descriptions at startup, full body on invocation, rules only when file patterns match
+
+Programming has never been about writing "code." The intent has always been **formulating logic to accomplish a task**. The medium changes — assembly, C, Python, YAML, now English — but the discipline doesn't.
+
+> No matter the medium, keep being a programmer.
+
+---
+
+## The Deterministic ↔ Probabilistic Stack
+
+| Layer | Type | Guarantee |
+|---|---|---|
+| CLAUDE.md / Rules | Guidance | Usually follows |
+| Skills | Probabilistic | May auto-invoke |
+| Subagents | Probabilistic | May delegate |
+| Hooks | **Deterministic** | Every time, no exceptions |
+| Permissions | **Deterministic** | Enforced regardless of intent |
+
+> **Must happen 100%** → hook or permission rule
+> **Should happen when relevant** → skill, subagent, or CLAUDE.md
+
+The common mistake: putting deterministic needs in probabilistic layers. The fix isn't a better prompt — it's a hook.
+
+---
+
+## Session 2 Preview
+
+Hands-on: set up CLAUDE.md, configure hooks, connect MCP servers, write a custom skill, build a subagent, spin up an agent team.
+
+**Bring a real project.**`;
+
+// --- APP LOGIC ---
+
+let currentSection = 0;
+
+function buildNav() {
+  const list = document.getElementById('nav-list');
+  list.innerHTML = sections.map((s, i) => `
+    <li>
+      <a class="nav-item${i === currentSection ? ' active' : ''}" href="#${s.id}" onclick="goToSection(${i}); return false;" data-index="${i}">
+        <span class="nav-number">${s.number}</span>
+        <span class="nav-info">
+          <span class="nav-title">${s.title}</span>
+          <span class="nav-meta">
+            ${s.duration ? `<span class="nav-duration">${s.duration}</span>` : ''}
+            <span class="nav-author ${s.author}">${s.author === 'julien' ? 'Julien' : 'Richard'}</span>
+          </span>
+        </span>
+      </a>
+    </li>
+  `).join('');
+}
+
+function renderSection(index) {
+  const section = sections[index];
+  let html = marked.parse(section.content);
+
+  // Transform image placeholder patterns
+  html = html.replace(/<p><strong>\[Image placeholder:\s*(.*?)\]<\/strong><\/p>/g, (match, desc) => {
+    return `<div class="image-placeholder"><div class="placeholder-icon">&#128444;</div><div class="placeholder-text">${desc}</div></div>`;
+  });
+
+  document.getElementById('content').innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToSection(index) {
+  if (index < 0 || index >= sections.length) return;
+  currentSection = index;
+  renderSection(index);
+  updateNav();
+  updateProgress();
+  history.replaceState(null, '', '#' + sections[index].id);
+
+  // Close mobile sidebar
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+}
+
+function updateNav() {
+  const items = document.querySelectorAll('.nav-item');
+  items.forEach((item, i) => {
+    item.classList.toggle('active', i === currentSection);
+  });
+}
+
+function updateProgress() {
+  const pct = ((currentSection + 1) / sections.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    goToSection(currentSection + 1);
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    goToSection(currentSection - 1);
+  }
+});
+
+// Configure marked
+marked.setOptions({
+  breaks: false,
+  gfm: true
+});
+
+// Init from hash or default
+function init() {
+  buildNav();
+
+  const hash = window.location.hash.replace('#', '');
+  if (hash) {
+    const idx = sections.findIndex(s => s.id === hash);
+    if (idx >= 0) currentSection = idx;
+  }
+
+  renderSection(currentSection);
+  updateNav();
+  updateProgress();
+}
+
+init();
+</script>
+
+</body>
+</html>
