@@ -1,10 +1,11 @@
 {
   "name": "sdlc-workshop",
-  "description": "Workshop plugin: build your own Software Development Lifecycle framework with guided coaching",
-  "version": "1.0.0",
-  "author": {
-    "name": "Richard El-Chaar"
-  },
+  "description": "Workshop plugin: spec-driven development toolkit and guided coaching for building SDLC workflows",
+  "version": "1.1.0",
+  "authors": [
+    { "name": "Richard El-Chaar" },
+    { "name": "Julien Hovan" }
+  ],
   "license": "MIT",
-  "keywords": ["workshop", "sdlc", "software-development-lifecycle", "plugin-building"]
+  "keywords": ["workshop", "sdlc", "spec-driven", "software-development-lifecycle", "plugin-building"]
 }

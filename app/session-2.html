@@ -512,16 +512,92 @@ const sections = [
     duration: "",
     author: "richard",
     content: null
+  },
+  {
+    id: "part-6",
+    number: "6",
+    title: "Advanced Topics",
+    duration: "",
+    author: "julien",
+    content: null
   }
 ];
 
 
 // --- SECTION 1: Introduction (Julien) ---
-sections[0].content = `# Introduction
+sections[0].content = `# Spec-Driven Development
 
 ---
 
-*Section to be completed.*`;
+Last session we learned how to extend Claude Code — skills, hooks, subagents, plugins. Individual tools. This session: **how to compose them into workflows that actually hold together across sessions, phases, and context windows.**
+
+The goal isn't automating away the developer. It's designing systems where AI and human reasoning reinforce each other — where every phase produces artifacts the next phase can use, and nothing important gets lost along the way.
+
+---
+
+## What Is Spec-Driven Development?
+
+A structured approach to AI-assisted software development where **a specification drives every phase** — discovery, research, refinement, planning, implementation, and review. Each phase reads from prior artifacts and writes its own. The spec is the anchor that prevents intent drift across context windows.
+
+This isn't unique to us. Several frameworks have converged on similar patterns:
+
+| Framework | Approach |
+|---|---|
+| **GSD (Get Stuff Done)** | Task-driven workflow with structured handoffs between planning and execution phases |
+| **Superpowers** | Opinionated multi-phase development with spec files as the source of truth |
+| **Ralph / TDD** | Ticket-driven development — backlog tickets as specs, dependency-aware execution across isolated worktrees |
+
+Different implementations, same core insight: **the spec is the contract between context windows.**
+
+**[Image placeholder: Spec-driven development flow diagram — phases connected by artifacts]**
+
+---
+
+## Why Workflows, Not Just Prompting?
+
+A single Claude session is powerful. But it has limits:
+
+- **Context decay** — at 100k+ tokens, early instructions lose influence. Details from hour one get buried by hour three
+- **Session boundaries** — close the terminal, lose the thread. "Continue where I left off" means the agent re-reads everything cold
+- **Single perspective** — one context window doing research, planning, AND implementation mixes concerns and dilutes focus
+
+Workflows solve this by **distributing reasoning across purpose-built phases.** Each phase has a narrow job, a clean context, and structured output the next phase consumes.
+
+---
+
+## Context Windows Over Time
+
+This is the key mental model. Instead of one long session that decays, you get **multiple focused sessions that build on each other's artifacts:**
+
+**[Image placeholder: Context windows over multiple sessions — showing how each session starts clean, reads prior artifacts, does focused work, writes output]**
+
+Each context window starts fresh. It loads only what it needs — the spec, the previous phase's output, relevant decisions from \`knowledge.json\`. No accumulated noise. No telephone game through 200k tokens of conversation history.
+
+---
+
+## The Parallelization Advantage
+
+Once work is decomposed into specs, **independent work streams can run simultaneously:**
+
+**[Image placeholder: Parallel context windows — multiple sessions running concurrently on different tasks/features, each with their own spec anchoring them]**
+
+- Research on feature A runs alongside implementation of feature B
+- Multiple review agents each check a different aspect (security, performance, correctness)
+- Parallel explorers investigate different parts of the codebase simultaneously
+
+This is where the real leverage is. Not making one agent faster — **making multiple agents useful at the same time,** each in its own clean context, each anchored to a spec.
+
+---
+
+## What's Ahead
+
+Richard will now walk through the **three design pillars** that make this work in practice:
+
+1. **Persistence & State** — where artifacts live, how phases find each other
+2. **Knowledge Flow** — what survives between phases and what gets lost
+3. **Orchestration** — how the user drives the workflow and where humans stay in the loop
+
+Then you'll build your own.`;
 
 
 // --- SECTION 2: Designing Workflows (Richard) ---
@@ -929,6 +1005,59 @@ Invoke \`/sdlc-coach\` \u2014 it walks you through designing every decision we j
 There is no single right architecture. Type \`hint\` if you get stuck. \`/sdlc-coach resume\` to pick up where you left off.
 
 > Go build something.`;
+
+
+// --- SECTION 6: Advanced Topics (Julien) ---
+sections[5].content = `# Advanced Topics
+
+---
+
+Once you have a working spec-driven workflow, there are deeper patterns worth exploring.
+
+---
+
+## MCPs as Interaction Protocols
+
+MCP servers aren't just API wrappers — they can serve as **structured protocols between phases and agents.**
+
+Instead of passing context through files alone, an MCP server can:
+
+- **Expose workflow state as resources** — agents query the current phase, decisions, and open questions through a protocol rather than parsing files
+- **Enforce transitions** — the MCP server validates that prerequisites are met before allowing a phase to start, rather than relying on each skill to check independently
+- **Coordinate parallel agents** — a shared MCP server acts as the message bus between concurrent workers, tracking who's doing what and merging results
+
+The shift: from "files on disk that agents read" to **"a live protocol that agents interact with."** The spec still lives on disk. But the workflow engine becomes a service rather than a set of conventions.
+
+---
+
+## Memory as a Managed Lifecycle
+
+In a basic workflow, knowledge lives in artifacts — \`knowledge.json\`, prose files, state files. But knowledge has a lifecycle:
+
+**Discovery** — new facts, assumptions, and constraints are surfaced
+
+**Accumulation** — knowledge grows across phases. Decisions compound. The knowledge base gets richer
+
+**Decay** — some knowledge becomes stale. An assumption made in discovery gets invalidated by research. A constraint changes
+
+**Consolidation** — after a feature ships, the important learnings get extracted and the ephemeral details get archived
+
+A managed memory lifecycle makes this explicit:
+
+- **Knowledge graphs** that track relationships between decisions, not just flat lists
+- **Staleness detection** — flag assumptions that haven't been validated in N phases
+- **Cross-feature learning** — patterns from completed features inform new ones. "Last time we touched auth, we missed rate limiting. Flag it early this time"
+- **Automated harvesting** — when a feature completes, extract the reusable learnings into a persistent knowledge base
+
+The goal: **knowledge that gets smarter over time,** not just bigger.
+
+---
+
+## Where to Go From Here
+
+These patterns aren't theoretical — they're how tools like TDD (Ticket-Driven Development) work in practice. Specs as tickets, knowledge graphs tracking cross-ticket themes, parallel execution across isolated worktrees, MCP servers coordinating the engine.
+
+Start simple. Build the basic workflow with the \`/sdlc-coach\`. Then evolve toward these patterns as your needs grow.`;
 
 
 // --- APP LOGIC ---
