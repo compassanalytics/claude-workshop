@@ -524,7 +524,7 @@ const sections = [
   {
     id: "part-6",
     number: "6",
-    title: "Advanced Topics",
+    title: "Install & Next Steps",
     duration: "",
     author: "julien",
     content: null
@@ -532,7 +532,15 @@ const sections = [
   {
     id: "part-7",
     number: "7",
-    title: "Install & Next Steps",
+    title: "Advanced Topics",
+    duration: "",
+    author: "julien",
+    content: null
+  },
+  {
+    id: "part-8",
+    number: "8",
+    title: "References",
     duration: "",
     author: "julien",
     content: null
@@ -1097,8 +1105,79 @@ There is no single right architecture. Type \`hint\` if you get stuck. \`/sdlc-c
 > Go build something.`;
 
 
-// --- SECTION 6: Advanced Topics (Julien) ---
-sections[5].content = `# Advanced Topics
+// --- SECTION 6: Install & Next Steps (Julien) ---
+sections[5].content = `# Install & Next Steps
+
+---
+
+You now have the concepts. Here's how to install the skills and start building your own workflow.
+
+## One-Line Install
+
+Copy and paste this into your terminal:
+
+\`\`\`bash
+curl -sL https://raw.githubusercontent.com/compassanalytics/claude-workshop/main/install.sh | bash
+\`\`\`
+
+This installs the workshop skills into your global Claude Code skills directory:
+- \`/sdlc\` — lightweight spec-driven development toolkit
+- \`/sdlc-coach\` — interactive guide for designing your own SDLC plugin
+
+---
+
+## Verify the Install
+
+Start a new Claude Code session anywhere on your machine and type:
+
+\`\`\`
+/sdlc-coach
+\`\`\`
+
+You should see the coach walk you through designing your plugin's identity, persistence, state tracking, and phase skills. Type \`hint\` if you get stuck, and \`/sdlc-coach resume\` to pick up where you left off.
+
+---
+
+## What's Installed
+
+The skills land in \`~/.claude/skills/\` and are available in every Claude Code session:
+
+\`\`\`
+~/.claude/skills/
+├── sdlc/
+│   └── SKILL.md
+└── sdlc-coach/
+    ├── SKILL.md
+    └── reference/
+        └── plugin-building-guide.md
+\`\`\`
+
+No \`--plugin-dir\` flag needed. They're global, always-on, and ready to use.
+
+---
+
+## Prefer to Install Manually?
+
+Clone the repo and copy the skills yourself:
+
+\`\`\`bash
+git clone https://github.com/compassanalytics/claude-workshop.git
+cp -r claude-workshop/workshop-session-2/skills/* ~/.claude/skills/
+\`\`\`
+
+---
+
+## Go Build Something
+
+The best way to learn this is to build something real with it. Pick a small feature, run \`/sdlc-coach\`, and design your first workflow. Iterate. Break it. Fix it. That's how good harnesses are forged.
+
+\`\`\`bash
+curl -sL https://raw.githubusercontent.com/compassanalytics/claude-workshop/main/install.sh | bash
+\`\`\``;
+
+
+// --- SECTION 7: Advanced Topics (Julien) ---
+sections[6].content = `# Advanced Topics
 
 ---
 
@@ -1182,13 +1261,90 @@ Skills aren't just "prompt snippets." They're structured artifacts with capabili
 
 ---
 
+## Tmux-Based Multi-Agent Orchestration
+
+When you need more than one agent working at the same time, **tmux has become the de-facto local control plane** for running multiple coding agents in parallel. It's lightweight, observable, and doesn't require custom servers or complex IPC.
+
+The basic pattern is simple: spawn a coding agent in a detached tmux window, send it a prompt via \`tmux send-keys\`, and capture its output via \`tmux capture-pane\`. But the real power comes from orchestrating many of these sessions together:
+
+- **Fan-out / fan-in:** Launch 5 parallel research agents, each investigating a different concern (security, performance, patterns, libraries, tests), then merge their findings
+- **Sequential chains:** Run phase A in one window, wait for its sentinel file to appear, then spawn phase B
+- **Batch-sequential waves:** Run groups of independent tasks in parallel, but sequence the groups (e.g., all explorers first, then all planners, then all implementors)
+
+Several tools have emerged around this pattern:
+
+| Tool | What it does |
+|---|---|
+| **swarmux** | Multi-agent Claude Code via tmux with N-pane layouts and pipeline patterns |
+| **codex-orchestrator** | Delegates tasks to OpenAI Codex agents in detached tmux sessions with JSON status monitoring |
+| **NTM** | Named Tmux Manager — a Go CLI that treats tmux as a "multi-agent command center" with agent mail and file reservations |
+| **TDD Spawner** | Spawns \`tdd-workflow\` tackle-ticket sessions in tmux windows across runtimes (Claude, Kimi, Codex, Gemini) |
+
+In the OhMyOpenCode ecosystem, the \`tdd-spawner\` skill provides MCP tools like \`spawn_ticket_sessions\` that handle the tmux bookkeeping for you. You pass a list of tickets and a mode (\`parallel\`, \`sequential\`, or \`batch_sequential\`), and it creates the windows, respects \`TDD_MAX_WORKERS\`, and queues extras automatically.
+
+The key insight: **tmux gives you process isolation + human observability for free.** You can watch the agents work in real time, jump into any session if it gets stuck, and kill the whole fleet with a single command.
+
+---
+
+## Sentinel Watchers
+
+When you have agents running in detached tmux sessions, you need a way to know when they're done. **Sentinels are lightweight file-based signals** that replace polling with event-driven coordination.
+
+The pattern works like this:
+
+1. The orchestrator spawns an agent in a tmux window and gives it a session ID
+2. The agent does its work
+3. When finished, the agent calls \`signal_done.sh <session_id> [exit_code] [reason]\`
+4. This creates a sentinel file — \`.tdd/engine/sentinels/<session_id>.done\` (or \`.error\`)
+5. The orchestrator waits on these files (or uses \`tmux wait-for\`) and advances to the next step
+
+Sentinels aren't just for success/failure. They can also act as circuit breakers:
+
+- **Pause sentinel:** A file like \`ralph-pause.sentinel\` can halt an autonomous loop gracefully until a human removes it
+- **Progress guards:** External watchdogs can detect if an agent hasn't written a new sentinel in N minutes and intervene
+- **Error sentinels:** A \`.error\` file with a reason string lets the orchestrator decide whether to retry, escalate, or stop the chain
+
+This is **protocol externalization at the execution layer** — the contract isn't just "what the agent should do," it's "how the agent signals that it's done."
+
+---
+
+## Ralph-Style Autonomous Loops
+
+The final escalation of spec-driven development is **autonomy** — a loop that keeps running until the job is done, with fresh context on every iteration.
+
+**Ralph** is the canonical pattern for this. Named after the simple bash loop \`while ! done; do ai_agent "$PROMPT"; done\`, it embodies a core philosophy: **state should live in the filesystem and git history, not in the agent's conversation memory.**
+
+Here's how a Ralph-style loop works in practice:
+
+1. **Read the spec** (e.g., \`prd.json\`, a ticket, or a backlog item)
+2. **Pick the highest-priority uncompleted task**
+3. **Spawn a fresh agent with that task and only the relevant context**
+4. **The agent implements, runs checks, commits on green**
+5. **Update the spec to reflect completion** (or append learnings to \`progress.txt\`)
+6. **Loop back to step 1**
+
+In the OhMyOpenCode TDD toolkit, \`/ralph\` takes this further:
+
+- It computes **dependency waves** across the backlog (tickets that can run in parallel vs. tickets blocked by others)
+- It spawns parallel tackle-ticket sessions via tmux for each wave
+- It waits for all sentinels, checks for errors, cleans up completed sessions
+- If new tickets become unblocked, it recomputes waves and continues
+- A **circuit breaker** halts the loop after 3 consecutive failures
+- A **pause sentinel** lets humans stop the loop gracefully
+
+The result is a **self-driving harness** that turns your backlog into executed code, wave by wave, with human oversight available but not required for every step.
+
+This is the frontier: not a bigger model, not a better prompt, but a **loop that externalizes intent, execution, and state so completely that the agent only needs to recognize what to do next.**
+
+---
+
 ## Where to Go From Here
 
 These patterns aren't theoretical — they're how tools like TDD (Ticket-Driven Development) work in practice. Here's what it looks like end-to-end — a PM session creating tickets as specs, and a DEV session consuming them through phased implementation:
 
 ![Example of Ticket Driven Development — PM session creates tickets, specs act as contracts, DEV session implements through phases](images/tdd-example.png)
 
-Specs as tickets, knowledge graphs tracking cross-ticket themes, parallel execution across isolated worktrees, MCP servers coordinating the engine.
+Specs as tickets, knowledge graphs tracking cross-ticket themes, parallel execution across isolated worktrees, MCP servers coordinating the engine, tmux sessions running agent swarms, sentinels signaling completion, and Ralph loops grinding through waves autonomously.
 
 The frontier is moving fast. The latest research points toward:
 
@@ -1200,75 +1356,29 @@ The frontier is moving fast. The latest research points toward:
 Start simple. Build the basic workflow with the \`/sdlc-coach\`. Then evolve toward these patterns as your needs grow. The best harness is the one you actually use.`;
 
 
-// --- SECTION 7: Install & Next Steps (Julien) ---
-sections[6].content = `# Install & Next Steps
+// --- SECTION 8: References (Julien) ---
+sections[7].content = `# References
 
 ---
 
-You now have the concepts. Here's how to install the skills and start building your own workflow.
+## Awesome Lists & Learning Repos
 
-## One-Line Install
+- **[awesome-agentic-patterns](https://github.com/nibzard/awesome-agentic-patterns)** — Curated collection of patterns, architectures, and frameworks for building agentic systems
+- **[context-engineering](https://github.com/bonigarcia/context-engineering)** — Deep dive into context engineering techniques for LLMs
+- **[awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering)** — Resources specifically focused on LLM agent harness design
+- **[GitHub Spec-Kit](https://github.com/github/spec-kit/blob/main/spec-driven.md)** — GitHub's open-source guide to spec-driven development with AI
 
-Copy and paste this into your terminal:
+## Papers
 
-\`\`\`bash
-curl -sL https://raw.githubusercontent.com/compassanalytics/claude-workshop/main/install.sh | bash
-\`\`\`
+- **A Survey of Context Engineering for Large Language Models**  
+  [arXiv:2507.13334](https://arxiv.org/abs/2507.13334)
 
-This installs the workshop skills into your global Claude Code skills directory:
-- \`/sdlc\` — lightweight spec-driven development toolkit
-- \`/sdlc-coach\` — interactive guide for designing your own SDLC plugin
-
----
-
-## Verify the Install
-
-Start a new Claude Code session anywhere on your machine and type:
-
-\`\`\`
-/sdlc-coach
-\`\`\`
-
-You should see the coach walk you through designing your plugin's identity, persistence, state tracking, and phase skills. Type \`hint\` if you get stuck, and \`/sdlc-coach resume\` to pick up where you left off.
+- **Externalization in LLM Agents: A Unified Review of Memory, Skills, Protocols and Harness Engineering** (Zhou et al., 2026)  
+  [arXiv:2604.08224](https://arxiv.org/abs/2604.08224)
 
 ---
 
-## What's Installed
-
-The skills land in \`~/.claude/skills/\` and are available in every Claude Code session:
-
-\`\`\`
-~/.claude/skills/
-├── sdlc/
-│   └── SKILL.md
-└── sdlc-coach/
-    ├── SKILL.md
-    └── reference/
-        └── plugin-building-guide.md
-\`\`\`
-
-No \`--plugin-dir\` flag needed. They're global, always-on, and ready to use.
-
----
-
-## Prefer to Install Manually?
-
-Clone the repo and copy the skills yourself:
-
-\`\`\`bash
-git clone https://github.com/compassanalytics/claude-workshop.git
-cp -r claude-workshop/workshop-session-2/skills/* ~/.claude/skills/
-\`\`\`
-
----
-
-## Go Build Something
-
-The best way to learn this is to build something real with it. Pick a small feature, run \`/sdlc-coach\`, and design your first workflow. Iterate. Break it. Fix it. That's how good harnesses are forged.
-
-\`\`\`bash
-curl -sL https://raw.githubusercontent.com/compassanalytics/claude-workshop/main/install.sh | bash
-\`\`\``;
+Happy building. If you find something that should be on this list, open a PR.`;
 
 
 // --- APP LOGIC ---
