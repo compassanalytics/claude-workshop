@@ -545,6 +545,15 @@ sections[0].content = `# Spec-Driven Development
 
 ---
 
+> **Bring Claude with you** — Paste this into any Claude Code session to follow along interactively:
+>
+> \`\`\`
+> Follow the Claude Code Workshop Session 2 companion guide and help me participate actively:
+> https://raw.githubusercontent.com/compassanalytics/claude-workshop/main/workshop-session-2/COMPANION.md
+> \`\`\`
+>
+> Claude will answer questions, surface key concepts as they come up, and guide you through the hands-on parts.
+
 Last session we learned how to extend Claude Code — skills, hooks, subagents, plugins. Individual tools. This session: **how to compose them into workflows that actually hold together across sessions, phases, and context windows.**
 
 The goal isn't automating away the developer. It's designing systems where AI and human reasoning reinforce each other — where every phase produces artifacts the next phase can use, and nothing important gets lost along the way.
@@ -554,6 +563,8 @@ The goal isn't automating away the developer. It's designing systems where AI an
 ## What Is Spec-Driven Development?
 
 A structured approach to AI-assisted software development where **a specification drives every phase** — discovery, research, refinement, planning, implementation, and review. Each phase reads from prior artifacts and writes its own. The spec is the contract between context windows.
+
+![Spec Driven Development — Stage 1: Creating the Spec, Stage 2: Implementing the Spec](images/spec-driven-tutorial.png)
 
 This isn't unique to us. Several frameworks have converged on similar patterns:
 
@@ -1166,7 +1177,11 @@ Skills aren't just "prompt snippets." They're structured artifacts with capabili
 
 ## Where to Go From Here
 
-These patterns aren't theoretical — they're how tools like TDD (Ticket-Driven Development) work in practice. Specs as tickets, knowledge graphs tracking cross-ticket themes, parallel execution across isolated worktrees, MCP servers coordinating the engine.
+These patterns aren't theoretical — they're how tools like TDD (Ticket-Driven Development) work in practice. Here's what it looks like end-to-end — a PM session creating tickets as specs, and a DEV session consuming them through phased implementation:
+
+![Example of Ticket Driven Development — PM session creates tickets, specs act as contracts, DEV session implements through phases](images/tdd-example.png)
+
+Specs as tickets, knowledge graphs tracking cross-ticket themes, parallel execution across isolated worktrees, MCP servers coordinating the engine.
 
 The frontier is moving fast. The latest research points toward:
 
