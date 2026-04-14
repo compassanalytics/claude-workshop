@@ -109,6 +109,12 @@ Build what they describe.
 
 Think about WHAT gets persisted — not just the final artifacts but also: decisions made along the way, open questions, research findings, things that were explicitly ruled out, context that future phases need. Then think about HOW: what format, one place or separated by phase, history or just the latest version? If they want to see what this looks like in practice, show examples — but only if they ask.
 
+#### If their design only captures prose artifacts (follow up)
+
+Push on this: prose doesn't distinguish between types of knowledge. An assumption buried in a paragraph looks the same as a firm decision. Ask: "How does a later phase tell the difference between a decision and an assumption in your discovery output?" There are six types worth tracking differently: decisions, context, constraints, assumptions, open questions, and rationale — each has different consequences when it gets lost. Also worth asking: should knowledge track WHERE it came from (user requirement vs. research finding vs. agent suggestion)? A user requirement carries more weight than an agent guess — that's provenance, and it matters when a later phase wants to change something.
+
+If they're interested in protocol-based access rather than file reads, MCP is an option — a local MCP server can expose artifacts as resources (read) and tools (write), so any tool in the ecosystem can access them through a standard protocol instead of knowing the directory layout.
+
 ### State & Lifecycle
 
 Note: if they already addressed state tracking as part of their persistence design, acknowledge that and ask if there's anything else to decide. Don't force a separate conversation.
@@ -152,6 +158,8 @@ As you build each phase skill, silently check that its inputs, outputs, and beha
 
 **For every phase skill you build:** it must integrate with the persistence structure (read from previous phases' artifacts, write its own artifact to the right location) and update state on completion. Also make clear in each skill HOW it finds the previous phase's output — does the skill body tell Claude to read a specific path? Does the orchestrator pass content as context? This is the plumbing that connects the phases.
 
+**Context loading is a design choice per phase.** Not every phase should read the same amount. If their design doesn't address this, ask: "How much does this phase load — just the previous phase's output, or earlier artifacts too?" Three strategies exist: minimal (only the previous output — focused but risks intent drift), cumulative (everything from every prior phase — complete but expensive and risks burying important info), or spec-anchored (original spec + previous output, everything else on disk if needed). Different phases often want different strategies — research needs focus, planning needs breadth, implementation needs alignment to the original ask.
+
 **When writing SKILL.md files, follow these rules:**
 
 - **YAML description:** Always use a quoted single-line string for the `description` field in frontmatter. The multiline `|` syntax causes parsing issues where continuation lines get treated as separate YAML keys. Write it as: `description: "What it does. Triggers: keyword1, keyword2"`
@@ -182,6 +190,7 @@ Start with: "Think about how the conversation should feel — how active Claude 
 - Whether Claude should probe for things they might not think of — edge cases, users they're forgetting, technical constraints
 - When discovery is "done enough" — manual signal, completeness check, or summary-and-confirm?
 - What the output looks like — discovery summary format, structured sections, something else?
+- Re-run behavior — what happens if someone re-runs discovery? Overwrite, version, or append what changed? This applies to every phase — establish the pattern here.
 
 ### Research
 
@@ -298,6 +307,8 @@ Build what they describe. This is the skill that ties the persistence, state, an
 #### If they need a nudge
 
 Start with: "Think about how the user starts a new project vs. adds a feature, whether phases should be enforced in order, and how someone resumes after closing a session."
+
+If they're stuck on which pattern to pick: separate commands per phase is the easiest to start with — build each phase as a standalone skill, wire them together later. A hybrid (orchestrator with escape hatches to individual phases) is often the right balance once the phases work. A single orchestrator is the most natural UX but hardest to build well. A state machine (conditional transitions between phases) is most powerful but requires defining transition logic up front.
 
 #### Dimensions to bring up as follow-ups (if their answer doesn't cover them)
 
