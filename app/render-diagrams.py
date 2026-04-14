@@ -179,6 +179,61 @@ flowchart TB
     style P fill:#dcfce7,stroke:#16a34a,stroke-width:2px
 """,
     ),
+    Diagram(
+        name="tmux-orchestration",
+        source="""
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fafaf8', 'edgeLabelBackground':'#ffffff'}}}%%
+flowchart TB
+    O[Orchestrator 🎛️] -->|tmux new-window| T1[Tmux Window 1<br/>Claude 🔷]
+    O -->|tmux new-window| T2[Tmux Window 2<br/>Codex 🟩]
+    O -->|tmux new-window| T3[Tmux Window 3<br/>Kimi 🔶]
+
+    T1 -->|capture-pane| R[Merge Results 📦]
+    T2 -->|capture-pane| R
+    T3 -->|capture-pane| R
+
+    R -->|next wave| O
+
+    style O fill:#f3e8ff,stroke:#9333ea,stroke-width:2px
+    style T1 fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+    style T2 fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    style T3 fill:#fef9c3,stroke:#ca8a04,stroke-width:2px
+    style R fill:#ffedd5,stroke:#d97757,stroke-width:2px
+""",
+    ),
+    Diagram(
+        name="sentinel-watchers",
+        source="""
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fafaf8', 'edgeLabelBackground':'#ffffff'}}}%%
+flowchart LR
+    A[Agent Working 🔨] -->|signal_done.sh| S{Sentinel File}
+    S -->|.done ✅| D[Orchestrator Proceeds ➡️]
+    S -->|.error ❌| E[Orchestrator Halts ⛔]
+
+    style A fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+    style S fill:#fff4e6,stroke:#d4a373,stroke-width:2px
+    style D fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    style E fill:#fecaca,stroke:#dc2626,stroke-width:2px
+""",
+    ),
+    Diagram(
+        name="ralph-loop",
+        source="""
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fafaf8', 'edgeLabelBackground':'#ffffff'}}}%%
+flowchart TB
+    S[Read Spec 📋] --> P[Pick Highest Task 🎯]
+    P --> F[Spawn Fresh Agent 🌱]
+    F --> I[Implement + Check + Commit ✅]
+    I --> U[Update Spec 📝]
+    U --> S
+
+    style S fill:#fff4e6,stroke:#d4a373,stroke-width:2px
+    style P fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+    style F fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    style I fill:#fce7f3,stroke:#db2777,stroke-width:2px
+    style U fill:#f3e8ff,stroke:#9333ea,stroke-width:2px
+""",
+    ),
 ]
 
 

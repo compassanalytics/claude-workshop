@@ -1267,6 +1267,8 @@ When you need more than one agent working at the same time, **tmux has become th
 
 The basic pattern is simple: spawn a coding agent in a detached tmux window, send it a prompt via \`tmux send-keys\`, and capture its output via \`tmux capture-pane\`. But the real power comes from orchestrating many of these sessions together:
 
+![Tmux orchestration — orchestrator spawning multiple tmux windows with agents, then merging results](images/tmux-orchestration.png)
+
 - **Fan-out / fan-in:** Launch 5 parallel research agents, each investigating a different concern (security, performance, patterns, libraries, tests), then merge their findings
 - **Sequential chains:** Run phase A in one window, wait for its sentinel file to appear, then spawn phase B
 - **Batch-sequential waves:** Run groups of independent tasks in parallel, but sequence the groups (e.g., all explorers first, then all planners, then all implementors)
@@ -1298,6 +1300,8 @@ The pattern works like this:
 4. This creates a sentinel file — \`.tdd/engine/sentinels/<session_id>.done\` (or \`.error\`)
 5. The orchestrator waits on these files (or uses \`tmux wait-for\`) and advances to the next step
 
+![Sentinel watchers — agent signals completion, sentinel file created, orchestrator proceeds or halts](images/sentinel-watchers.png)
+
 Sentinels aren't just for success/failure. They can also act as circuit breakers:
 
 - **Pause sentinel:** A file like \`ralph-pause.sentinel\` can halt an autonomous loop gracefully until a human removes it
@@ -1315,6 +1319,8 @@ The final escalation of spec-driven development is **autonomy** — a loop that 
 **Ralph** is the canonical pattern for this. Named after the simple bash loop \`while ! done; do ai_agent "$PROMPT"; done\`, it embodies a core philosophy: **state should live in the filesystem and git history, not in the agent's conversation memory.**
 
 Here's how a Ralph-style loop works in practice:
+
+![Ralph loop — read spec, pick task, spawn fresh agent, implement, update spec, loop back](images/ralph-loop.png)
 
 1. **Read the spec** (e.g., \`prd.json\`, a ticket, or a backlog item)
 2. **Pick the highest-priority uncompleted task**

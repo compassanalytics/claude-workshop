@@ -1,0 +1,10 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fafaf8', 'edgeLabelBackground':'#ffffff'}}}%%
+flowchart LR
+    A[Agent Working 🔨] -->|signal_done.sh| S{Sentinel File}
+    S -->|.done ✅| D[Orchestrator Proceeds ➡️]
+    S -->|.error ❌| E[Orchestrator Halts ⛔]
+
+    style A fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+    style S fill:#fff4e6,stroke:#d4a373,stroke-width:2px
+    style D fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    style E fill:#fecaca,stroke:#dc2626,stroke-width:2px
