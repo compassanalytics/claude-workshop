@@ -43,6 +43,19 @@ cp -r claude-workshop/workshop-session-2/skills/* ~/.claude/skills/
 
 ---
 
+## Bring Claude to the Workshop
+
+Want Claude to participate with you as you follow the session? Paste this into any Claude Code session:
+
+```
+Follow the Claude Code Workshop Session 2 companion guide and help me participate actively:
+https://raw.githubusercontent.com/compassanalytics/claude-workshop/main/workshop-session-2/COMPANION.md
+```
+
+Claude will read the companion guide and act as your workshop co-pilot — surfacing key concepts, answering questions, and guiding you through the hands-on exercises in real time.
+
+---
+
 ## Repo Structure
 
 ```
@@ -58,7 +71,8 @@ cp -r claude-workshop/workshop-session-2/skills/* ~/.claude/skills/
 ├── install.sh                    # One-line skill installer
 ├── workshop-session-1.md         # Session 1 source material
 ├── workshop-session-2/           # Session 2 implementation artifacts
-│   └── skills/                   # sdlc + sdlc-coach skills
+│   ├── skills/                   # sdlc + sdlc-coach skills
+│   └── COMPANION.md              # Copy-paste guide for Claude Code workshop companion
 └── .github/workflows/            # GitHub Pages deployment
 ```
 
