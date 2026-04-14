@@ -1,0 +1,15 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fafaf8', 'edgeLabelBackground':'#ffffff'}}}%%
+flowchart TB
+    subgraph Dynamics["Cross-Cutting Dynamics"]
+        direction LR
+        M[Memory<br/>State] -->|experience distillation| S[Skills<br/>Expertise]
+        S -->|execution recording| M
+        S -->|capability invocation| P[Protocols<br/>Interaction]
+        P -->|capability generation| S
+        M -->|strategy selection| P
+        P -->|result assimilation| M
+    end
+
+    style M fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+    style S fill:#fff4e6,stroke:#d4a373,stroke-width:2px
+    style P fill:#dcfce7,stroke:#16a34a,stroke-width:2px

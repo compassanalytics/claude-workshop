@@ -1,0 +1,17 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fafaf8', 'edgeLabelBackground':'#ffffff'}}}%%
+flowchart TB
+    subgraph FeatureA["Feature A: Auth System"]
+        A1[Discovery] --> A2[Research] --> A3[Plan]
+    end
+
+    subgraph FeatureB["Feature B: Payment Flow"]
+        B1[Discovery] --> B2[Research] --> B3[Plan]
+    end
+
+    subgraph FeatureC["Feature C: Notifications"]
+        C1[Discovery] --> C2[Research] --> C3[Plan]
+    end
+
+    style FeatureA fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+    style FeatureB fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    style FeatureC fill:#fce7f3,stroke:#db2777,stroke-width:2px

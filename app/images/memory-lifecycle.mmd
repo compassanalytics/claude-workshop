@@ -1,0 +1,11 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fafaf8', 'edgeLabelBackground':'#ffffff'}}}%%
+flowchart LR
+    D[Discovery<br/>🌱] -->|new facts| A[Accumulation<br/>📚]
+    A -->|stale knowledge| Dec[Decay<br/>🍂]
+    Dec -->|extract learnings| C[Consolidation<br/>💎]
+    C -->|inform| D
+
+    style D fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    style A fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+    style Dec fill:#fef9c3,stroke:#ca8a04,stroke-width:2px
+    style C fill:#f3e8ff,stroke:#9333ea,stroke-width:2px

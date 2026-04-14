@@ -1,0 +1,20 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fafaf8', 'edgeLabelBackground':'#ffffff'}}}%%
+flowchart TB
+    subgraph S1["Session 1"]
+        A1[Clean Context] --> D1[Read Spec] --> W1[Focused Work] --> O1[Write Artifact]
+    end
+
+    subgraph S2["Session 2"]
+        A2[Clean Context] --> D2[Read Prior Artifact] --> W2[Focused Work] --> O2[Write Artifact]
+    end
+
+    subgraph S3["Session 3"]
+        A3[Clean Context] --> D3[Read Prior Artifact] --> W3[Focused Work] --> O3[Write Artifact]
+    end
+
+    O1 -.->|artifact chain| D2
+    O2 -.->|artifact chain| D3
+
+    style S1 fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+    style S2 fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    style S3 fill:#fef9c3,stroke:#ca8a04,stroke-width:2px

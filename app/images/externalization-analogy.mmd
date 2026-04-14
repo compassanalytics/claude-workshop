@@ -1,0 +1,34 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fafaf8', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#fff4e6'}}}%%
+flowchart LR
+    subgraph Human["Externalization of Human"]
+        direction LR
+        T[Thought<br/>🧠] -->|ideas in symbols| L[Language<br/>🗣️]
+        L -->|memory extension| W[Writing<br/>✍️]
+        W -->|mass dissemination| P[Printing<br/>📰]
+        P -->|automated manipulation| C[Computing<br/>💻]
+    end
+
+    subgraph LLM["Externalization of LLM Agent"]
+        direction LR
+        Weights[Weights<br/>🕸️] -->|externalized state| M[Memory 🧠]
+        Weights -->|externalized expertise| S[Skill 🛠️]
+        Weights -->|externalized interaction| Pro[Protocol 📡]
+        M --> Harness
+        S --> Harness
+        Pro --> Harness
+        Harness[Externalized Agency] --> H[Harness 🎛️]
+    end
+
+    style Human fill:#fff4e6,stroke:#d4a373,stroke-width:2px
+    style LLM fill:#e6f4ff,stroke:#3787d4,stroke-width:2px
+    style T fill:#ffcccc
+    style L fill:#ccffcc
+    style W fill:#ccccff
+    style P fill:#ffffcc
+    style C fill:#ffccff
+    style Weights fill:#ffcccc
+    style M fill:#ccffcc
+    style S fill:#ccccff
+    style Pro fill:#ffffcc
+    style Harness fill:#ffccff
+    style H fill:#ff9966,stroke:#333,stroke-width:2px

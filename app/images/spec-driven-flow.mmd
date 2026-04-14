@@ -1,0 +1,14 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#fafaf8', 'edgeLabelBackground':'#ffffff', 'tertiaryColor': '#fff4e6'}}}%%
+flowchart LR
+    D[Discovery 🔍] -->|writes| R[Research 🔬]
+    R -->|writes| Ref[Refinement ⚒️]
+    Ref -->|writes| P[Planning 📝]
+    P -->|writes| I[Implement 🔨]
+    I -->|writes| Rev[Review ✅]
+
+    style D fill:#e0f2fe,stroke:#0284c7,stroke-width:2px
+    style R fill:#dcfce7,stroke:#16a34a,stroke-width:2px
+    style Ref fill:#fef9c3,stroke:#ca8a04,stroke-width:2px
+    style P fill:#fce7f3,stroke:#db2777,stroke-width:2px
+    style I fill:#f3e8ff,stroke:#9333ea,stroke-width:2px
+    style Rev fill:#ffedd5,stroke:#d97757,stroke-width:2px
