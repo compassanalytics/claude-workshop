@@ -364,6 +364,14 @@
   .section-image.small { max-width: 400px; }
   .section-image.medium { max-width: 600px; }
 
+  #content img {
+    display: block;
+    max-width: 100%;
+    margin: 24px auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+
   #hamburger {
     display: none;
     position: fixed;
@@ -520,6 +528,14 @@ const sections = [
     duration: "",
     author: "julien",
     content: null
+  },
+  {
+    id: "part-7",
+    number: "7",
+    title: "Install & Next Steps",
+    duration: "",
+    author: "julien",
+    content: null
   }
 ];
 
@@ -559,9 +575,13 @@ There's a deeper pattern behind why these workflows work. A recent systems-level
 
 The paper draws a direct parallel between human civilization and LLM agent evolution:
 
-![Externalization analogy — human cognition vs. LLM agent infrastructure](images/externalization-analogy.png)
+![Externalization of Human vs. LLM Agent — from thought to harness](images/externalization-human-llm.png)
 
 Just as humans externalized thought into language, writing, printing, and computing, LLM agents are externalizing capability from weights into **memory** (state), **skills** (expertise), **protocols** (interaction), and the **harness** that coordinates them.
+
+And this isn't just a theoretical framing — you can trace how community focus has shifted over time, from weights and fine-tuning toward context engineering, skills, and now full harness design:
+
+![How community themes shift from 2022 to 2026 — Weights → Context → Skills → Harness](images/themes-timeline.png)
 
 **Spec-driven development is a harness.** It doesn't make the model bigger or the prompts longer. It reorganizes the task so the model can solve it more reliably with the capabilities it already has.
 
@@ -1088,7 +1108,11 @@ This maps directly to the **protocol externalization** dimension in agent system
 
 ## Memory as a Managed Lifecycle
 
-In a basic workflow, knowledge lives in artifacts — \`knowledge.json\`, prose files, state files. But knowledge has a lifecycle:
+In a basic workflow, knowledge lives in artifacts — \`knowledge.json\`, prose files, state files. But real memory systems have far more structure than a flat file:
+
+![Externalized State: Memory — from raw context through memory content, system architecture, to harness integration](images/memory-architecture.png)
+
+And knowledge has a lifecycle:
 
 ![Memory lifecycle — discovery, accumulation, decay, consolidation](images/memory-lifecycle.png)
 
@@ -1115,6 +1139,10 @@ This is **memory as externalized state** — not just "what the model remembers"
 
 Any sophisticated harness must manage the coupling between memory, skills, and protocols. They don't just coexist — they continuously reshape each other:
 
+![Harness ecosystem — skills, memory, and protocols as interconnected clusters around the harness core](images/harness-ecosystem.png)
+
+Each of these modules has deep internal structure. Let's zoom in:
+
 ![Module interactions — memory, skills, and protocols influencing each other](images/module-interactions.png)
 
 - **Memory → Skills:** Execution records get distilled into reusable expertise
@@ -1127,6 +1155,12 @@ Any sophisticated harness must manage the coupling between memory, skills, and p
 If your workflow feels like it's "fighting itself," the problem is usually here. A planning skill that doesn't write decisions in a format the implementation skill expects is a **protocol failure.** An implementation skill that doesn't record what it actually built is a **memory failure.** A review skill that can't invoke the right checks is a **skill boundary failure.**
 
 Getting these three externalized dimensions to play well together is what separates a toy workflow from production-grade agent infrastructure.
+
+To make this concrete, here's what a mature skills pipeline looks like — from how skills are acquired and composed, through selection and safety checks, to the runtime activation pipeline:
+
+![Externalized Expertise: Skills — acquisition, artifact structure, selection heuristics, and activation pipeline](images/skills-architecture.png)
+
+Skills aren't just "prompt snippets." They're structured artifacts with capabilities, preconditions, safety boundaries, and discovery metadata — orchestrated through a pipeline that mirrors how a harness turns static expertise into runtime behavior.
 
 ---
 
@@ -1142,6 +1176,73 @@ The frontier is moving fast. The latest research points toward:
 - **Multi-modal externalization** — diagrams, schemas, and visual artifacts as first-class spec citizens
 
 Start simple. Build the basic workflow with the \`/sdlc-coach\`. Then evolve toward these patterns as your needs grow. The best harness is the one you actually use.`;
+
+
+// --- SECTION 7: Install & Next Steps (Julien) ---
+sections[6].content = `# Install & Next Steps
+
+---
+
+You now have the concepts. Here's how to install the skills and start building your own workflow.
+
+## One-Line Install
+
+Copy and paste this into your terminal:
+
+\`\`\`bash
+curl -sL https://raw.githubusercontent.com/compassanalytics/claude-workshop/main/install.sh | bash
+\`\`\`
+
+This installs the workshop skills into your global Claude Code skills directory:
+- \`/sdlc\` — lightweight spec-driven development toolkit
+- \`/sdlc-coach\` — interactive guide for designing your own SDLC plugin
+
+---
+
+## Verify the Install
+
+Start a new Claude Code session anywhere on your machine and type:
+
+\`\`\`
+/sdlc-coach
+\`\`\`
+
+You should see the coach walk you through designing your plugin's identity, persistence, state tracking, and phase skills. Type \`hint\` if you get stuck, and \`/sdlc-coach resume\` to pick up where you left off.
+
+---
+
+## What's Installed
+
+The skills land in \`~/.claude/skills/\` and are available in every Claude Code session:
+
+\`\`\`
+~/.claude/skills/
+├── sdlc/
+│   └── SKILL.md
+└── sdlc-coach/
+    ├── SKILL.md
+    └── reference/
+        └── plugin-building-guide.md
+\`\`\`
+
+No \`--plugin-dir\` flag needed. They're global, always-on, and ready to use.
+
+---
+
+## Prefer to Install Manually?
+
+Clone the repo and copy the skills yourself:
+
+\`\`\`bash
+git clone https://github.com/compassanalytics/claude-workshop.git
+cp -r claude-workshop/workshop-session-2/skills/* ~/.claude/skills/
+\`\`\`
+
+---
+
+## Go Build Something
+
+The best way to learn this is to build something real with it. Pick a small feature, run \`/sdlc-coach\`, and design your first workflow. Iterate. Break it. Fix it. That's how good harnesses are forged.`;
 
 
 // --- APP LOGIC ---
