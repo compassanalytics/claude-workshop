@@ -1,5 +1,6 @@
 """JWT helpers and the get_current_user dependency."""
 
+import os
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
@@ -9,8 +10,13 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from src.api.errors import problem
 
-# Demo only — in production, load from env / secrets manager.
-JWT_SECRET = "demo-secret-do-not-use-in-prod"
+# Read from environment. Production deployments MUST set JWT_SECRET.
+# Falls back to a clearly-marked dev value if unset (tests, local runs without .env).
+# Length ≥32 bytes to satisfy JWT's SHA-256 HMAC minimum.
+JWT_SECRET = os.environ.get(
+    "JWT_SECRET",
+    "DEV-ONLY-set-JWT_SECRET-env-var-in-prod-this-fallback-is-not-a-secret",
+)
 JWT_ALG = "HS256"
 ACCESS_TTL = timedelta(minutes=30)
 
