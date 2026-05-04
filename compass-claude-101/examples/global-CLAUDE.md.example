@@ -1,0 +1,23 @@
+# Personal defaults — applies to every project on this machine
+
+> Copy this to `~/.claude/CLAUDE.md` before the workshop so the hierarchy demo
+> has three layers (global → project → subdirectory).
+
+## How I like Claude to work with me
+
+- Be terse. Don't summarize what you just did at the end of every response — the diff already shows it.
+- For exploratory questions, give me 2-3 sentences with a recommendation, not a wall of text.
+- Don't add comments that just restate what the code does.
+- When you make a non-obvious choice, explain *why* — not what.
+
+## Tool preferences I always use
+
+- Package manager: `uv` for Python, `pnpm` for Node when available.
+- Editor: VS Code. The CLI is the source of truth, the editor is for reading.
+- Always prefer `rg` over `grep` when both are available.
+
+## Things I never want
+
+- Don't generate license headers in source files unless I ask.
+- Don't add `// TODO:` comments — file an issue or fix it.
+- Don't open browser windows or external apps without asking.
