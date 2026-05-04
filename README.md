@@ -10,7 +10,7 @@ Internal workshop materials for leveling up Claude Code usage at Compass Analyti
 
 | Session | Topic | What you'll learn |
 |---|---|---|
-| **Session 1** | [From Basics to Power User](app/session-1.html) | CLAUDE.md, rules, skills, hooks, MCP, subagents, agent teams, plugins, permissions |
+| **Session 1** | [From Basics to Power User](app/session-1.html) | CLAUDE.md, rules, skills, hooks, MCP, subagents, agent teams, plugins, permissions. Demo project: [`compass-claude-101/`](compass-claude-101/README.md). |
 | **Session 2** | [Agentic SDLC Workflows](app/session-2.html) | Spec-driven development, structured lifecycles, persistence, orchestration, and building your own SDLC plugin |
 
 ---
@@ -60,20 +60,23 @@ Claude will read the companion guide and act as your workshop co-pilot — surfa
 
 ```
 .
-├── app/                          # GitHub Pages site
+├── app/                          # GitHub Pages site (the workshop slides — single source of truth)
 │   ├── index.html                # Redirects to session-2.html
 │   ├── session-1.html            # Session 1 content
 │   ├── session-2.html            # Session 2 content
 │   ├── session-2-notes.html      # Presenter notes version
-│   ├── images/                   # Diagrams and screenshots
+│   ├── images/, assets/          # Diagrams and screenshots
 │   └── render-diagrams.py        # Mermaid diagram renderer
-├── content/                      # Raw content sources
-├── install.sh                    # One-line skill installer
-├── workshop-session-1.md         # Session 1 source material
-├── workshop-session-2/           # Session 2 implementation artifacts
-│   ├── skills/                   # sdlc + sdlc-coach skills
-│   └── COMPANION.md              # Copy-paste guide for Claude Code workshop companion
-└── .github/workflows/            # GitHub Pages deployment
+├── compass-claude-101/           # Session 1 hands-on demo project (FastAPI + React + .claude/)
+│   ├── CLAUDE.md, .claude/, src/, web/, tests/
+│   └── README.md                 # Host setup + demo segment → files map
+├── workshop-session-2/           # Session 2 plugin: sdlc + sdlc-coach skills + companion
+│   ├── .claude-plugin/plugin.json
+│   ├── skills/sdlc/, skills/sdlc-coach/
+│   └── COMPANION.md              # Copy-paste guide for the Claude Code companion
+├── install.sh                    # One-line installer for session-2 skills
+├── .github/workflows/pages.yml   # GitHub Pages deployment
+└── README.md
 ```
 
 ---
