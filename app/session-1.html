@@ -880,7 +880,7 @@ CLAUDE.md can be defined at multiple levels. Each layer stacks on top of the pre
 
 When instructions conflict, the more specific (deeper) directory wins.
 
-**Personal overrides:** \`CLAUDE.local.md\` can exist at any directory level. It\u2019s automatically gitignored and takes priority over the shared CLAUDE.md at the same level  -  useful for personal preferences you don\u2019t want to push to the team.
+**Personal overrides:** \`CLAUDE.local.md\` can exist at any directory level. It loads alongside the shared \`CLAUDE.md\` at that level (after it, so it wins on conflicts) and is intended for personal preferences you don\u2019t want to push to the team. **You must add it to \`.gitignore\` yourself** \u2014 it\u2019s not auto-ignored. Running \`/init\` and choosing the personal option will add the entry for you.
 
 ---
 
@@ -946,7 +946,7 @@ See @README.md for project overview.
 See @docs/api-conventions.md for API design rules.
 \`\`\`
 
-Claude reads the referenced file on demand  -  it\u2019s not loaded upfront. This keeps your CLAUDE.md lean while still giving access to detailed reference material.
+**Imported files are loaded into context at launch** alongside the CLAUDE.md that references them \u2014 \`@\` is for organization, **not** for lazy loading. Splitting a large CLAUDE.md into \`@\` imports keeps the file readable but does NOT save tokens. For lazy-loaded instructions, use [\`.claude/rules/\`](#part-2b) (path-scoped, loads when matching files are read) or skills (loads on invocation). Imports can recurse up to 5 hops deep.
 
 **Best practice ([HumanLayer blog, Nov 2025](https://www.humanlayer.dev/blog/writing-a-good-claude-md)):** Prefer pointers over copies. Don\u2019t paste code snippets into CLAUDE.md  -  they go stale. Point to the file instead: \`\u201CSee @src/lib/api/client.ts for the canonical API client pattern.\u201D\`
 
