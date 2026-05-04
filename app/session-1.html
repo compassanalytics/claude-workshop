@@ -755,18 +755,18 @@ The trajectory is clear: AI goes from nonexistent → passive observer → activ
 - **41%** of all code estimated AI-generated (early 2026)
 
 **Productivity:**
-- **~3.6 hours/week** saved on average; 75% say AI reduces toil (DX Q4 2025, 135K+ devs)
-- **22%** of merged code is AI-authored — actual repo telemetry, not surveys
-- **15-22%** agent adoption across 129K+ GitHub projects
+- **~4.9 hours/week** saved by daily AI users — juniors and Staff+ both ~4.8–4.9 hrs (DX Q1 2026, 400+ companies; up from 3.6 hrs in Q4 2025)
+- **~27.4%** of merged code is AI-authored, climbing toward 30% in some repos (DX Q1 2026 — actual repo telemetry, not surveys)
+- **1.1M+** public repos using LLM SDKs, **+178% YoY** (GitHub Octoverse 2025/2026)
 
 <img src="images/img-20251222163834.png" alt="Software Engineering Productivity Increases from AI Use — quadrant" class="section-image">
 
 **Enterprise cases:**
 - **Rakuten** — 12.5M-line codebase, 7 autonomous hours, 99.9% accuracy
-- **TELUS** — 13K+ AI solutions, 30% faster shipping, 500K hours saved
-- **Zapier** — 89-97% AI adoption across entire org
-- **Stripe** — Cursor adoption: single digits → 80%+ of developers
-- **Salesforce** — 90% of 20K developers on AI tools
+- **TELUS** — 47 large-scale GenAI solutions, 30% faster shipping, 500K+ hours saved, $90M+ in benefits
+- **Zapier** — 89% adoption, 800+ internal AI agents, 10× YoY task completion
+- **Stripe** — 1,370 engineers using Claude, 1,300 PRs/week from internal "minions" agents, 10K-line Scala→Java migration in 4 days
+- **Salesforce** — Agentforce: $1.4B ARR, 18,500 deals closed (Q1 2026)
 
 ---
 
@@ -807,10 +807,10 @@ The skill of modern AI engineering isn't choosing one over the other — it's kn
 
 <img src="images/img-20251222165636.png" alt="Do Not Outsource the Thinking — Jake Nations" class="section-image medium">
 
-- Only **0-20%** of tasks fully delegated — AI amplifies, doesn't replace
-- **~1.7x more issues** in AI-coauthored PRs (CodeRabbit) — verification matters
+- Only **0-20%** of tasks fully delegated — AI amplifies, doesn't replace (Anthropic Societal Impacts, 2026 Agentic Coding Trends Report)
+- **~1.7x more issues** in AI-coauthored PRs — 10.83 vs 6.45 per PR (CodeRabbit, Dec 2025) — verification matters
 - Long sessions → context rot → compounding assumptions
-- **75%** of devs still manually review every AI snippet
+- **75%** of devs still ask another person for help when they don't trust the AI's output (Stack Overflow 2025)
 - Tools are powerful but need proper setup — which is what the rest of this covers`;
 
 
@@ -1283,7 +1283,7 @@ Five ship with Claude Code ([skills docs](https://code.claude.com/docs/en/skills
 | \`/debug [description]\` | Reads the session debug log to troubleshoot your current session. |
 | \`/claude-api\` | Loads Claude API reference material. Also auto-activates when code imports \`anthropic\` or \`@anthropic-ai/sdk\`. |
 
-Note: \`/review\` is deprecated. Install the \`code-review\` plugin instead: \`claude plugin install code-review@claude-code-marketplace\` ([commands docs](https://code.claude.com/docs/en/commands)).
+Note: \`/review\` is deprecated. Install the \`code-review\` plugin instead: \`claude plugins add code-review@claude-plugins-official\` ([commands docs](https://code.claude.com/docs/en/commands)). The earlier marketplace install URL had a known 404 bug (GitHub issue #42595, April 2026) — this is the working form.
 
 ---
 
@@ -1364,7 +1364,7 @@ Servers can now return **interactive HTML UIs** that render directly in the conv
 claude mcp add --transport http notion https://mcp.notion.com/mcp
 
 # Stdio (local tools)
-claude mcp add postgres --command "npx" --args "-y @modelcontextprotocol/server-postgres"
+claude mcp add postgres -- npx -y @modelcontextprotocol/server-postgres
 \`\`\`
 
 **Scopes:**
@@ -1543,11 +1543,16 @@ Hooks are configured in \`settings.json\`, not markdown files:
 
 Hook commands receive context as JSON via stdin (tool input, tool output, session info).
 
-Hooks also support two additional types beyond shell scripts:
-- **\`prompt\` hooks**  -  trigger LLM inference
-- **\`agent\` hooks**  -  spawn a Claude subagent to review or evaluate something
+Hooks support **five types** beyond shell scripts:
+- **\`command\`** (default)  -  shell script, exit code drives behaviour
+- **\`prompt\`**  -  trigger a single LLM inference (cheap, lightweight)
+- **\`agent\`**  -  spawn a fresh subagent to review or evaluate (heavier, full context)
+- **\`http\`**  -  call a webhook
+- **\`mcp_tool\`**  -  invoke a configured MCP tool
 
-For example, a \`PreToolUse\` agent hook could review every commit message or evaluate whether a code change follows architecture patterns  -  deterministically triggered, with AI-level judgment.`;
+All five can be marked **\`async: true\`** (added Jan 2026) to fire without blocking the action. Lifecycle events expanded too  -  there are now **21 events** as of March 2026; the table above shows the most commonly used.
+
+For example, a \`PreToolUse\` \`agent\` hook can review every commit before it lands or evaluate whether a code change follows architecture patterns  -  deterministically triggered, with AI-level judgment. \`agent\` hooks are still marked experimental.`;
 
 
 sections[6].content = `# Part 5: Subagents & Agent Teams
@@ -1854,9 +1859,9 @@ This is what a mature plugin ecosystem looks like. Started with a few skills in 
 
 ## The Bigger Picture: Agent Skills as Open Standard
 
-Skills follow the **Agent Skills specification** (agentskills.io) — announced Dec 2025, now adopted by **16+ tools and 30+ products**:
+Skills follow the **Agent Skills specification** (agentskills.io) — announced Dec 2025, now adopted by **32 tools** as of March 2026:
 
-Claude Code, OpenAI Codex CLI, Google Gemini CLI, GitHub Copilot, Cursor, JetBrains Junie, VS Code, Goose (Block), Amp, OpenHands, and more.
+Claude Code, OpenAI (Codex CLI, ChatGPT), Microsoft (VS Code, GitHub Copilot), Google (Gemini CLI), JetBrains Junie, AWS (Kiro), Cursor, Block (Goose), Sourcegraph (Amp), Snowflake, Databricks, ByteDance (TRAE), Mistral, OpenHands, and more. OpenAI shipped support within 48 hours of the Dec 18, 2025 launch.
 
 A skill you write for Claude Code works in Cursor without modification. The ecosystem isn't siloed.
 
@@ -1874,11 +1879,11 @@ Official marketplace includes **11 LSP plugins** — C/C++, C#, Go, Java, Kotlin
 
 ---
 
-## Scale of the Ecosystem (early 2026)
+## Scale of the Ecosystem (May 2026)
 
-- **~9,000+ total extensions** across official + community marketplaces
-- **Official Anthropic marketplace**: 33 plugins (code intelligence, integrations, workflows, output styles)
-- **Community**: \`buildwithclaude.com\` (492+), \`claudemarketplaces.com\`, GitHub repos
+- **Thousands of extensions** across official + community marketplaces
+- **Official Anthropic marketplace**: 100+ plugins (code intelligence, integrations, workflows, output styles)
+- **Community**: \`buildwithclaude.com\` reports **15,876 plugins** (curated section: 117 agents / 175 commands / 28 hooks / 26 skills / 50 bundles); also \`claudemarketplaces.com\` and GitHub repos
 - **awesome-agent-skills**: 500+ cross-platform skills
 
 ---
@@ -2067,7 +2072,7 @@ It's programming. It's just in English now.
 - **Debuggability** — "why did it do that?" has no stack trace pointing to line 42
 - **Trust gap** — developer trust in AI code accuracy dropped from 40% to 29% (Stack Overflow 2026)
 
-> **45%** of developers cite "almost right, but not quite" as their top AI frustration
+> **66%** of developers cite "almost right, but not quite" as their top AI frustration (Stack Overflow 2025)
 
 This is the core tension: the same property (non-determinism) is both the **main feature** and the **main defect**.
 
