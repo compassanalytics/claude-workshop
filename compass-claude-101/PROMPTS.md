@@ -98,7 +98,22 @@ Run security-scanner, pattern-explorer, and test-generator in parallel against s
 
 ## Part 7 — Plugins
 
-**Live install commands (in the Claude TUI, not the terminal):**
+**No prompts, no live install — pure browser walkthrough.**
+
+Open in a browser tab:
+
+```
+https://github.com/compassanalytics/claude-compass-superpowers
+```
+
+Then drill into:
+
+- `.claude-plugin/marketplace.json` (the manifest)
+- One plugin folder (e.g., `general-dev/`) → `.claude-plugin/plugin.json`, `skills/`, `agents/`, `hooks/`
+
+**⚠ Pre-workshop**: confirm the URL opens for you. Research's external fetch returned 404 — could be private or moved.
+
+**If the audience asks "how would I install this?"** the commands are (in the Claude TUI, NOT the terminal):
 
 ```
 /plugin marketplace add compassanalytics/claude-compass-superpowers
@@ -108,7 +123,7 @@ Run security-scanner, pattern-explorer, and test-generator in parallel against s
 /plugin install general-dev@compassanalytics
 ```
 
-*(Verify the marketplace path is reachable from your machine BEFORE the workshop — research's external fetch returned 404.)*
+But you're not running them live today.
 
 ---
 
