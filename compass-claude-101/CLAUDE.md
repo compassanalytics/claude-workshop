@@ -14,12 +14,10 @@ A small ingestion service used to demo Claude Code config layers. FastAPI backen
 - Web source: `web/src/` — components in `web/src/components/`, hooks in `web/src/hooks/`.
 - Tests: `tests/` — one file per resource, fixtures live in `conftest.py`.
 
-## Broad principles
+## Workflow
 
-- snake_case for Python, camelCase for TS, PascalCase for components/types.
 - Ask before adding new dependencies.
-- Never push directly to `main`.
-- Don't modify `.claude/` config files unless the user asks.
+- Treat `.claude/` config as user-managed — ask before changing it.
 
 ## Build & test
 

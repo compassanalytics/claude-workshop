@@ -896,7 +896,9 @@ The IFScale benchmark (Jaroslawicz et al., July 2025  -  [arXiv:2507.11538](http
 
 ### What to include
 
-The core question: **can Claude figure this out on its own?** If no, it belongs in CLAUDE.md. If Claude can infer it from reading your code, leave it out.
+The right test: **without this in CLAUDE.md, will Claude *reliably* do the right thing?** "Reliably" matters — even if Claude *could* technically derive something from reading five files, having it upfront avoids ambiguity (Pydantic v1 vs v2), anchors decisions, and saves the token cost of re-derivation every session. Real CLAUDE.md files routinely include stack info and architectural decisions even though they're "derivable from code" — that's not a violation, it's a reasonable anchor.
+
+The right-hand column below is a **bias toward less**, not a hard prohibition. Cut what's truly universal (language defaults Claude already knows from training) or self-evident; keep what's load-bearing.
 
 **Table from Anthropic\u2019s [Claude Code Best Practices](https://code.claude.com/docs/en/best-practices) page:**
 
