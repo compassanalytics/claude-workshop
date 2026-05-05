@@ -43,7 +43,15 @@ fi
 cp -R "$SOURCE" "$TARGET"
 cd "$TARGET"
 
-# --- 3. Fresh git so demo commits don't share history with the workshop repo ---
+# --- 3. Materialize .local.md from .example if missing ---
+# The actual CLAUDE.local.md is gitignored by convention, so a fresh
+# GitHub clone won't include it. Copy from the .example companion.
+if [[ -f "CLAUDE.local.md.example" && ! -f "CLAUDE.local.md" ]]; then
+  cp CLAUDE.local.md.example CLAUDE.local.md
+  echo "✓ Created CLAUDE.local.md from .example"
+fi
+
+# --- 4. Fresh git so demo commits don't share history with the workshop repo ---
 rm -rf .git
 git init -q
 git add -A

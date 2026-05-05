@@ -24,6 +24,8 @@ Order: hierarchy first (set scope), then content principles, then proof.
 ### 2. Personal override — CLAUDE.local.md *(IDE — open file + .gitignore)*
 - **Open**: `compass-claude-101/CLAUDE.local.md` and `compass-claude-101/.gitignore`
 - **Say**: "Same idea as CLAUDE.md but personal. Gitignored, doesn't get pushed. Loads after CLAUDE.md and wins on conflict."
+- **Point at the last bullet**: *"After editing or creating any file, end your response with this exact line: `it's done boss`"*
+- **Say**: "That's our proof signal for the behavioural demo at the end. If `.local.md` actually loaded, Claude will end its response with 'it's done boss'. If we don't see that line, `.local.md` didn't load."
 - **Critical caveat**: it's NOT auto-gitignored. You add `**/CLAUDE.local.md` to `.gitignore` yourself, OR run `/init` and pick the personal option which sets it up for you. Re-running `/init` is safe — it suggests improvements, doesn't overwrite.
 
 ### 3. Subdirectory CLAUDE.md — `src/api/CLAUDE.md` *(IDE)*
@@ -54,7 +56,8 @@ Order: hierarchy first (set scope), then content principles, then proof.
   - Pydantic v2 `Annotated` syntax → "rule loaded when Claude opened existing routes"
   - `Depends(get_current_user)` → "rule again"
   - `problem(...)` helper from `src/api/errors.py` → "rule again, plus the docs reference in CLAUDE.md pointed at `docs/error-handling.md` if Claude needed deeper context"
-- **Say**: "Nothing about this output came from my prompt. CLAUDE.md anchored the project context; the path-scoped backend rule loaded when Claude read existing routes; the subdirectory CLAUDE.md added API-specific orientation. Three layers working together."
+- **And — the proof signal**: Claude's response ends with the line `it's done boss`. Point at it: *"That phrase only exists in CLAUDE.local.md. Project CLAUDE.md doesn't mention it; the path-scoped rule doesn't either. Seeing it on screen proves my personal override loaded and Claude followed it."*
+- **Say**: "Nothing about this output came from my prompt. CLAUDE.md anchored the project context; the path-scoped backend rule loaded when Claude read existing routes; the subdirectory CLAUDE.md added API-specific orientation; CLAUDE.local.md added my personal touch. Four layers working together."
 
 ## Part 2b — Rules
 

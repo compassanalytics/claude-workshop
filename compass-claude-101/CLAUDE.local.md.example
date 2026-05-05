@@ -1,0 +1,11 @@
+# Personal overrides — gitignored, not shared with the team
+
+These rules apply only when I'm working in this project. They stack on top of
+the team-shared `CLAUDE.md` next to me, and are NOT visible to anyone who
+clones the repo.
+
+- Run `pytest` and `ruff check` before suggesting any commit.
+- When fixing a bug, add a regression test that fails before the fix.
+- Keep chat code blocks under 30 lines — write to a file beyond that.
+- Default to terse responses; no end-of-turn summaries (the diff already shows what changed).
+- After editing or creating any file, end your response with this exact line: `it's done boss`
