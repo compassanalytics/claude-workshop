@@ -15,34 +15,46 @@ Each block below maps to one section of `app/session-1.html`. Order matches the 
 
 ## Part 2a — CLAUDE.md
 
-Order: structure first (1, 2), then content (3, 4, 5), then proof (6).
+Order: hierarchy first (set scope), then content principles, then proof.
 
-### 1. Hierarchy *(IDE — two tabs side by side)*
-- **Open**: `~/.claude/CLAUDE.md` (global) and `compass-claude-101/CLAUDE.md` (project)
-- **Say**: "Claude loads both at session start. Project rules layer on top of global; deeper directory wins on conflict."
-- **Point at**: one rule from each so the audience sees the layering concretely
+### 1. The anchor — open project CLAUDE.md *(IDE)*
+- **Click**: `compass-claude-101/CLAUDE.md` in the file tree
+- **Say**: "This is the project-level CLAUDE.md. Lives in the repo, gets committed, every teammate inherits it. Claude reads it at the start of every session — that's where persistent project context comes from."
 
-### 2. Personal override *(IDE — open the file + the `.gitignore`)*
+### 2. Personal override — CLAUDE.local.md *(IDE — open file + .gitignore)*
 - **Open**: `compass-claude-101/CLAUDE.local.md` and `compass-claude-101/.gitignore`
-- **Say**: "Personal preferences scoped to this one project. Loads after `CLAUDE.md` so it overrides on conflict."
-- **Critical caveat**: NOT auto-gitignored. You add `**/CLAUDE.local.md` to `.gitignore` yourself, OR run `/init` and pick the personal option which sets it up for you. (Re-running `/init` on an existing project is safe — it suggests improvements, doesn't overwrite.)
+- **Say**: "Same idea as CLAUDE.md but personal. Gitignored, doesn't get pushed. Loads after CLAUDE.md and wins on conflict."
+- **Critical caveat**: it's NOT auto-gitignored. You add `**/CLAUDE.local.md` to `.gitignore` yourself, OR run `/init` and pick the personal option which sets it up for you. Re-running `/init` is safe — it suggests improvements, doesn't overwrite.
 
-### 3. Brevity / 200-line target *(IDE)*
-- **Open**: project `CLAUDE.md`, scroll to bottom in two seconds
-- **Say**: "~30 lines. Anthropic targets under 200. Every line competes for attention; concise instructions get followed more reliably."
+### 3. Subdirectory CLAUDE.md — `src/api/CLAUDE.md` *(IDE)*
+- **Open**: `compass-claude-101/src/api/CLAUDE.md`
+- **Say**: "The third visible tier. When Claude works inside `src/api/`, this loads on top of the project CLAUDE.md. Keeps API-specific orientation scoped to where it matters."
+- **Verbal aside (no file shown)**: "There's actually a fourth tier above all this — `~/.claude/CLAUDE.md` in your home directory. Personal preferences for every project on your machine. We won't open that one today; same concept, different scope. Total tiers: global → project → subdirectory, plus `.local.md` overrides at any level. Deeper wins on conflict."
 
-### 4. Positive-instruction principle *(IDE — same file open)*
-- **Point at**: the "Broad principles" block. Mix of positive ("snake_case for Python", "Ask before adding new dependencies") and a couple of hard-stop negations ("Never push to `main`")
-- **Say**: "Default to positive framing — LLMs follow 'do X' more reliably than 'don't Y'. Reserve negations for hard rules that have to be a wall."
+### 4. Brevity + what earns its keep *(IDE — back in project CLAUDE.md)*
+- **Action**: scroll project `CLAUDE.md` top-to-bottom in two seconds
+- **Say**: "~35 lines. Anthropic targets under 200. Every line costs context tokens; concise instructions get followed more reliably."
+- **Point at**: the `## Stack` and `## Project shape` sections
+- **Say**: "These are technically derivable — Claude could read `pyproject.toml` and `ls` the repo. But they earn their keep as anchors. Saves five file reads to know we're on Pydantic v2 not v1. The 'don't include what Claude can figure out' rule is a bias toward less, not a wall."
 
-### 5. Reference paths, don't import them *(talk only — point at the file)*
-- **Point at**: the "Canonical patterns" section in `CLAUDE.md` (three plain path references: `src/api/errors.py`, `src/api/auth/tokens.py`, `tests/conftest.py`)
-- **Say**: "Plain paths. Claude reads them on-demand only if it needs them. If I'd written `@src/api/errors.py` instead, that file plus the other two would load eagerly at session start, every session, regardless of whether the conversation needs them. `@` is for organization, not for context savings."
+### 5. Positive-instruction principle *(IDE — Workflow section)*
+- **Point at**: the `## Workflow` section. Both bullets are positive (`Ask before adding new dependencies` / `Treat .claude/ config as user-managed — ask before changing it`)
+- **Say**: "Both framed as DO X, not DON'T Y. LLMs follow positive framings more reliably than negations. If you catch yourself writing a long DON'T list, that's a signal to move it to a hook or a permissions deny rule — those are deterministic, not advisory."
 
-### 6. Behavioral demo — the climax *(Terminal — Claude TUI)*
+### 6. Reference paths, not imports *(IDE — Reference docs section)*
+- **Point at**: the `## Reference docs` section (three plain paths to `docs/*.md` files)
+- **Open optionally**: `docs/error-handling.md` to show what's actually there — short, focused documentation
+- **Say**: "Three plain path references to documentation. Claude reads them on-demand IF the current task needs them. If I'd written `@docs/error-handling.md` instead, that file plus the other two would load eagerly at session start — every session — whether the conversation needs them or not. `@` is for organization; plain paths are for true lazy loading."
+
+### 7. Behavioral demo — the climax *(Terminal — Claude TUI)*
 - **Type**: *"Add an endpoint to delete an event by id."*
-- **Audience watches**: the output uses `snake_case` parameter names, Pydantic v2 `Annotated` syntax, `Depends(get_current_user)`, the `problem()` helper from `src/api/errors.py` — none of which were in the prompt.
-- **Say**: "Claude only knows these conventions because of CLAUDE.md plus the path-scoped backend rule that loaded when it read existing routes. Without those files, this output would be generic FastAPI."
+- **Say while it generates**: "Watch what conventions Claude picks up — none of them are in my prompt."
+- **After output, point at parts of the result**:
+  - `snake_case` parameter names → "language default, fine"
+  - Pydantic v2 `Annotated` syntax → "rule loaded when Claude opened existing routes"
+  - `Depends(get_current_user)` → "rule again"
+  - `problem(...)` helper from `src/api/errors.py` → "rule again, plus the docs reference in CLAUDE.md pointed at `docs/error-handling.md` if Claude needed deeper context"
+- **Say**: "Nothing about this output came from my prompt. CLAUDE.md anchored the project context; the path-scoped backend rule loaded when Claude read existing routes; the subdirectory CLAUDE.md added API-specific orientation. Three layers working together."
 
 ## Part 2b — Rules
 

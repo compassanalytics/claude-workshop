@@ -34,11 +34,12 @@ Project-wide CLAUDE.md is intentionally short. Detailed conventions are scoped:
 - `.claude/rules/frontend/ui.md` — applies when reading files in `web/src/`.
 - `.claude/rules/testing.md` — always loaded (unscoped).
 
-## Canonical patterns to follow
+## Reference docs
 
-Plain path references below — read them on demand, not loaded eagerly. (If we
-used `@path` instead, all three files would load into context at session start.)
+Plain path references below — Claude reads them on demand only when the
+current task needs them. (If we used `@path` instead, all three would load
+eagerly into context at session start, every session.)
 
-- `src/api/errors.py` — the `problem()` helper for ProblemDetails error bodies.
-- `src/api/auth/tokens.py` — the `get_current_user` auth dependency.
-- `tests/conftest.py` — shared pytest fixtures (`client`, `db`, `auth_headers`).
+- `docs/error-handling.md` — ProblemDetails contract and the `problem()` helper.
+- `docs/authentication.md` — JWT bearer auth and the `get_current_user` dependency.
+- `docs/testing.md` — pytest fixtures (`client`, `db`, `auth_headers`) and conventions.
