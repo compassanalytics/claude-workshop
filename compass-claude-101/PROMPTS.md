@@ -67,7 +67,7 @@ Fetch the latest open Jira ticket assigned to me and summarize it.
 
 ## Part 5 — Hooks
 
-**Pre-stage in a terminal BEFORE the trigger:**
+**Pre-stage in a terminal BEFORE the trigger** (or use `bash reset-demo.sh --bait`):
 
 ```bash
 cp .env.example .env
@@ -76,27 +76,13 @@ git add -f .env
 
 **⚠ Gotcha**: `.env` is in the project's `.gitignore`. You MUST use `-f` to force-add it; plain `git add .env` refuses. Without it staged, `block-secrets.sh` sees nothing in `git diff --cached` and the hook silently passes.
 
-**Beat 2 — block-secrets command hook fires:**
+**Trigger — block-secrets command hook fires:**
 
 ```
 Commit my staged changes.
 ```
 
-**Beat 3 — agent hook reviews diff:**
-After block-secrets blocks the bait commit, unstage `.env` and stage something clean:
-
-```bash
-git restore --staged .env
-git add docs/testing.md
-```
-
-Then in the Claude TUI:
-
-```
-Commit my staged changes.
-```
-
-The agent hook should fire on this clean commit, emit `APPROVE: ...` or `BLOCK: ...`.
+That's the only live hook trigger. Other hook types (`agent`, `prompt`, `http`, `mcp_tool`) are mentioned verbally only — the agent/prompt hooks were producing noisy/unreliable output in the TUI during dry-run, so they're out of the live demo.
 
 ---
 

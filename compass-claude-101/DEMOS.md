@@ -143,22 +143,20 @@ The point: MCP is a config + auth that abstracts external tool APIs into somethi
 
 ## Part 5 — Hooks
 
-Three beats: structure → deterministic block → AI-judgment block.
+Two beats: structure → deterministic block. (Agent/prompt hooks are mentioned verbally only — runtime display in the TUI is unverified, and the prompt hook produced noisy unwanted output in dry-run.)
 
 ### 1. File tour *(IDE — split view)*
 - **Open**: `.claude/settings.json` (hooks block) and `.claude/hooks/block-secrets.sh`
-- **Say**: "Hooks are shell scripts that fire at specific points in Claude's lifecycle. The settings.json wires them to events; the script does the work. The script reads stdin JSON (the tool input), inspects it, exits 0 to allow or 2 to block. That's it."
+- **Say**: "Hooks are shell scripts that fire at specific points in Claude's lifecycle. The settings.json wires them to events — `PreToolUse`, `PostToolUse`, `Stop` — and to a matcher (which tools they apply to). The script does the actual work. It reads stdin JSON (the tool input), inspects it, exits 0 to allow or 2 to block. That's it."
 
 ### 2. Trigger A — `command` hook (the deterministic block) *(Terminal — Claude TUI)*
-- **Setup** (pre-staged before workshop): `cp .env.example .env && git add .env`
+- **Setup** (pre-staged before workshop): `bash reset-demo.sh --bait` (or manually: `cp .env.example .env && git add -f .env`)
 - **Type**: *"Commit my staged changes."*
-- **What audience sees**: Claude tries `git commit`, the `block-secrets.sh` hook fires, exits 2, the `BLOCKED: refusing to commit files that look like secrets:` message surfaces in stderr, commit is cancelled.
+- **What audience sees**: Claude tries `git commit`, the `block-secrets.sh` hook fires, exits 2, the `BLOCKED: refusing to commit files that look like secrets:` message surfaces, commit is cancelled.
 - **Say**: "Exit code 2 is the kill switch. Unlike CLAUDE.md guidance which Claude *might* follow, a hook with exit 2 makes the action impossible. Same hook fires every time, no exceptions."
 
-### 3. Trigger B — `agent` hook (the wow) *(Terminal — same flow continues)*
-- **Trigger**: same `git commit` attempt (or stage clean changes and try again)
-- **What audience sees**: after the command hooks clear, an `agent` hook fires — a fresh subagent reads `git diff --cached`, evaluates it against rules in the prompt (debug prints, missing tests, breaking API changes, etc.), and emits one line: `APPROVE: <reason>` or `BLOCK: <reason>`.
-- **Say**: "Deterministic trigger, AI-level judgment. The first hook is regex-and-grep — it catches what you anticipated. The agent hook catches what you didn't think of, because a model is reading the diff with reasoning. There are five hook types total — `command`, `prompt`, `agent`, `http`, `mcp_tool` — but `command` and `agent` are the two that matter for this audience."
+### 3. Other hook types — verbal mention only
+- **Say**: "Five hook types exist total — `command`, `prompt`, `agent`, `http`, and `mcp_tool`. We're demoing only the `command` type because it's the most visible and reliable. The `agent` type is the most powerful — instead of running a shell script you spawn a fresh subagent that reads the action with judgment and decides whether to approve or block. Imagine a `PreToolUse` agent hook on every `git commit` that reads the staged diff and catches debug prints or breaking API changes that regex can't match. Deterministic trigger, AI-level judgment. Agent hooks are still marked experimental and the runtime display in the TUI is rough — that's why we're skipping the live demo for that one today."
 
 ## Part 6 — Subagents & Agent Teams
 

@@ -32,28 +32,7 @@
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": ".claude/hooks/block-secrets.sh" },
-          { "type": "command", "command": ".claude/hooks/block-rm-rf.sh" },
-          {
-            "type": "agent",
-            "prompt": "Inspect $ARGUMENTS. If the command is NOT a `git commit` invocation, respond exactly `SKIP` and stop. Otherwise, run `git diff --cached` and review the staged diff for: debug prints (`console.log`, `ipdb.set_trace`, `breakpoint()`); TODOs lacking an issue link; `.env` files or credentials added; functions over 100 lines newly introduced; breaking changes to public APIs without a migration note. Respond with ONE line: `APPROVE: <one-line reason>` or `BLOCK: <reason>`. Be terse."
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          { "type": "command", "command": ".claude/hooks/auto-format.sh" }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          { "type": "command", "command": ".claude/hooks/stop-notify.sh" },
-          { "type": "prompt", "prompt": "In 2 bullets, summarize what was accomplished in this session. Flag anything left unfinished. Be terse." }
+          { "type": "command", "command": ".claude/hooks/block-secrets.sh" }
         ]
       }
     ]
