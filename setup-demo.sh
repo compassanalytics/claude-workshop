@@ -6,7 +6,10 @@
 #   curl -sL https://raw.githubusercontent.com/compassanalytics/claude-workshop/main/setup-demo.sh | bash
 #
 #   # With an explicit target dir:
-#   curl -sL https://raw.githubusercontent.com/compassanalytics/claude-workshop/main/setup-demo.sh | bash -s -- ~/scratch/demo-1
+#   bash setup-demo.sh ~/Desktop/demo-workshop
+#
+#   # With the hooks-demo bait pre-staged (force-stages .env):
+#   bash setup-demo.sh ~/Desktop/demo-workshop --bait
 #
 #   # If you're already inside the workshop repo, it uses the local copy instead of cloning:
 #   bash setup-demo.sh                     # → ./compass-claude-101
@@ -15,7 +18,16 @@
 set -euo pipefail
 
 REPO_URL="https://github.com/compassanalytics/claude-workshop.git"
-TARGET="${1:-compass-claude-101}"
+BAIT=0
+ARGS=()
+for arg in "$@"; do
+  if [[ "$arg" == "--bait" ]]; then
+    BAIT=1
+  else
+    ARGS+=("$arg")
+  fi
+done
+TARGET="${ARGS[0]:-compass-claude-101}"
 TMP_DIR=""
 
 cleanup() {
@@ -58,7 +70,7 @@ git add -A
 git -c user.email='demo@local' -c user.name='Demo' commit -q -m "chore: initial scaffold"
 echo "✓ Fresh git initialized"
 
-# --- 4. Python venv + deps ---
+# --- 5. Python venv + deps ---
 echo ""
 echo "=== Python deps ==="
 if command -v uv >/dev/null 2>&1; then
@@ -79,7 +91,7 @@ else
   exit 1
 fi
 
-# --- 5. Verify with pytest ---
+# --- 6. Verify with pytest ---
 echo ""
 echo "=== pytest ==="
 if pytest -q; then
@@ -88,7 +100,16 @@ else
   echo "⚠ pytest reported failures — check output above"
 fi
 
-# --- 6. Done ---
+# --- 7. Optional: pre-stage the hooks-demo bait ---
+if [[ "$BAIT" == "1" ]]; then
+  echo ""
+  echo "=== Pre-staging hooks-demo bait ==="
+  cp .env.example .env
+  git add -f .env
+  echo "✓ .env force-staged — Part 5 hooks demo is one prompt away"
+fi
+
+# --- 8. Done ---
 echo ""
 echo "═══════════════════════════════════════════════════════════════"
 echo "  Demo project ready at: $(pwd)"

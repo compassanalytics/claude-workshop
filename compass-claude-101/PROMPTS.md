@@ -157,6 +157,12 @@ Check disk usage with `du -sh .`.
 bash /Users/Richard.El-Chaar/Documents/claude-workshop/setup-demo.sh ~/Desktop/demo-test
 ```
 
+**Spin up a fresh demo copy + pre-stage the hooks-demo bait** (one command, ready for Part 5):
+
+```bash
+bash /Users/Richard.El-Chaar/Documents/claude-workshop/setup-demo.sh ~/Desktop/demo-test --bait
+```
+
 **Activate venv + open Claude in the test dir:**
 
 ```bash
