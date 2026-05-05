@@ -71,8 +71,10 @@ Fetch the latest open Jira ticket assigned to me and summarize it.
 
 ```bash
 cp .env.example .env
-git add .env
+git add -f .env
 ```
+
+**⚠ Gotcha**: `.env` is in the project's `.gitignore`. You MUST use `-f` to force-add it; plain `git add .env` refuses. Without it staged, `block-secrets.sh` sees nothing in `git diff --cached` and the hook silently passes.
 
 **Beat 2 — block-secrets command hook fires:**
 
@@ -81,11 +83,20 @@ Commit my staged changes.
 ```
 
 **Beat 3 — agent hook reviews diff:**
-The same `git commit` flow continues. After block-secrets clears (e.g. unstage `.env` and stage some clean change), trigger another commit attempt:
+After block-secrets blocks the bait commit, unstage `.env` and stage something clean:
+
+```bash
+git restore --staged .env
+git add docs/testing.md
+```
+
+Then in the Claude TUI:
 
 ```
-Stage src/api/main.py and commit "chore: trivial change".
+Commit my staged changes.
 ```
+
+The agent hook should fire on this clean commit, emit `APPROVE: ...` or `BLOCK: ...`.
 
 ---
 
@@ -159,3 +170,35 @@ claude
 cd /Users/Richard.El-Chaar/Documents/claude-workshop
 git pull
 ```
+
+---
+
+## Reset between dry-runs
+
+Demos accumulate cruft (modified routes from Part 2a, new files from Part 2b, staged `.env` from Part 5). Use the reset script to get back to a known good state:
+
+```bash
+cd ~/Documents/compass-claude-101-test
+bash reset-demo.sh             # plain reset — restores working tree, removes demo artifacts
+bash reset-demo.sh --bait      # reset + pre-stage .env for the hooks demo
+```
+
+The script:
+- Restores all unstaged + staged changes
+- Removes `src/api/health/` (Part 2b artifact) and `.env`
+- With `--bait`: re-creates `.env` from `.env.example` and force-stages it
+
+It does NOT touch `.venv`, `.git`, `.claude/`, or `CLAUDE.local.md`.
+
+---
+
+## Live-demo gotchas (things that bit me, things to watch)
+
+| Gotcha | Why it bites | Fix |
+|---|---|---|
+| `git add .env` refuses with "paths are ignored" | `.env` is gitignored. The hook needs it staged though. | Use `git add -f .env` (force) |
+| zsh chokes on commands with `# inline comments` when pasted | zsh's default doesn't treat `#` as a comment in interactive mode | Drop the comments, paste only the actual command |
+| Path-scoped backend rule didn't fire on a "create new file" prompt | Path-scoped rules trigger on **reads**, not writes | Working as designed — that IS the Part 2b gotcha demo. If you wanted the rule to fire, the prompt has to make Claude read an existing `src/api/*.py` first. |
+| Subdirectory `src/api/CLAUDE.md` doesn't load when I open Claude from project root | Subdir CLAUDE.mds load lazily — only when Claude reads a file in that dir | Working as designed. It activates during the behavioral demo (when Claude opens existing routes). To eager-load it, `cd src/api && claude` instead. |
+| `it's done boss` doesn't appear at the end of Claude's response | `CLAUDE.local.md` didn't load | Verify the file exists and is non-empty in the demo project root. Restart Claude. |
+| Agent hook (`commit-reviewer`) output isn't visible in the TUI | Schema verified, runtime display is the one thing I couldn't pre-test | If you can't see the APPROVE/BLOCK line, drop Trigger D from the demo and demo only command hooks. |

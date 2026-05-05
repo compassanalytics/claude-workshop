@@ -45,7 +45,7 @@ Open `claude` in your demo copy, run each prompt, confirm the expected behaviour
 - [ ] The `Pre-flight context` block (the `!`cmd`` lines) renders git status / log / diff at the top of context
 
 ### Part 5 — Hooks (HIGHEST RISK)
-- [ ] Pre-stage: `cp .env.example .env && git add .env`
+- [ ] Pre-stage: `cp .env.example .env && git add -f .env` (the `-f` is required because `.env` is gitignored)
 - [ ] Trigger: *"Commit my staged changes."*
 - [ ] **Trigger A — `block-secrets`**: hook fires, audience can SEE the `BLOCKED: ...` message in the TUI
 - [ ] **Trigger D — agent hook**: a fresh subagent reads the staged diff and emits `APPROVE: ...` or `BLOCK: ...` — **output must be visible in the TUI**, not silently logged. If you can't see it, drop Trigger D from the demo and only show command hooks.
